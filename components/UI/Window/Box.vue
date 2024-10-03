@@ -28,17 +28,21 @@ let props = defineProps({
 <template>
 
   <div class="box">
-    <h1>{{title}}</h1>
-    <p>{{content.email}}</p>
-    <p>{{content.dateOfBirth}}</p>
-    <p>{{content.phoneNumber}}</p>
+    <h1 class="text">{{title}}</h1>
+    <p class="text">{{content.email}}</p>
+    <p class="text">{{content.dateOfBirth}}</p>
+    <p class="text">{{content.phoneNumber}}</p>
   </div>
 
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@750;1000&display=swap');
 
+
+.text:hover {
+  color: #acacac;
+}
 
 .box {
   font-family: 'Montserrat', sans-serif;
