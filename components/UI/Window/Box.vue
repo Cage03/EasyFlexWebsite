@@ -6,9 +6,22 @@ let props = defineProps({
     required: false
   },
   content: {
-    type: String,
-    required: false
-  }
+    dateOfBirth:{
+      type: Date,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true
+    },
+    phoneNumber: {
+      type: String,
+      required: true
+    }
+    
+  },
+
+  
 })
 </script>
 
@@ -16,22 +29,27 @@ let props = defineProps({
 
   <div class="box">
     <h1>{{title}}</h1>
-    <p>{{content}}</p>
+    <p>{{content.email}}</p>
+    <p>{{content.dateOfBirth}}</p>
+    <p>{{content.phoneNumber}}</p>
   </div>
 
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
 
 .box {
-  background-color: #f9f9f9;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #ffffff;
   border: 1px solid #c3c3c3;
   padding: 15px;
   margin: 15px;
 }
 
 .box h1 {
-  font-size: 1.5em;
+  font-size: 3em;
   margin: 0;
 }
 
