@@ -39,7 +39,6 @@ let props = defineProps({
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@750;1000&display=swap');
 
-
 .text:hover {
   color: #acacac;
 }
@@ -47,11 +46,11 @@ let props = defineProps({
 .box {
   font-family: 'Montserrat', sans-serif;
   background-color: #ffffff;
-  border: 1px solid #c3c3c3;
   padding: 15px;
   margin: 15px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 20px -10px;
 }
-
 .box h1 {
   font-size: 3em;
   margin: 0;
