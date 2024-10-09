@@ -32,6 +32,8 @@ h3{
   align-items: flex-start;
   width: 100dvw;
   height: 100dvh;
+  font-family: Montserrat, sans-serif;
+  background: var(--background-color);
 }
 
 </style>

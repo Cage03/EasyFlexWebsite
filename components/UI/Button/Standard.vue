@@ -31,7 +31,7 @@ let props = defineProps(
   padding: 1rem;
   text-align: center;
   display: flex;
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-family: Montserrat,sans-serif;
   font-weight:600;
   font-style: italic;
