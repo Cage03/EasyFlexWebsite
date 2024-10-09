@@ -1,5 +1,7 @@
 ﻿<script setup lang="ts">
 
+import FeatureBox from "~/components/UI/FeatureBox.vue";
+
 const api = useRuntimeConfig().public.apiUrl;
 
 const name = ref('');
@@ -39,7 +41,7 @@ function addCertificate(certificate: string) {
 
 function registerFlexworker() {
   console.log('registerFlexworker');
-  fetch(`${api}/Register`, {
+  fetch(`${api}/Flexworker/Register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -76,54 +78,17 @@ function registerFlexworker() {
             <img src="public/icons/avatar.svg" alt="Profile Picture">
           </div>
           <div class="profile_data">
-            <div>
-              <input placeholder="Name" id="name" v-model="name" type="text" required>
-            </div>
-            <div>
-              <input placeholder="Adress" id="adress" v-model="adress" type="text" required>
-            </div>
-            <div>
-              <input id="dateOfBirth" v-model="dateOfBirth" type="date" required>
-            </div>
-            <div>
-              <input placeholder="Email" id="email" v-model="email" type="email" required>
-            </div>
-            <div>
-              <input placeholder="Phone number" id="phoneNumber" v-model="phoneNumber" type="tel" required>
-            </div>
+            <InputField placeholder="Name" v-model="name" style="font-size: 1.5rem"/>
+            <InputField placeholder="Adress" v-model="adress" />
+            <InputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
+            <InputField placeholder="Email" v-model="email" type="email" />
+            <InputField placeholder="Phone number" v-model="phoneNumber" type="tel" />
           </div>
         </div>
         <div class="features-window">
-          <div class="languages-box">
-            <h1 class="feature-text">Languages</h1>
-            <div class="languages">
-              <div v-for="language in languages" :key="language" class="features">{{ language }}</div>
-              <div class="add-language-container">
-                <input placeholder="Language" type="text" v-model="newLanguage">
-                <button type="button" @click="addLanguage(newLanguage)">Add</button>
-              </div>
-            </div>
-          </div>
-          <div class="skills-box">
-            <h1 class="feature-text">Skills</h1>
-            <div class="skills">
-              <div v-for="skill in skills" :key="skill" class="features">{{ skill }}</div>
-              <div class="add-skill-container">
-                <input placeholder="Skill" type="text" v-model="newSkill">
-                <button type="button" @click="addSkill(newSkill)">Add</button>
-              </div>
-            </div>
-          </div>
-          <div class="certificates-box">
-            <h1 class="feature-text">Certificates</h1>
-            <div class="certificates">
-              <div v-for="certificate in certificates" :key="certificate" class="features">{{ certificate }}</div>
-              <div class="add-certificate-container">
-                <input placeholder="Certificate" type="text" v-model="newCertificate">
-                <button type="button" @click="addCertificate(newCertificate)">Add</button>
-              </div>
-            </div>
-          </div>
+          <FeatureBox title="Languages" :features="languages" :newFeature="newLanguage" :addFeature="addLanguage" />
+          <FeatureBox title="Skills" :features="skills" :newFeature="newSkill" :addFeature="addSkill" />
+          <FeatureBox title="Certificates" :features="certificates" :newFeature="newCertificate" :addFeature="addCertificate" />
         </div>
         <div class="register-button-container">
           <UIButtonStandard :content="'Register'" />
