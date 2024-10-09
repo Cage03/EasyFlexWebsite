@@ -1,10 +1,15 @@
 ﻿<script setup lang="ts">
+import {IconType} from "~/types/global-types";
 
 let props = defineProps(
     {
       content: {
         type: String,
         required: false
+      },
+      icon:{
+        type: String as PropType<IconType>,
+        required:false
       }
     })
 </script>
@@ -12,6 +17,7 @@ let props = defineProps(
 <template>
   <button class="button">
     {{content}}
+    <UIIcon v-if="icon" :icon="icon"/>
   </button>
 </template>
 
@@ -29,6 +35,7 @@ let props = defineProps(
   font-family: Montserrat,sans-serif;
   font-weight:600;
   font-style: italic;
+  gap:0.5rem;
 }
 
 </style>

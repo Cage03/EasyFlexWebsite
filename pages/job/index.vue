@@ -6,7 +6,7 @@
           <UISearch/>
         </div>
         <div class="buttons">
-          <UIButtonStandard :content="'Create New'"/>
+          <UIButtonStandard :icon="IconType.Plus" :content="'Create New'"/>
         </div>
       </div>
       <div class="overview">
@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 
+import {IconType} from "~/types/global-types";
 </script>
 
 <style scoped lang="scss">
