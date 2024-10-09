@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="layout">
     <Header />
     <slot class="page"/>
@@ -37,6 +37,8 @@ h3{
     width:100%;
     max-width: 2000px;
   }
+  font-family: Montserrat, sans-serif;
+  background: var(--background-color);
 }
 
 </style>

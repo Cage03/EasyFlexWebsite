@@ -1,5 +1,7 @@
 ﻿<script setup lang="ts">
 
+import FeatureBox from "~/components/UI/FeatureBox.vue";
+
 const api = useRuntimeConfig().public.apiUrl;
 
 const name = ref('');
@@ -8,9 +10,38 @@ const dateOfBirth = ref('');
 const email = ref('');
 const phoneNumber = ref('');
 
+const languages = ref<string[]>([]);
+const skills = ref<string[]>([]);
+const certificates = ref<string[]>([]);
+
+const newLanguage = ref('');
+const newSkill = ref('');
+const newCertificate = ref('');
+
+function addLanguage(language: string) {
+  if (language) {
+    languages.value.push(language);
+    newLanguage.value = '';
+  }
+}
+
+function addSkill(skill: string) {
+  if (skill) {
+    skills.value.push(skill);
+    newSkill.value = '';
+  }
+}
+
+function addCertificate(certificate: string) {
+  if (certificate) {
+    certificates.value.push(certificate);
+    newCertificate.value = '';
+  }
+}
+
 function registerFlexworker() {
   console.log('registerFlexworker');
-  fetch(`${api}/Register`, {
+  fetch(`${api}/Flexworker/Register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -44,35 +75,24 @@ function registerFlexworker() {
       <form @submit.prevent="registerFlexworker">
         <div class="profile_data_header">
           <div class="profile_picture">
-            <img src="assets/icons/Generic avatar.svg" alt="Profile Picture">
+            <img src="public/icons/avatar.svg" alt="Profile Picture">
           </div>
           <div class="profile_data">
-            <div>
-              <label for="name">Name:</label>
-              <input id="name" v-model="name" type="text" required>
-            </div>
-            <div>
-              <label for="adress">Adress:</label>
-              <input id="adress" v-model="adress" type="text" required>
-            </div>
-            <div>
-              <label for="dateOfBirth">Date of Birth:</label>
-              <input id="dateOfBirth" v-model="dateOfBirth" type="date" required>
-            </div>
-            <div>
-              <label for="email">Email:</label>
-              <input id="email" v-model="email" type="email" required>
-            </div>
-            <div>
-              <label for="phoneNumber">Phone Number:</label>
-              <input id="phoneNumber" v-model="phoneNumber" type="tel" required>
-            </div>
+            <InputField placeholder="Name" v-model="name" style="font-size: 1.5rem"/>
+            <InputField placeholder="Adress" v-model="adress" />
+            <InputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
+            <InputField placeholder="Email" v-model="email" type="email" />
+            <InputField placeholder="Phone number" v-model="phoneNumber" type="tel" />
           </div>
         </div>
-        <div class="skills_box">
-
+        <div class="features-window">
+          <FeatureBox title="Languages" :features="languages" :newFeature="newLanguage" :addFeature="addLanguage" />
+          <FeatureBox title="Skills" :features="skills" :newFeature="newSkill" :addFeature="addSkill" />
+          <FeatureBox title="Certificates" :features="certificates" :newFeature="newCertificate" :addFeature="addCertificate" />
         </div>
-        <button type="submit">Register</button>
+        <div class="register-button-container">
+          <UIButtonStandard :content="'Register'" />
+        </div>
       </form>
     </div>
   </div>
@@ -80,22 +100,31 @@ function registerFlexworker() {
 
 <style scoped lang="scss">
 
+input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-50);
+  border-radius: 0.25rem;
+  background: none;
+}
+
+#name {
+  font-size: x-large;
+}
+
 .register_page {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width:100%;
+  width: 100%;
 
   .window {
     display: flex;
     width: 50rem;
-    height: 30rem;
     padding: 1rem;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 1rem;
 
     border-radius: 1rem;
@@ -125,6 +154,75 @@ function registerFlexworker() {
     align-items: flex-start;
     gap: 0.625rem;
   }
+}
+
+.features-window {
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.feature-text{
+  color: #000;
+  font-family: Montserrat;
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.languages-box, .skills-box, .certificates-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.625rem;
+  align-self: stretch;
+}
+
+.languages, .skills, .certificates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1 0 0;
+  border-radius: 1rem;
+  border: 1px solid #000;
+  max-width: 75%;
+  min-height: 3rem;
+}
+
+.features {
+  display: flex;
+  padding: 0.3125rem;
+  margin: 0.3125rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
+  border-radius: 1rem;
+  border: 1px solid var(--Primary-Solid, #4E8798);
+
+  color: #000;
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.add-certificate-container, .add-skill-container, .add-language-container {
+  display: flex;
+  gap: 0.625rem;
+  margin-left: auto;
+}
+
+.register-button-container{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2.5rem;
+  align-self: stretch;
 }
 
 
