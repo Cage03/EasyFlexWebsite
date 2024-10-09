@@ -29,9 +29,14 @@ h3{
 .layout{
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 100dvw;
   height: 100dvh;
+  
+  .page{
+    width:100%;
+    max-width: 2000px;
+  }
 }
 
 </style>
