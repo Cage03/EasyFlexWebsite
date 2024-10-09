@@ -17,7 +17,7 @@ let props = defineProps(
 <template>
   <button class="button">
     {{content}}
-    <UIIcon v-if="icon" :icon="icon"/>
+    <UIIcon v-if="icon" class="icon" :icon="icon"/>
   </button>
 </template>
 
@@ -31,11 +31,18 @@ let props = defineProps(
   padding: 1rem;
   text-align: center;
   display: flex;
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-family: Montserrat,sans-serif;
   font-weight:600;
   font-style: italic;
   gap:0.5rem;
+  cursor:pointer;
+  align-items:center;
+  flex-direction: row;
+  
+  .icon{
+    margin-top:-0.5rem;
+  }
 }
 
 </style>
