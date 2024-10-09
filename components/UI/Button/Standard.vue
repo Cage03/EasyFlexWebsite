@@ -10,12 +10,17 @@ let props = defineProps(
       icon:{
         type: String as PropType<IconType>,
         required:false
+      },
+      action: {
+        type: Function,
+        required: false,
+        default: () => {}
       }
     })
 </script>
 
 <template>
-  <button class="button">
+  <button @click="action" class="button">
     {{content}}
     <UIIcon v-if="icon" class="icon" :icon="icon"/>
   </button>
@@ -39,9 +44,17 @@ let props = defineProps(
   cursor:pointer;
   align-items:center;
   flex-direction: row;
+  transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
   
   .icon{
     margin-top:-0.5rem;
+  }
+  
+  &:hover{
+    transform: translateY(-0.2rem);
+    transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
+    background-color: var(--button-secondary-color);
+    box-shadow: var(--shadow-four-sides);
   }
 }
 

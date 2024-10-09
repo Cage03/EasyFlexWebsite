@@ -6,7 +6,7 @@
           <UISearch :placeholder="'Search...'" v-model="searchQuery"/>
         </div>
         <div class="buttons">
-          <UIButtonStandard :icon="IconType.Plus" :content="'Create New'"/>
+          <UIButtonStandard :action="redirectToCreate" :icon="IconType.Plus" :content="'Create New'"/>
         </div>
       </div>
       <div class="overview">
@@ -30,6 +30,12 @@ const formatJobProperties = (job: Record<string, any>) => {
 }
 
 const searchQuery = ref("");
+
+const redirectToCreate = () => {
+  const router = useRouter();
+  
+  router.push('/') //todo find right page to redirect to
+}
 
 </script>
 
