@@ -18,14 +18,17 @@ let props = defineProps(
 <style scoped>
 
 .button {
-  background-color: #4CAF50;
+  background-color: #FEC228;
   border: none;
+  border-radius: 1rem;
   color: white;
-  padding: 15px 32px;
+  padding: 1rem;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+  display: flex;
+  font-size: 1.5rem;
+  font-family: Montserrat,sans-serif;
+  font-weight:600;
+  font-style: italic;
 }
 
 </style>
