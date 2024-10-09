@@ -12,12 +12,10 @@
 
 .header {
   display: flex;
-  width: 100%;
   height: 3rem;
   padding: 1rem 3rem;
   justify-content: space-between;
   align-items: center;
-
 
   .logo {
     color: var(--primary-logo);
