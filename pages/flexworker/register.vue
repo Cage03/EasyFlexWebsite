@@ -9,6 +9,7 @@ const adress = ref('');
 const dateOfBirth = ref('');
 const email = ref('');
 const phoneNumber = ref('');
+const profilePictureUrl = ref('');
 
 const languages = ref<string[]>([]);
 const skills = ref<string[]>([]);
@@ -17,6 +18,23 @@ const certificates = ref<string[]>([]);
 const newLanguage = ref('');
 const newSkill = ref('');
 const newCertificate = ref('');
+
+const showPopup = ref(false);
+const popupMessage = ref('');
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+};
+
+function showSuccessPopup() {
+  showPopup.value = true;
+  popupMessage.value = 'Registration successful!';
+}
+
+function showErrorPopup(message: string) {
+  showPopup.value = true;
+  popupMessage.value = 'Registration failed! \n' + message;
+}
 
 function addLanguage(language: string) {
   if (language) {
@@ -51,7 +69,8 @@ function registerFlexworker() {
       adress: adress.value,
       dateOfBirth: dateOfBirth.value,
       email: email.value,
-      phoneNumber: phoneNumber.value
+      phoneNumber: phoneNumber.value,
+      profilePictureUrl: profilePictureUrl.value,
     })
   })
       .then(response => {
@@ -62,14 +81,18 @@ function registerFlexworker() {
       })
       .then(data => {
         console.log('Registration successful:', data);
+        showSuccessPopup();
       })
       .catch(err => {
         console.error('Registration error:', err);
+        showErrorPopup(err.message);
       });
 }
 </script>
 
 <template>
+  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{popupMessage}}</UIPopup>
+
   <div class="register_page">
     <div class="window">
       <form @submit.prevent="registerFlexworker">
@@ -78,11 +101,12 @@ function registerFlexworker() {
             <img src="public/icons/avatar.svg" alt="Profile Picture">
           </div>
           <div class="profile_data">
-            <InputField placeholder="Name" v-model="name" style="font-size: 1.5rem"/>
-            <InputField placeholder="Adress" v-model="adress" />
-            <InputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
-            <InputField placeholder="Email" v-model="email" type="email" />
-            <InputField placeholder="Phone number" v-model="phoneNumber" type="tel" />
+            <UIInputField placeholder="Name" v-model="name" style="font-size: 1.5rem"/>
+            <UIInputField placeholder="Adress" v-model="adress" />
+            <UIInputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
+            <UIInputField placeholder="Email" v-model="email" type="email" />
+            <UIInputField placeholder="Phone number" v-model="phoneNumber" type="tel" />
+            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />
           </div>
         </div>
         <div class="features-window">
