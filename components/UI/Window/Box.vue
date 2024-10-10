@@ -1,5 +1,9 @@
 ﻿<script setup lang="ts">
-import InputField from "~/components/UI/InputField.vue";
+import {IconType} from "~/types/global-types";
+
+const api = useRuntimeConfig().public.apiUrl;
+const router = useRouter();
+const id = router.currentRoute.value.query.id;
 
 interface ContentProps {
   name: string,
@@ -10,6 +14,7 @@ interface ContentProps {
   profilePictureUrl: string;
 }
 let props = defineProps({
+  
   content: {
     type: Object as () => ContentProps,
     required: true
@@ -79,10 +84,36 @@ function convertToViewAble(date){
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return date.toLocaleDateString('en-GB', options);
 }
+
+const deleteFlexWorker = async () => {
+  try {
+    const res = await fetch(`${api}/Flexworker/Delete?id=${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
+    console.log('FlexWorker deleted successfully!');
+    
+    router.push('/flexworker/index');
+    
+  } catch (err: any) {
+    console.error('Delete error:', err.message);
+  }
+};
 </script>
 
 <template>
   <div class="box">
+    <div class="deleteButton">
+      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexWorker" />
+    </div>
+
     <div class="profilePicture">
       <img :src="local.profilePictureUrl" alt="Profile Picture" />
     </div>
@@ -116,6 +147,7 @@ function convertToViewAble(date){
         </div>
       <UIButtonStandard v-if="fieldChanged" content="Save changes" @click="handleUpdate"></UIButtonStandard>
     </div>
+
 
     <div class="detailFlexBox">
       <div class="detailContainer">
@@ -220,6 +252,14 @@ function convertToViewAble(date){
   box-shadow: 0px 0px 20px -10px;
   width: 50%;
   height: auto;
+  position: relative;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
 }
 
 .profilePicture img {

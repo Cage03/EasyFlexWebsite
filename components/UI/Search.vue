@@ -29,15 +29,17 @@ const updateValue = (event: Event) => {
 <style lang="scss">
 .search-bar{
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   max-width:100%;
   width:100%;
-  height:4.75rem;
   
   input{
     width:100%;
-    padding:1.5rem 3rem;
+    padding:1rem 2.5rem;
     border-radius: 1rem;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-family: Montserrat, sans-serif;
     font-style:italic;
     color: var(--text-primary-color);
@@ -45,8 +47,8 @@ const updateValue = (event: Event) => {
   
   svg{
     position: absolute;
-    right:-3rem;
-    top:1rem;
+    right:3rem;
+    top:0.25rem;
     transform: translateY(50%);
   }
 }

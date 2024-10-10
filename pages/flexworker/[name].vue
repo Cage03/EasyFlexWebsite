@@ -18,8 +18,6 @@ const error = ref(null);
 const router = useRouter();
 const id = router.currentRoute.value.query.id;
 
-
-
 onMounted(async () => {
   try {
     const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
@@ -77,7 +75,7 @@ async function handleUpdate(payload:object) {
 </script>
 
 <template>
-  <UIWindowBox :content="{
+  <UIWindowBox :title="response.name" :content="{
     name: response.name,
     adress: response.adress,
     dateOfBirth: response.dateOfBirth,
