@@ -2,7 +2,7 @@
 
 
 const api = useRuntimeConfig().public.apiUrl;
-const response = ref({ name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureURL: ''});
+const response = ref({ name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureUrl: ''});
 const error = ref(null);
 
 // get id from query params
@@ -32,6 +32,9 @@ onMounted(async () => {
   }
 });
 
+function deleteFlexworker() {
+
+}
 
 </script>
 
@@ -41,7 +44,7 @@ onMounted(async () => {
     dateOfBirth: response.dateOfBirth,
     email: response.email,
     phoneNumber: response.phoneNumber,
-    profilePictureUrl: response.profilePictureURL || '/icons/avatar.svg'
+    profilePictureUrl: response.profilePictureUrl || '/icons/avatar.svg'
   }"></UIWindowBox>
 </template>
 

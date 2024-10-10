@@ -69,7 +69,7 @@ function convertToViewAble(date){
     </div>
 
     <div class="profilePicture">
-      <img :src="content.profilePictureURL || '/icons/avatar.svg'" alt="Profile Picture" />
+      <img :src="content.profilePictureUrl || '/icons/avatar.svg'" alt="Profile Picture" />
     </div>
 
     <div class="textContainer">
