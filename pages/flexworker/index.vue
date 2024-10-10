@@ -28,14 +28,17 @@ onMounted(async () => {
     console.error('Fetch error:', err);
   }
 });
+
+
 </script>
 
 <template>
   <UIWindowBox :title="response.name" :content="{
+    name: response.name,
     dateOfBirth: response.dateOfBirth,
     email: response.email,
     phoneNumber: response.phoneNumber,
-    profilePictureURL: response.profilePictureURL || 'assets/icons/Generic avatar.svg'
+    profilePictureUrl: response.profilePictureUrl
   }"></UIWindowBox>
 </template>
 

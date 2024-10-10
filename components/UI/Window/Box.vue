@@ -1,11 +1,12 @@
 ﻿<script setup lang="ts">
 
 let props = defineProps({
-  title: {
-    type: String,
-    required: false
-  },
+  
   content: {
+    name: {
+      type: String,
+      required: false
+    },
     dateOfBirth: {
       type: Date,
       required: true
@@ -18,28 +19,74 @@ let props = defineProps({
       type: String,
       required: true
     },
-    profilePictureURL: {
+    profilePictureUrl: {
       type: String,
       required: true
     },
-
   },
-
-
 })
+
+const editMode = ref({
+  name: false,
+  email: false,
+  phoneNumber: false,
+  dateOfBirth: false
+});
+
+let viewableDate;
+const local = ref(props.content);
+
+watch(() => props.content, (newValue) => {
+  local.value = { ...newValue };
+  local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
+
+  convertToViewAble( new Date(local.value.dateOfBirth));
+  console.log(viewableDate);
+  console.log(local.value.profilePictureUrl);
+});
+
+const saveText = (field: keyof Content) => {
+  if (local.value[field]?.toString() !== '') {
+    editMode.value[field] = false;
+
+    props.content[field] = local.value[field];
+    convertToViewAble( new Date(local.value.dateOfBirth));
+    console.log(local.value);
+  }
+};
+
+function convertToViewAble(date){
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  viewableDate =  date.toLocaleDateString('en-GB', options);
+}
 </script>
 
 <template>
   <div class="box">
     <div class="profilePicture">
-      <img :src="content.profilePictureURL || 'assets/icons/Generic avatar.svg'" alt="Profile Picture" />
+      <img :src="local.profilePictureUrl" alt="Profile Picture" />
     </div>
 
     <div class="textContainer">
-      <h1 class="text">{{ title }}</h1>
-      <p class="text">{{ content.email }}</p>
-      <p class="text">{{ content.dateOfBirth }}</p>
-      <p class="text">{{ content.phoneNumber }}</p>
+      
+        <div @click="editMode.name = true" class="editable-field">
+          <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
+          <input v-else class="inputBox xl" type="text" @blur="saveText('name')" @keydown.enter="saveText('name')" v-model="local.name">
+        </div>
+
+        <div @click="editMode.email = true" class="editable-field">
+          <p class="text" v-if="!editMode.email">{{local.email}}</p>
+          <input v-else class="inputBox" type="email" @blur="saveText('email')" @keydown.enter="saveText('email')" v-model="local.email">
+        </div>
+        <div @click="editMode.dateOfBirth = true" class="editable-field">
+          <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
+          <input v-else class="inputBox" type="date" @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')" v-model="local.dateOfBirth">
+        </div>
+        <div @click="editMode.phoneNumber = true" class="editable-field">
+          <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
+          <input v-else class="inputBox" type="tel" @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')" v-model="local.phoneNumber">
+        </div>
+      
     </div>
 
     <div class="detailFlexBox">
@@ -60,7 +107,6 @@ let props = defineProps({
           <p>design</p>
       </div>
     </div>
-
     <div class="detailContainer">
       <p class="detailTitle">Certificates:</p>
       <div class="detailBox">
@@ -82,7 +128,11 @@ let props = defineProps({
   font-size: 20px;
   width: 15rem;
 }
-
+.editable-field {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
 .detailFlexBox {
   display: flex;
   flex-direction: column;
@@ -117,6 +167,18 @@ let props = defineProps({
   margin: 0;
   border-radius: 10px;
 }
+.inputBox {
+  display: flex;
+  gap: 10px;
+  border-radius: 15px;
+  padding: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.inputBox.xl{
+  font-size: 24px;
+}
 
 .box {
   display: flex;
@@ -142,7 +204,7 @@ let props = defineProps({
   display: flex;
   flex-direction: column;
   margin-left: 3%;
-  margin-right: 50%;
+  margin-right: 30%;
 }
 
 .text {
