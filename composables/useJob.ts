@@ -3,8 +3,8 @@ export const UseJob = () => {
     const config = useRuntimeConfig();
     const apiUrl = config.public.apiUrl;
     
-    async function getJobs(pageNumber = 1) {
-        const response = await fetch(`${apiUrl}/Jobs/GetJobs?pageNumber=${pageNumber}`, {
+    async function getJobs(pageNumber = 1, limit:number) {
+        const response = await fetch(`${apiUrl}/Job/GetJobs?pageNumber=${pageNumber}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
