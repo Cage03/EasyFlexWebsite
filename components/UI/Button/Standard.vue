@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
 let props = defineProps(
@@ -11,18 +11,18 @@ let props = defineProps(
         type: String as PropType<IconType>,
         required:false
       },
-      color: {
-        type: String,
+      action: {
+        type: Function,
         required: false,
-        default: "yellow",
+        default: () => {}
       }
     })
 </script>
 
 <template>
-  <button :class="color" class="button">
+  <button @click="action" class="button">
     {{content}}
-    <UIIcon v-if="icon" :icon="icon"/>
+    <UIIcon v-if="icon" class="icon" :icon="icon"/>
   </button>
 </template>
 
@@ -41,6 +41,21 @@ let props = defineProps(
   font-weight:600;
   font-style: italic;
   gap:0.5rem;
+  cursor:pointer;
+  align-items:center;
+  flex-direction: row;
+  transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
+  
+  .icon{
+    margin-top:-0.5rem;
+  }
+  
+  &:hover{
+    transform: translateY(-0.2rem);
+    transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
+    background-color: var(--button-secondary-color);
+    box-shadow: var(--shadow-four-sides);
+  }
 }
 
 .red {

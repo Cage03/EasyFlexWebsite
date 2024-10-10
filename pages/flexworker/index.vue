@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="job-overview-page">
+  <div class="flexworker-overview-page">
     <div class="overview-container">
       <div class="functionality">
         <div class="search-bar-container">
@@ -10,8 +10,8 @@
         </div>
       </div>
       <div class="overview">
-        <template v-for="job in jobs">
-          <UIListitem :properties="formatJobProperties(job)" :redirect="`/job?id=${job.id}`"/>
+        <template v-for="flexworker in flexworkers">
+          <UIListitem :properties="formatFlexworkerProperties(flexworker)" :redirect="`/flexworker/name?id=${flexworker.id}`"/>
         </template>
       </div>
     </div>
@@ -21,10 +21,17 @@
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
-let jobs = ref([])
+interface Flexworker{
+  id: number;
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
 
-const formatJobProperties = (job: Record<string, any>) => {
-  return Object.entries(job)
+const flexworkers = ref<Flexworker[]>([])
+
+const formatFlexworkerProperties = (flexworker: Record<string, any>) => {
+  return Object.entries(flexworker)
       .filter(([key]) => key !== 'id')
       .map(([key, value]) => ({key, value}));
 }
@@ -33,14 +40,43 @@ const searchQuery = ref("");
 
 const redirectToCreate = () => {
   const router = useRouter();
-  
+
   router.push('/') //todo find right page to redirect to
 }
+
+const api = useRuntimeConfig().public.apiUrl;
+const error = ref(null);
+
+onMounted(async () => {
+  try {
+    const res = await fetch(`${api}/Flexworker/Get`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const data = await res.json();
+
+    // only get id, name, email, phoneNumber
+    flexworkers.value = data.map((flexworker: Record<string, any>) => ({
+      id: flexworker.id,
+      name: flexworker.name,
+      email: flexworker.email,
+      phoneNumber: flexworker.phoneNumber
+    }));
+  } catch (err:any) {
+    error.value = err.message;
+    console.error('Fetch error:', err);
+  }
+});
 
 </script>
 
 <style scoped lang="scss">
-.job-overview-page {
+.flexworker-overview-page {
   height: 100%;
   width: 100%;
   display: flex;
