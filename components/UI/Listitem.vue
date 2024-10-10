@@ -51,7 +51,7 @@ const redirectTo = () => {
     gap:1rem;
     
     p {
-      width:15rem;
+      width:20rem;
       overflow:hidden;
       font-size: 1.5rem;
       font-weight: 700;
