@@ -21,13 +21,16 @@
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
+const useJob = UseJob()
+
 let jobs = ref([])
 
 const formatJobProperties = (job: Record<string, any>) => {
   return Object.entries(job)
       .filter(([key]) => key !== 'id')
-      .map(([key, value]) => ({key, value}));
-}
+      .slice(0, 3)
+      .map(([key, value]) => ({ key, value }));
+};
 
 const searchQuery = ref("");
 
@@ -37,16 +40,21 @@ const redirectToCreate = () => {
   router.push('/') //todo find right page to redirect to
 }
 
+onMounted(async ()=>{
+  jobs.value = await useJob.getJobs(1)
+})
+
 </script>
 
 <style scoped lang="scss">
 .job-overview-page {
-  height: 100%;
+  height: calc(100% - 1rem);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top:1rem;
 
   .overview-container {
     width: 70%;
@@ -78,7 +86,7 @@ const redirectToCreate = () => {
       padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
-      height: 42rem;
+      height: 60%;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;

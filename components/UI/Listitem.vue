@@ -48,21 +48,24 @@ const redirectTo = () => {
   .properties {
     display: flex;
     flex-direction: row;
-    gap:1rem;
-    
+    gap: 1rem;
+    width: 100%; 
+
     p {
-      width:20rem;
-      overflow:hidden;
-      font-size: 1.5rem;
+      overflow: hidden;
+      font-size: 1rem;
       font-weight: 700;
       font-family: Montserrat, sans-serif;
       text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-basis: 25%; 
+      flex-shrink: 0;  
     }
   }
 
   .icon {
     margin-top: -0.5rem;
-    cursor:pointer;
+    cursor: pointer;
   }
 }
 </style>
