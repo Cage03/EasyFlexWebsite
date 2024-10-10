@@ -22,7 +22,10 @@ onMounted(async () => {
     }
     const data = await res.json();
     response.value = data;
-    console.log(response);
+
+    //update url
+    router.push({path: '/flexworker/' + data.name , query:{id}});
+
   } catch (err:any) {
     error.value = err.message;
     console.error('Fetch error:', err);
