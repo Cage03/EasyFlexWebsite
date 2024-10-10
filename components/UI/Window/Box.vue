@@ -25,7 +25,9 @@ const editMode = ref({
 });
 
 let viewableDate;
+let fieldChanged = false;
 const local = ref(props.content);
+const emit = defineEmits<{(event: 'updateEvent', payload: object): void }>()
 
 watch(() => props.content, (newValue) => {
   local.value = { ...newValue };
@@ -37,12 +39,19 @@ watch(() => props.content, (newValue) => {
 const saveText = (field: keyof Content) => {
   if (local.value[field]?.toString() !== '') {
     editMode.value[field] = false;
-
+    fieldChanged = true
     props.content[field] = local.value[field];
     convertToViewAble( new Date(local.value.dateOfBirth));
     console.log(local.value);
+
   }
 };
+
+function handleUpdate(){
+  
+  emit("updateEvent", props.content);
+  fieldChanged = false;
+}
 
 function convertToViewAble(date){
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -83,7 +92,7 @@ function convertToViewAble(date){
           <UIInputField v-else  @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')"
                         v-model="local.phoneNumber" placeholder="Phone number" type="tel" />
         </div>
-      
+      <UIButtonStandard v-if="fieldChanged" content="Save changes" @click="handleUpdate"></UIButtonStandard>
     </div>
 
     <div class="detailFlexBox">
