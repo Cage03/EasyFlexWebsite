@@ -26,36 +26,58 @@ const editMode = ref({
 
 let viewableDate;
 let fieldChanged = false;
+let continueWatch = true;
 const local = ref(props.content);
 const emit = defineEmits<{(event: 'updateEvent', payload: object): void }>()
 
 watch(() => props.content, (newValue) => {
-  local.value = { ...newValue };
-  local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
+  if(newValue && continueWatch) {
+    local.value = { ...newValue };
+    local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
 
-  convertToViewAble( new Date(local.value.dateOfBirth));
+    viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
+    //Prevents props from syncing with the local which is needed to check if a field has changed and not remained the same
+    continueWatch = false
+  }
+
 });
 
 const saveText = (field: keyof Content) => {
-  if (local.value[field]?.toString() !== '') {
+  if (local.value[field] !== '' ) {
     editMode.value[field] = false;
-    fieldChanged = true
-    props.content[field] = local.value[field];
-    convertToViewAble( new Date(local.value.dateOfBirth));
-    console.log(local.value);
-
+    checkFfFieldsChanged()
+    viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
+    console.log(fieldChanged)
   }
 };
+function checkFfFieldsChanged(){
+  fieldChanged = false;
+  
+  for (const key in props.content) {
+    
+    const field = key as keyof ContentProps;
+    console.log("i am here " + field);
 
+    const localValue = local.value[field];
+
+    const propValue = (field === 'dateOfBirth')
+        ? props.content[field].toString().split('T')[0]
+        : props.content[field];
+    if (String(localValue) !== String(propValue)) {
+      fieldChanged = true;
+      break; 
+    }
+  }
+}
 function handleUpdate(){
   
-  emit("updateEvent", props.content);
+  emit("updateEvent", local.value);
   fieldChanged = false;
 }
 
 function convertToViewAble(date){
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  viewableDate =  date.toLocaleDateString('en-GB', options);
+  return date.toLocaleDateString('en-GB', options);
 }
 </script>
 
