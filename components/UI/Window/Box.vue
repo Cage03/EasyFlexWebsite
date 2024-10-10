@@ -1,4 +1,5 @@
 ﻿<script setup lang="ts">
+import {IconType} from "~/types/global-types";
 
 let props = defineProps({
   
@@ -63,8 +64,12 @@ function convertToViewAble(date){
 
 <template>
   <div class="box">
+    <div class="deleteButton">
+      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" />
+    </div>
+
     <div class="profilePicture">
-      <img :src="local.profilePictureUrl" alt="Profile Picture" />
+      <img :src="content.profilePictureURL || '/icons/avatar.svg'" alt="Profile Picture" />
     </div>
 
     <div class="textContainer">
@@ -88,6 +93,7 @@ function convertToViewAble(date){
         </div>
       
     </div>
+
 
     <div class="detailFlexBox">
       <div class="detailContainer">
@@ -187,11 +193,19 @@ function convertToViewAble(date){
   font-family: 'Montserrat', sans-serif;
   background-color: #ffffff;
   padding: 1%;
-  margin-left: 25%;
+  margin-left: 0%;
   border-radius: 15px;
   box-shadow: 0px 0px 20px -10px;
   width: 50%;
   height: auto;
+  position: relative;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
 }
 
 .profilePicture img {
