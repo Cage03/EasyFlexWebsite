@@ -10,12 +10,17 @@ let props = defineProps(
       icon:{
         type: String as PropType<IconType>,
         required:false
+      },
+      color: {
+        type: String,
+        required: false,
+        default: "yellow",
       }
     })
 </script>
 
 <template>
-  <button class="button">
+  <button :class="color" class="button">
     {{content}}
     <UIIcon v-if="icon" :icon="icon"/>
   </button>
@@ -36,6 +41,10 @@ let props = defineProps(
   font-weight:600;
   font-style: italic;
   gap:0.5rem;
+}
+
+.red {
+  background-color: #d23535;
 }
 
 </style>

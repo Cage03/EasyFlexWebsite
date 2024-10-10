@@ -41,7 +41,7 @@ onMounted(async () => {
     dateOfBirth: response.dateOfBirth,
     email: response.email,
     phoneNumber: response.phoneNumber,
-    profilePictureUrl: response.profilePictureUrl
+    profilePictureUrl: response.profilePictureURL || '/icons/avatar.svg'
   }"></UIWindowBox>
 </template>
 
