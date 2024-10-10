@@ -33,10 +33,6 @@ let props = defineProps(
 
 <style scoped>
 
-.red {
-  background-color: #d23535;
-}
-
 .button {
   background-color: #FEC228;
   border: none;
@@ -69,6 +65,14 @@ let props = defineProps(
 
 .red {
   background-color: #d23535;
+
+  &:hover{
+    transform: translateY(-0.2rem);
+    transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
+    background-color: var(--delete-button-secondary-color);
+    box-shadow: var(--shadow-four-sides);
+  }
 }
+
 
 </style>
