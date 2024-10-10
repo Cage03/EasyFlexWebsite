@@ -59,7 +59,7 @@ const searchQuery = ref("");
 const redirectToCreate = () => {
   const router = useRouter();
 
-  router.push('/') //todo find right page to redirect to
+  router.push('/flexworker/register') //todo find right page to redirect to
 }
 
 const api = useRuntimeConfig().public.apiUrl;
