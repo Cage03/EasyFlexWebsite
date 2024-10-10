@@ -3,7 +3,7 @@
 const api = useRuntimeConfig().public.apiUrl;
 
 let name = '';
-let adress = '';
+let address = '';
 let description = '';
 let minHours = '';
 let maxHours = '';
@@ -19,7 +19,7 @@ function registerJob() {
     },
     body: JSON.stringify({
       name: name,
-      adress: adress,
+      address: address,
       description: description,
       minHours: minHours,
       maxHours: maxHours,
@@ -68,7 +68,7 @@ function showErrorPopup(message: string) {
       <h1>Register Job</h1>
       <div class="profile_data">
         <UIInputField id="name" :placeholder="'Name'" v-model="name" type="text" required/>
-        <UIInputField id="address" :placeholder="'Address'" v-model="adress" type="text" required/>
+        <UIInputField id="address" :placeholder="'Address'" v-model="address" type="text" required/>
         <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="description" type="text" rows="5" autoResize
                                required/>
         <UIInputField class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required/>
