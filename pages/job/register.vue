@@ -27,20 +27,20 @@ function registerJob() {
       endDate: endDate
     })
   })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-      })
-      .then(data => {
-        console.log('Registration successful:', data);
-        showSuccessPopup();
-      })
-      .catch(err => {
-        console.error('Registration error:', err);
-        showErrorPopup(err.message);
-      });
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log('Registration successful:', data);
+      showSuccessPopup();
+    })
+    .catch(err => {
+      console.error('Registration error:', err);
+      showErrorPopup(err.message);
+    });
 }
 
 const showPopup = ref(false);
@@ -62,30 +62,33 @@ function showErrorPopup(message: string) {
 </script>
 
 <template>
-   <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{popupMessage}}</UIPopup>
+  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{ popupMessage }}</UIPopup>
   <div class="register_page">
     <div class="window">
       <form @submit.prevent="registerJob">
-          
-          <div class="profile_data">
-            
-              <UIInputField :placeholder="'Naam'" v-model="name" type="text" required />      
-              <UIInputField :placeholder="'Adres'" v-model="adress" type="text" required />     
-              <UIInputFieldMutliline :placeholder="'Omschrijving'" v-model="description" type="text" rows="5" autoResize required />       
-              <UIInputField :placeholder="'Minimale uren'" v-model="minHours" type="number" required />
-              <UIInputField :placeholder="'Maximale uren'" v-model="maxHours" type="number" required />
-              <UIInputField :placeholder="'Begindatum'" v-model="startDate" type="date" required />
-              <UIInputField :placeholder="'Einddatum'" v-model="endDate" type="date" required />
-
-              <UIButtonStandard :content="'Register'" :action="registerJob" />
-                  
-          </div>
+        <h1>Register Job</h1>
+        <div class="profile_data">
+          <UIInputField :placeholder="'Name'" v-model="name" type="text" required />
+          <UIInputField :placeholder="'Adress'" v-model="adress" type="text" required />
+          <UIInputFieldMutliline :placeholder="'Description'" v-model="description" type="text" rows="5" autoResize
+            required />
+          <UIInputField :placeholder="'Min hours'" v-model="minHours" type="number" required />
+          <UIInputField :placeholder="'Max hours'" v-model="maxHours" type="number" required />
+          <UIInputField :placeholder="'Startdate'" v-model="startDate" type="date" required />
+          <UIInputField :placeholder="'End date'" v-model="endDate" type="date" required />
+        </div>
+        <div class="register-button-container">
+          <UIButtonStandard :content="'Register'" />
+        </div>
       </form>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+h1 {
+  justify-content: center;
+}
 
 .register_page {
   flex: 1;
@@ -93,26 +96,15 @@ function showErrorPopup(message: string) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width:100%;
+  width: 100%;
 }
-
-.profile_data {
-    display: flex;
-    padding: 0rem 1rem;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 0.625rem;
-  }
 
 .window {
   display: flex;
   width: 50rem;
-  height: 30rem;
   padding: 1rem;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
   gap: 1rem;
 
   border-radius: 1rem;
@@ -120,5 +112,31 @@ function showErrorPopup(message: string) {
 
   /* Shadow 4 Sides */
   box-shadow: 0px 0px 20px 0px rgba(63, 43, 79, 0.08);
-  }
+}
+
+.profile_data {
+  display: flex;
+  padding: 0rem 1rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-50);
+  border-radius: 0.25rem;
+  background: none;
+}
+
+.register-button-container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2.5rem;
+  align-self: stretch;
+}
 </style>
