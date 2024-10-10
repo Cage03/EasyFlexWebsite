@@ -24,6 +24,9 @@ const popupMessage = ref('');
 
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
+  // redirect to flexworker page
+  const router = useRouter();
+  router.push('/flexworker');
 };
 
 function showSuccessPopup() {
