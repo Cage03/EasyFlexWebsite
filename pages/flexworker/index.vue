@@ -11,8 +11,10 @@
       </div>
       <div class="overview">
         <template v-for="flexworker in flexworkers">
-          <UIListitem :properties="formatFlexworkerProperties(flexworker)" :redirect="`/flexworker/name?id=${flexworker.id}`"/>
+          <UIListitem :properties="formatFlexworkerProperties(flexworker)"
+                      :redirect="`/flexworker/name?id=${flexworker.id}`"/>
         </template>
+        <div ref="bottom" class="bottom-marker"></div>
       </div>
     </div>
   </div>
@@ -21,7 +23,7 @@
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
-interface Flexworker{
+interface Flexworker {
   id: number;
   name: string;
   email: string;
@@ -29,6 +31,9 @@ interface Flexworker{
 }
 
 const flexworkers = ref<Flexworker[]>([])
+const page = ref(0);
+const limit = 10;
+const loading = ref(false);
 
 const formatFlexworkerProperties = (flexworker: Record<string, any>) => {
   return Object.entries(flexworker)
@@ -47,9 +52,11 @@ const redirectToCreate = () => {
 const api = useRuntimeConfig().public.apiUrl;
 const error = ref(null);
 
-onMounted(async () => {
+const fetchFlexworkers = async () => {
+  if (loading.value) return;
+  loading.value = true;
   try {
-    const res = await fetch(`${api}/Flexworker/Get`, {
+    const res = await fetch(`${api}/Flexworker/Get?limit=${limit}&page=${page.value}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -58,18 +65,40 @@ onMounted(async () => {
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
-    const data = await res.json();
-
-    // only get id, name, email, phoneNumber
-    flexworkers.value = data.map((flexworker: Record<string, any>) => ({
+    let data = await res.json();
+    data = data.map((flexworker: Flexworker) => ({
       id: flexworker.id,
       name: flexworker.name,
       email: flexworker.email,
-      phoneNumber: flexworker.phoneNumber
+      phoneNumber: flexworker.phoneNumber,
     }));
-  } catch (err:any) {
+    flexworkers.value.push(...data);
+    page.value++;
+  } catch (err: any) {
     error.value = err.message;
     console.error('Fetch error:', err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+
+onMounted(async () => {
+  await fetchFlexworkers();
+
+  const observer = new IntersectionObserver(async (entries) => {
+    if (entries[0].isIntersecting) {
+      await fetchFlexworkers();
+    }
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0
+  });
+
+  const bottomMarker = document.querySelector('.bottom-marker');
+  if (bottomMarker) {
+    observer.observe(bottomMarker);
   }
 });
 
