@@ -1,4 +1,5 @@
 ﻿<template>
+  <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{popupMessage}}</UIPopup>
   <div class="flexworker-overview-page">
     <div class="overview-container">
       <div class="functionality">
@@ -22,6 +23,18 @@
 
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
+
+const showPopup = ref(false);
+const popupMessage = ref("");
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+}
+
+const showErrorPopup = (message: string) => {
+  popupMessage.value = "Failure to load flexworkers";
+  showPopup.value = true;
+}
 
 interface Flexworker {
   id: number;
@@ -77,6 +90,7 @@ const fetchFlexworkers = async () => {
   } catch (err: any) {
     error.value = err.message;
     console.error('Fetch error:', err);
+    showErrorPopup(err.message);
   } finally {
     loading.value = false;
   }
