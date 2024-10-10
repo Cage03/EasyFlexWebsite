@@ -3,5 +3,6 @@
     Search = 'search',
     Plus = 'plus',
     Avatar = 'avatar',
-    Trashcan = 'trashcan'
+    Trashcan = 'trashcan',
+    X_symbol = 'x_symbol',
 }

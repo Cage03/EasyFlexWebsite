@@ -1,8 +1,15 @@
 ﻿<script setup lang="ts">
+import {IconType} from "~/types/global-types";
 
 const props = defineProps({
   show: Boolean,
   buttonText: String,
+
+  xButton: {
+      type: Boolean,
+      required: false,
+      default: false,
+  },
 })
 
 const emit = defineEmits(['close']);
@@ -15,14 +22,16 @@ const closePopup = () => {
 
 <template>
   <div :class="['popup-overlay', { 'popup-show': show }]">
-  <div class="popup-content">
-    <div class="popup-text">
-    <slot/>
+    <div class="popup-content">
+      <UIButtonStandard v-if="xButton" :icon="IconType.X_symbol" :color="'transparent'" class="close-button""/>
+      <div class="popup-text">
+        <slot/>
+      </div>
+      <UIButtonStandard @click="closePopup" :content="buttonText"/>
     </div>
-    <UIButtonStandard @click="closePopup" :content="buttonText"/>
   </div>
-</div>
 </template>
+
 
 <style scoped lang="scss">
 
@@ -66,9 +75,9 @@ const closePopup = () => {
 }
 
 .close-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  position: relative;
+  top: 0rem;
+  left: 90%;
   background: none;
   border: none;
   font-size: 1.5rem;

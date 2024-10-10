@@ -64,6 +64,17 @@ let props = defineProps(
   }
 }
 
+.transparent {
+  background-color: transparent;
+
+  &:hover{
+    transform: translateY(0);
+    transition: transform 0 ease-in-out, 0 ease-in-out;
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
 .red {
   background-color: #d23535;
 

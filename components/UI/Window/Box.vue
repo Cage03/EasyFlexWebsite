@@ -5,6 +5,16 @@ const api = useRuntimeConfig().public.apiUrl;
 const router = useRouter();
 const id = router.currentRoute.value.query.id;
 
+const showPopup = ref(false);
+const popupMessage = ref('');
+
+const toggleConfirmationPopup = () => {
+  showPopup.value = true;
+  popupMessage.value = 'Are you sure you want to delete this flexworker?';
+};
+
+
+
 let props = defineProps({
   
   content: {
@@ -65,6 +75,7 @@ function convertToViewAble(date){
   viewableDate =  date.toLocaleDateString('en-GB', options);
 }
 
+//delete flexworker function
 const deleteFlexWorker = async () => {
   try {
     const res = await fetch(`${api}/Flexworker/Delete?id=${id}`, {
@@ -79,19 +90,32 @@ const deleteFlexWorker = async () => {
     }
     
     console.log('FlexWorker deleted successfully!');
-    
-    router.push('/flexworker/index');
+    showSuccessPopup();
+    router.push('/flexworker');
     
   } catch (err: any) {
+    showErrorPopup(err.message);
     console.error('Delete error:', err.message);
   }
 };
+
+function showSuccessPopup() {
+  showPopup.value = true;
+  popupMessage.value = 'Flexworker successfully deleted!';
+}
+
+function showErrorPopup(message: string) {
+  showPopup.value = true;
+  popupMessage.value = 'Delete failed! \n' + message;
+}
+
 </script>
 
 <template>
+  <UIPopup :xButton="true" :show="showPopup" :buttonText="'Confirm'" @close="deleteFlexWorker">{{popupMessage}}</UIPopup>
   <div class="box">
     <div class="deleteButton">
-      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexWorker" />
+      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="toggleConfirmationPopup" />
     </div>
 
     <div class="profilePicture">
@@ -231,7 +255,7 @@ const deleteFlexWorker = async () => {
   position: absolute;
   top: 10px;
   right: 10px;
-  z-index: 1;
+  /* z-index: 1; */
 }
 
 .profilePicture img {
