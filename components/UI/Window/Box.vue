@@ -1,33 +1,24 @@
 ﻿<script setup lang="ts">
+import InputField from "~/components/UI/InputField.vue";
 
+interface ContentProps {
+  name: string,
+  adress: string,
+  dateOfBirth: string;
+  email: string;
+  phoneNumber: string;
+  profilePictureUrl: string;
+}
 let props = defineProps({
-  
   content: {
-    name: {
-      type: String,
-      required: false
-    },
-    dateOfBirth: {
-      type: Date,
-      required: true
-    },
-    email: {
-      type: String,
-      required: true
-    },
-    phoneNumber: {
-      type: String,
-      required: true
-    },
-    profilePictureUrl: {
-      type: String,
-      required: true
-    },
-  },
+    type: Object as () => ContentProps,
+    required: true
+  }
 })
 
 const editMode = ref({
   name: false,
+  adress: false,
   email: false,
   phoneNumber: false,
   dateOfBirth: false
@@ -41,8 +32,6 @@ watch(() => props.content, (newValue) => {
   local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
 
   convertToViewAble( new Date(local.value.dateOfBirth));
-  console.log(viewableDate);
-  console.log(local.value.profilePictureUrl);
 });
 
 const saveText = (field: keyof Content) => {
@@ -71,20 +60,28 @@ function convertToViewAble(date){
       
         <div @click="editMode.name = true" class="editable-field">
           <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
-          <input v-else class="inputBox xl" type="text" @blur="saveText('name')" @keydown.enter="saveText('name')" v-model="local.name">
+          <UIInputField v-else  @blur="saveText('name')" @keydown.enter="saveText('name')"
+                        v-model="local.name" placeholder="Name" style="font-size: 1.5rem"/>
         </div>
-
+        <div @click="editMode.adress = true" class="editable-field">
+          <p class="text" v-if="!editMode.adress">{{local.adress}}</p>
+          <UIInputField  v-else  @blur="saveText('adress')" @keydown.enter="saveText('adress')"
+                         v-model="local.adress" placeholder="Adress" />
+        </div>
         <div @click="editMode.email = true" class="editable-field">
           <p class="text" v-if="!editMode.email">{{local.email}}</p>
-          <input v-else class="inputBox" type="email" @blur="saveText('email')" @keydown.enter="saveText('email')" v-model="local.email">
+          <UIInputField v-else @blur="saveText('email')" @keydown.enter="saveText('email')" 
+                        v-model="local.email" placeholder="Email"  type="email" />
         </div>
         <div @click="editMode.dateOfBirth = true" class="editable-field">
           <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
-          <input v-else class="inputBox" type="date" @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')" v-model="local.dateOfBirth">
+          <UIInputField v-else  @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')"
+                        v-model="local.dateOfBirth" placeholder="Date of Birth"  type="date" />
         </div>
         <div @click="editMode.phoneNumber = true" class="editable-field">
           <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
-          <input v-else class="inputBox" type="tel" @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')" v-model="local.phoneNumber">
+          <UIInputField v-else  @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')"
+                        v-model="local.phoneNumber" placeholder="Phone number" type="tel" />
         </div>
       
     </div>
