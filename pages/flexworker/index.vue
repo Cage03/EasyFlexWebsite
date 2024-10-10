@@ -2,7 +2,7 @@
 
 
 const api = useRuntimeConfig().public.apiUrl;
-const response = ref({ name: '', dateOfBirth: ''});
+const response = ref({ name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureURL: ''});
 const error = ref(null);
 
 // get id from query params
@@ -28,10 +28,18 @@ onMounted(async () => {
     console.error('Fetch error:', err);
   }
 });
+
+
 </script>
 
 <template>
-  <UIWindowBox :title="response.name" :content="response.dateOfBirth"></UIWindowBox>
+  <UIWindowBox :title="response.name" :content="{
+    name: response.name,
+    dateOfBirth: response.dateOfBirth,
+    email: response.email,
+    phoneNumber: response.phoneNumber,
+    profilePictureUrl: response.profilePictureUrl
+  }"></UIWindowBox>
 </template>
 
 <style scoped>
