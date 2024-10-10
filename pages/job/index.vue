@@ -1,5 +1,6 @@
 ﻿<template>
   <div class="job-overview-page">
+    <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{popupMessage}}</UIPopup>
     <div class="overview-container">
       <div class="functionality">
         <div class="search-bar-container">
@@ -24,7 +25,14 @@ import {IconType} from "~/types/global-types";
 
 const useJob = UseJob()
 
+const showPopup = ref(false)
+const popupMessage = ref("")
+
 let jobs = ref([]) as any
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+}
 
 const page = ref(1);
 const limit = 10;
@@ -55,7 +63,8 @@ const loadMoreJobs = async () => {
       page.value++;
     }
   } catch (error) {
-    console.error('Error loading jobs:', error);
+    popupMessage.value = "Error occured while trying to get jobs";
+    showPopup.value = true;
   } finally {
     loading.value = false;
   }
