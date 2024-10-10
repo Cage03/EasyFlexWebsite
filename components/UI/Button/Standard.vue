@@ -22,6 +22,7 @@ let props = defineProps(
         default: "yellow",
       }
     })
+    
 </script>
 
 <template>

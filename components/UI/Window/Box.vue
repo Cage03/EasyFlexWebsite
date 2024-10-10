@@ -1,6 +1,10 @@
 ﻿<script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
+const api = useRuntimeConfig().public.apiUrl;
+const router = useRouter();
+const id = router.currentRoute.value.query.id;
+
 let props = defineProps({
   
   content: {
@@ -60,12 +64,34 @@ function convertToViewAble(date){
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   viewableDate =  date.toLocaleDateString('en-GB', options);
 }
+
+const deleteFlexWorker = async () => {
+  try {
+    const res = await fetch(`${api}/Flexworker/Delete?id=${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
+    console.log('FlexWorker deleted successfully!');
+    
+    router.push('/flexworker/index');
+    
+  } catch (err: any) {
+    console.error('Delete error:', err.message);
+  }
+};
 </script>
 
 <template>
   <div class="box">
     <div class="deleteButton">
-      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" />
+      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexWorker" />
     </div>
 
     <div class="profilePicture">

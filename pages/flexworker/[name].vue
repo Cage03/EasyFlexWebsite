@@ -32,10 +32,6 @@ onMounted(async () => {
   }
 });
 
-function deleteFlexworker() {
-
-}
-
 </script>
 
 <template>
