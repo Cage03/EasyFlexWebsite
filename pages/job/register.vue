@@ -27,20 +27,20 @@ function registerJob() {
       endDate: endDate
     })
   })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.text();
-    })
-    .then(data => {
-      console.log('Registration successful:', data);
-      showSuccessPopup();
-    })
-    .catch(err => {
-      console.error('Registration error:', err);
-      showErrorPopup(err.message);
-    });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log('Registration successful:', data);
+        showSuccessPopup();
+      })
+      .catch(err => {
+        console.error('Registration error:', err);
+        showErrorPopup(err.message);
+      });
 }
 
 const showPopup = ref(false);
@@ -64,24 +64,28 @@ function showErrorPopup(message: string) {
 <template>
   <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{ popupMessage }}</UIPopup>
   <div class="register_page">
-    <div class="window">
-      <form @submit.prevent="registerJob">
-        <h1>Register Job</h1>
-        <div class="profile_data">
-          <UIInputField :placeholder="'Name'" v-model="name" type="text" required />
-          <UIInputField :placeholder="'Adress'" v-model="adress" type="text" required />
-          <UIInputFieldMutliline :placeholder="'Description'" v-model="description" type="text" rows="5" autoResize
-            required />
-          <UIInputField :placeholder="'Min hours'" v-model="minHours" type="number" required />
-          <UIInputField :placeholder="'Max hours'" v-model="maxHours" type="number" required />
-          <UIInputField :placeholder="'Startdate'" v-model="startDate" type="date" required />
-          <UIInputField :placeholder="'End date'" v-model="endDate" type="date" required />
+    <form class="window" @submit.prevent="registerJob">
+      <h1>Register Job</h1>
+      <div class="profile_data">
+        <UIInputField id="name" :placeholder="'Name'" v-model="name" type="text" required/>
+        <UIInputField id="address" :placeholder="'Address'" v-model="adress" type="text" required/>
+        <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="description" type="text" rows="5" autoResize
+                               required/>
+        <UIInputField class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required/>
+        <UIInputField class="hours" :placeholder="'Max hours'" v-model="maxHours" type="number" required/>
+        <div class="date-picker-container">
+          <label>Start date:</label>
+          <UIInputField class="date-picker" v-model="startDate" type="date" required/>
         </div>
-        <div class="register-button-container">
-          <UIButtonStandard :content="'Register'" />
+        <div class="date-picker-container">
+          <label>End date:</label>
+          <UIInputField class="date-picker" v-model="endDate" type="date" required/>
         </div>
-      </form>
-    </div>
+      </div>
+      <div class="register-button-container">
+        <UIButtonStandard :content="'Register'"/>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -109,14 +113,12 @@ h1 {
 
   border-radius: 1rem;
   background: var(--white-95, rgba(250, 250, 250, 0.95));
-
-  /* Shadow 4 Sides */
-  box-shadow: 0px 0px 20px 0px rgba(63, 43, 79, 0.08);
+  box-shadow: var(--shadow-four-sides)
 }
 
 .profile_data {
   display: flex;
-  padding: 0rem 1rem;
+  padding: 0 1rem;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
@@ -129,6 +131,42 @@ input, textarea {
   border: 1px solid var(--gray-50);
   border-radius: 0.25rem;
   background: none;
+  font-style: italic;
+}
+
+#name{
+  width:16rem;
+}
+
+#address{
+  width:16rem;
+}
+
+#description{
+  width:26rem;
+}
+
+.hours{
+  width:6rem;
+}
+
+.date-picker-container {
+  display:flex;
+  align-items: center;
+  flex-direction: row;
+  gap:1rem;
+  
+  label{
+    width:6rem;
+    font-size:1rem;
+    font-weight: 700;
+    color:var(--text-primary-color);
+    text-align: left;
+  }
+  
+  .date-picker {
+    width: 7.5rem;
+  }
 }
 
 .register-button-container {
