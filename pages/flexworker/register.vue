@@ -63,6 +63,8 @@ function addCertificate(certificate: string) {
 const loading = ref(false);
 
 async function registerFlexworker() {
+  if (loading.value) return;
+  loading.value = true;
   try {
     const response = await fetch(`${api}/Flexworker/Register`, {
       method: 'POST',
@@ -90,6 +92,7 @@ async function registerFlexworker() {
     console.error('Registration error:', err);
     showErrorPopup(err.message);
   }
+  loading.value = false;
 }
 </script>
 
