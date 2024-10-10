@@ -11,7 +11,7 @@ const id = router.currentRoute.value.query.id;
 
 onMounted(async () => {
   try {
-    const res = await fetch(`${api}/GetById?id=${id}`, {
+    const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
