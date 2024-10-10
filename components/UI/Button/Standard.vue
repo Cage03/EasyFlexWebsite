@@ -15,18 +15,27 @@ let props = defineProps(
         type: Function,
         required: false,
         default: () => {}
+      },
+      color: {
+        type: String,
+        required: false,
+        default: "yellow",
       }
     })
 </script>
 
 <template>
-  <button @click="action" class="button">
+  <button @click="action" :class="color" class="button">
     {{content}}
     <UIIcon v-if="icon" class="icon" :icon="icon"/>
   </button>
 </template>
 
 <style scoped>
+
+.red {
+  background-color: #d23535;
+}
 
 .button {
   background-color: #FEC228;
