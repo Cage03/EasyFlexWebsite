@@ -101,12 +101,10 @@ async function handleFetch(){
 
 
     const data = await res.json();
+    console.log("ID from database:", data.id);
     console.log("Fetched data:", data);
     responseMap.value = data;
-
-      console.log("ID from database:", data.id);
-      response.value = data;
-      router.push({ path: '/flexworker/' + data.name, query: { id } });
+    router.push({ path: '/flexworker/' + data.name, query: { id } });
       
 
   } catch (err: any) {
