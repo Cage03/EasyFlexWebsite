@@ -14,7 +14,6 @@ const toggleConfirmationPopup = () => {
 };
 
 
-
 let props = defineProps({
   
   content: {
