@@ -1,6 +1,9 @@
 <script setup lang="ts">
 
 const api = useRuntimeConfig().public.apiUrl;
+const router = useRouter();
+
+const id = ref(null);
 
 let name = '';
 let address = '';
@@ -31,10 +34,11 @@ function registerJob() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return response.text();
+      return response.json();
     })
-    .then(data => {
-      console.log('Registration successful:', data);
+    .then(response => {
+      console.log('Registration successful:', response);
+      id.value = response;
       showSuccessPopup();
     })
     .catch(err => {
@@ -43,15 +47,21 @@ function registerJob() {
     });
 }
 
+const shouldRedirect = ref(false);
 const showPopup = ref(false);
 const popupMessage = ref('');
 
 function togglePopup() {
   showPopup.value = !showPopup.value;
+
+  if (shouldRedirect.value) {
+    router.push({ path: '/job/get', query: { id: id.value } });
+  }
 }
 
 function showSuccessPopup() {
   showPopup.value = true;
+  shouldRedirect.value = true;
   popupMessage.value = 'Job successfully registered!';
 }
 
