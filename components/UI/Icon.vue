@@ -37,5 +37,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.unique-svg-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
