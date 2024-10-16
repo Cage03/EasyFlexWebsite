@@ -247,7 +247,6 @@ const deleteFlexWorker = async () => {
   font-family: 'Montserrat', sans-serif;
   background-color: #ffffff;
   padding: 1%;
-  margin-left: 25%;
   border-radius: 15px;
   box-shadow: 0px 0px 20px -10px;
   width: 50%;
