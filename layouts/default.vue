@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="layout">
     <Header />
     <slot class="page"/>
@@ -30,13 +30,16 @@ h3{
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100dvw;
   height: 100dvh;
+  overflow:hidden;
   
   .page{
     width:100%;
+    height:100%;
     max-width: 2000px;
   }
+  font-family: Montserrat, sans-serif;
+  background: var(--background-color);
 }
 
 </style>
