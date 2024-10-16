@@ -38,7 +38,9 @@ const showPopup = ref(false)
 const popupMessage = ref("")
 
 const shouldRedirect = ref(false);
+
 const togglePopup = () => {
+  showPopup.value = !showPopup.value;
   if (shouldRedirect.value) {
     router.push('/job');
   }
@@ -112,6 +114,7 @@ const saveChanges = async () => {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
     isEdited.value = false;
+    originalJob.value = JSON.parse(JSON.stringify(job.value));
     showSuccessPopup();
   } catch (err: any) {
     error.value = err.message;
@@ -124,15 +127,14 @@ const saveChanges = async () => {
 
 <template>
   <div class="register_page">
-    <UIPopup :button-text="'Close'" @close="togglePopup()" :show="showPopup">{{ popupMessage }}</UIPopup>
+    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
     <div class="window">
       <div class="profile_data">
         <div class="flex-wrapper">
           <h1 @click="toggleEditName" v-if="!isEditingname">{{ job.name || 'Name' }}</h1>
+          <input v-if="isEditingname" v-model="job.name" @blur="toggleEditName" style="font-size: 1.5rem">
           <UIButtonStandard v-if="!isEdited" :content="'delete'" :icon="IconType.Edit" :action="handleDelete"/>
         </div>
-        <div class="profile_data">
-          <input v-if="isEditingname" v-model="job.name" @blur="toggleEditName" style="font-size: 1.5rem">
           <div class="text-container">
             <label>Address:</label>
             <UIInputField id="address" :placeholder="'Address'" v-model="job.address" type="text" required/>
@@ -166,7 +168,6 @@ const saveChanges = async () => {
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped lang="scss">
