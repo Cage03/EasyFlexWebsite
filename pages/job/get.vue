@@ -1,16 +1,34 @@
 <script setup lang="ts">
 
 import {IconType} from "~/types/global-types";
-
 const useJob = UseJob();
 
 const api = useRuntimeConfig().public.apiUrl;
 
 const job = ref({ name: '', address: '', description: '', minHours: '', maxHours: '', startDate: '', endDate: '' })
+const originalJob = ref({ name: '', address: '', description: '', minHours: '', maxHours: '', startDate: '', endDate: '' })
 const error = ref(null);
+const showPopup = ref(false);
+const popupMessage = ref('');
+const isEditingname = ref(false);
 
 const router = useRouter();
 const id = router.currentRoute.value.query.id;
+const isEdited = ref(false);
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+};
+
+const showSuccessPopup = () => {
+  showPopup.value = true;
+  popupMessage.value = 'Changes saved!';
+}
+
+const showErrorPopup = (message: string) => {
+  showPopup.value = true;
+  popupMessage.value = message;
+}
 
 const showPopup = ref(false)
 const popupMessage = ref("")
@@ -35,13 +53,14 @@ onMounted(async () => {
         }
         const data = await res.json();
         job.value = data;
-
+        originalJob.value = JSON.parse(JSON.stringify(data));
         //update url
         //router.push({path: '/Job/' + data.name , query:{id}});
 
     } catch (err: any) {
         error.value = err.message;
         console.error('Fetch error:', err);
+        showErrorPopup("Failed to fetch job data");
     }
 });
 
@@ -64,6 +83,39 @@ const handleDelete = async () => {
   }
 };
 
+watch(job, (newValue) => {
+  if (JSON.stringify(newValue) !== JSON.stringify(originalJob.value)) {
+    isEdited.value = true;
+  } else {
+    isEdited.value = false;
+  }
+}, {deep: true});
+
+const toggleEditName = () => {
+  isEditingname.value = !isEditingname.value;
+}
+
+const saveChanges = async () => {
+  try{
+    const res = await fetch(`${api}/Job/Update`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(job.value)
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    isEdited.value = false;
+    showSuccessPopup();
+  } catch (err: any) {
+    error.value = err.message;
+    console.error('Fetch error:', err);
+    showErrorPopup("Failed to save changes");
+  }
+}
+
 </script>
 
 <template>
@@ -75,6 +127,12 @@ const handleDelete = async () => {
                 <h1>{{ job.name }}</h1>
                 <UIButtonStandard :content="'delete'" :icon="IconType.Edit" :action="handleDelete"/>
                </div> 
+  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{popupMessage}}</UIPopup>
+  <div class="register_page">
+      <div class="window">
+            <div class="profile_data">
+              <h1 @click="toggleEditName" v-if="!isEditingname">{{ job.name || 'Name' }}</h1>
+              <input v-if="isEditingname" v-model="job.name" @blur="toggleEditName" style="font-size: 1.5rem">
                 <div class="text-container">
                     <label>Address:</label>
                     <UIInputField id="address" :placeholder="'Address'" v-model="job.address" type="text" required />
@@ -102,6 +160,9 @@ const handleDelete = async () => {
                     <label>End date:</label>
                     <UIInputField class="date-picker" v-model="job.endDate" type="date" required />
                 </div>
+              <div class="save-button-container" v-if="isEdited">
+                <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
+              </div>
             </div>
         </div>
     </div>
