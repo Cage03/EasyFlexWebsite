@@ -49,7 +49,7 @@ const searchQuery = ref("");
 
 const redirectToCreate = () => {
   const router = useRouter();
-  router.push('/')
+  router.push('/job/register')
 }
 
 const loadMoreJobs = async () => {
