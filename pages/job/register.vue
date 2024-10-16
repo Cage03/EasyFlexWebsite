@@ -27,20 +27,20 @@ function registerJob() {
       endDate: endDate
     })
   })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-      })
-      .then(data => {
-        console.log('Registration successful:', data);
-        showSuccessPopup();
-      })
-      .catch(err => {
-        console.error('Registration error:', err);
-        showErrorPopup(err.message);
-      });
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(data => {
+      console.log('Registration successful:', data);
+      showSuccessPopup();
+    })
+    .catch(err => {
+      console.error('Registration error:', err);
+      showErrorPopup(err.message);
+    });
 }
 
 const showPopup = ref(false);
@@ -67,23 +67,23 @@ function showErrorPopup(message: string) {
     <form class="window" @submit.prevent="registerJob">
       <h1>Register Job</h1>
       <div class="profile_data">
-        <UIInputField id="name" :placeholder="'Name'" v-model="name" type="text" required/>
-        <UIInputField id="address" :placeholder="'Address'" v-model="address" type="text" required/>
-        <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="description" type="text" rows="5" autoResize
-                               required/>
-        <UIInputField class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required/>
-        <UIInputField class="hours" :placeholder="'Max hours'" v-model="maxHours" type="number" required/>
+        <UIInputField id="name" :placeholder="'Name'" v-model="name" type="text" required />
+        <UIInputField id="address" :placeholder="'Address'" v-model="address" type="text" required />
+        <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="description" type="text" rows="5"
+          autoResize required />
+        <UIInputField class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required />
+        <UIInputField class="hours" :placeholder="'Max hours'" v-model="maxHours" type="number" required />
         <div class="date-picker-container">
           <label>Start date:</label>
-          <UIInputField class="date-picker" v-model="startDate" type="date" required/>
+          <UIInputField class="date-picker" v-model="startDate" type="date" required />
         </div>
         <div class="date-picker-container">
           <label>End date:</label>
-          <UIInputField class="date-picker" v-model="endDate" type="date" required/>
+          <UIInputField class="date-picker" v-model="endDate" type="date" required />
         </div>
       </div>
       <div class="register-button-container">
-        <UIButtonStandard :content="'Register'"/>
+        <UIButtonStandard :content="'Register'" />
       </div>
     </form>
   </div>
@@ -125,7 +125,8 @@ h1 {
   gap: 0.625rem;
 }
 
-input, textarea {
+input,
+textarea {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--gray-50);
@@ -134,36 +135,36 @@ input, textarea {
   font-style: italic;
 }
 
-#name{
-  width:16rem;
+#name {
+  width: 16rem;
 }
 
-#address{
-  width:16rem;
+#address {
+  width: 16rem;
 }
 
-#description{
-  width:26rem;
+#description {
+  width: 26rem;
 }
 
-.hours{
-  width:6rem;
+.hours {
+  width: 6rem;
 }
 
 .date-picker-container {
-  display:flex;
+  display: flex;
   align-items: center;
   flex-direction: row;
-  gap:1rem;
-  
-  label{
-    width:6rem;
-    font-size:1rem;
+  gap: 1rem;
+
+  label {
+    width: 6rem;
+    font-size: 1rem;
     font-weight: 700;
-    color:var(--text-primary-color);
+    color: var(--text-primary-color);
     text-align: left;
   }
-  
+
   .date-picker {
     width: 7.5rem;
   }
