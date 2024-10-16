@@ -12,6 +12,16 @@ const error = ref(null);
 const router = useRouter();
 const id = router.currentRoute.value.query.id;
 
+const showPopup = ref(false)
+const popupMessage = ref("")
+
+const shouldRedirect = ref(false);
+const togglePopup = () => {
+  if(shouldRedirect.value) {
+    router.push('/job');
+  }
+};
+
 onMounted(async () => {
     try {
         const res = await fetch(`${api}/Job/Get?id=${id}`, {
@@ -36,10 +46,21 @@ onMounted(async () => {
 });
 
 const handleDelete = async () => {
-  try {
-    await useJob.deleteJob(parseInt(<string>id));
-  } catch (err) {
-    console.error('Delete error:', err);
+  const confirmed = window.confirm("Are you sure you want to delete this job?");
+  if (confirmed) {
+    try {
+      await useJob.deleteJob(parseInt(<string>id));
+      shouldRedirect.value = true;
+      popupMessage.value = "Job deleted successfully!";
+      showPopup.value = true;
+    } catch (err) {
+      console.log(err);
+      shouldRedirect.value = false;
+      popupMessage.value = "An error occurred while trying to delete job";
+      showPopup.value = true;
+    }
+  } else {
+    popupMessage.value = "Job deletion canceled.";
   }
 };
 
@@ -47,6 +68,7 @@ const handleDelete = async () => {
 
 <template>
     <div class="register_page">
+      <UIPopup :button-text="'Close'" @close="togglePopup()" :show="showPopup">{{popupMessage}}</UIPopup>
         <div class="window">
             <div class="profile_data">
               <div class="flex-wrapper">

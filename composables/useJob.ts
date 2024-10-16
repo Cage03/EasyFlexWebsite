@@ -29,8 +29,6 @@ export const UseJob = () => {
         if (!response.ok) {
             throw new Error(`Failed to fetch jobs: ${response.statusText}`);
         }
-        
-        return await response.json();
     }
     
     return{

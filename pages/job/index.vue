@@ -12,7 +12,7 @@
       </div>
       <div class="overview">
         <template v-for="job in jobs">
-          <UIListitem :properties="formatJobProperties(job)" :redirect="`/job?id=${job.id}`"/>
+          <UIListitem :properties="formatJobProperties(job)" :redirect="`/job/get?id=${job.id}`"/>
         </template>
         <div ref="bottom" class="bottom-marker"></div>
       </div>
@@ -28,8 +28,6 @@ const useJob = UseJob()
 const showPopup = ref(false)
 const popupMessage = ref("")
 
-let jobs = ref([]) as any
-
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
 }
@@ -37,6 +35,8 @@ const togglePopup = () => {
 const page = ref(1);
 const limit = 10;
 const loading = ref(false);
+
+let jobs = ref([]) as any
 
 const formatJobProperties = (job: Record<string, any>) => {
   return Object.entries(job)
