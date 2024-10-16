@@ -20,6 +20,11 @@ const error = ref(null);
 const router = useRouter();
 const id = router.currentRoute.value.query.id;
 
+let viewableDate;
+let fieldChanged = false;
+let continueWatch = true;
+const local = ref(response.value);
+
 onMounted(async () => {
   try {
     const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
@@ -43,36 +48,6 @@ onMounted(async () => {
   }
 });
 
-async function handleUpdate() {
-  const content = ref<flexworkerContent>({
-    id: id,
-    name: local.value.name,
-    adress: local.value.adress,
-    dateOfBirth: local.value.dateOfBirth,
-    email: local.value.email,
-    phoneNumber: local.value.phoneNumber,
-    profilePictureUrl: local.value.profilePictureUrl
-  })
-  
-  console.log("content check");
-  console.log(content);
-  try {
-    const res = await fetch(`${api}/Flexworker/Update`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(content.value)
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-  } catch (err:any) {
-    error.value = err.message;
-    console.error('Fetch error:', err);
-  }
-}
-
 const editMode = ref({
   name: false,
   adress: false,
@@ -81,10 +56,6 @@ const editMode = ref({
   dateOfBirth: false
 });
 
-let viewableDate;
-let fieldChanged = false;
-let continueWatch = true;
-const local = ref(response.value);
 
 watch(() => response.value, (newValue) => {
   if(newValue && continueWatch) {
@@ -98,12 +69,12 @@ watch(() => response.value, (newValue) => {
 
 });
 
-const saveText = (field: keyof Content) => {
+const handleFieldChange = (field: keyof Content) => {
   if (local.value[field] !== '' ) {
     editMode.value[field] = false;
     checkIfFieldsChanged()
     viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
-    console.log(fieldChanged)
+
   }
 };
 function checkIfFieldsChanged(){
@@ -152,6 +123,54 @@ const deleteFlexWorker = async () => {
     console.error('Delete error:', err.message);
   }
 };
+
+async function handleUpdate() {
+  const content = ref<flexworkerContent>({
+    id: id,
+    name: local.value.name,
+    adress: local.value.adress,
+    dateOfBirth: local.value.dateOfBirth,
+    email: local.value.email,
+    phoneNumber: local.value.phoneNumber,
+    profilePictureUrl: local.value.profilePictureUrl
+  })
+
+  const res = await fetch(`${api}/Flexworker/Update`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(content.value)})
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log('Registration successful:', data);
+        showSuccessPopup();
+      })
+      .catch(err => {
+        console.error('Registration error:', err);
+        showErrorPopup(err.message);
+      });
+
+}
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+};
+
+function showSuccessPopup() {
+  showPopup.value = true;
+  popupMessage.value = 'Registration successful!';
+}
+
+function showErrorPopup(message: string) {
+  showPopup.value = true;
+  popupMessage.value = 'Registration failed! \n' + message;
+}
 </script>
 
 <template>
@@ -168,28 +187,28 @@ const deleteFlexWorker = async () => {
           <div class="profile_data">
             <div  @click="editMode.name = true" class="editable-field">
               <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
-              <UIInputField v-else  @blur="saveText('name')" @keydown.enter="saveText('name')"
+              <UIInputField v-else @blur="handleFieldChange('name')" @keydown.enter="handleFieldChange('name')"
                             v-model="local.name" placeholder="Name" style="font-size: 1.5rem"/>
             </div>
 
             <div @click="editMode.adress = true" class="editable-field">
               <p class="text" v-if="!editMode.adress">{{local.adress}}</p>
-              <UIInputField  v-else  @blur="saveText('adress')" @keydown.enter="saveText('adress')"
-                             v-model="local.adress" placeholder="Adress" />
+              <UIInputField v-else @blur="handleFieldChange('adress')" @keydown.enter="handleFieldChange('adress')"
+                            v-model="local.adress" placeholder="Adress" />
             </div>
             <div @click="editMode.email = true" class="editable-field">
               <p class="text" v-if="!editMode.email">{{local.email}}</p>
-              <UIInputField v-else @blur="saveText('email')" @keydown.enter="saveText('email')"
-                            v-model="local.email" placeholder="Email"  type="email" />
+              <UIInputField v-else @blur="handleFieldChange('email')" @keydown.enter="handleFieldChange('email')"
+                            v-model="local.email" placeholder="Email" type="email" />
             </div>
             <div @click="editMode.dateOfBirth = true" class="editable-field">
               <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
-              <UIInputField v-else  @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')"
-                            v-model="local.dateOfBirth" placeholder="Date of Birth"  type="date" />
+              <UIInputField v-else @blur="handleFieldChange('dateOfBirth')" @keydown.enter="handleFieldChange('dateOfBirth')"
+                            v-model="local.dateOfBirth" placeholder="Date of Birth" type="date" />
             </div>
             <div @click="editMode.phoneNumber = true" class="editable-field">
               <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
-              <UIInputField v-else  @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')"
+              <UIInputField v-else @blur="handleFieldChange('phoneNumber')" @keydown.enter="handleFieldChange('phoneNumber')"
                             v-model="local.phoneNumber" placeholder="Phone number" type="tel" />
             </div>
 <!--            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />-->
@@ -203,7 +222,7 @@ const deleteFlexWorker = async () => {
 <!--        <div class="register-button-container">-->
 <!--          <UIButtonStandard :content="'Register'" />-->
 <!--        </div>-->
-        <UIButtonStandard v-if="fieldChanged" :content="'Save changes'"></UIButtonStandard>
+        <UIButtonStandard v-if="fieldChanged" :content="'Save changes'" ></UIButtonStandard>
       </form>
     </div>
   </div>
