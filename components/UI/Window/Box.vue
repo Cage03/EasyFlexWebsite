@@ -21,7 +21,6 @@ const closePopup = () => {
   showPopup.value = false;
 };
 
-
 let props = defineProps({
   
   content: {

@@ -1,8 +1,6 @@
 ﻿<script setup lang="ts">
-
-
 const api = useRuntimeConfig().public.apiUrl;
-const response = ref({ name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureUrl: ''});
+const response = ref({ name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureUrl: '' });
 const error = ref(null);
 
 // get id from query params
@@ -17,21 +15,26 @@ onMounted(async () => {
         'Content-Type': 'application/json'
       }
     });
+
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
+
+
     const data = await res.json();
-    response.value = data;
+    console.log("Fetched data:", data);
 
-    //update url
-    router.push({path: '/flexworker/' + data.name , query:{id}});
+      console.log("ID from database:", data.id);
+      response.value = data;
+      router.push({ path: '/flexworker/' + data.name, query: { id } });
+      
 
-  } catch (err:any) {
+  } catch (err: any) {
     error.value = err.message;
     console.error('Fetch error:', err);
+    router.push('/flexworker/notFound');
   }
 });
-
 </script>
 
 <template>
@@ -44,6 +47,4 @@ onMounted(async () => {
   }"></UIWindowBox>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
