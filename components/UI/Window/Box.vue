@@ -1,10 +1,18 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
 const api = useRuntimeConfig().public.apiUrl;
 const router = useRouter();
 const id = router.currentRoute.value.query.id;
 
+interface ContentProps {
+  name: string,
+  adress: string,
+  dateOfBirth: string;
+  email: string;
+  phoneNumber: string;
+  profilePictureUrl: string;
+}
 const showPopup = ref(false);
 const popupMessage = ref('');
 const successPopup = ref(false);
@@ -24,61 +32,73 @@ const closePopup = () => {
 let props = defineProps({
   
   content: {
-    name: {
-      type: String,
-      required: false
-    },
-    dateOfBirth: {
-      type: Date,
-      required: true
-    },
-    email: {
-      type: String,
-      required: true
-    },
-    phoneNumber: {
-      type: String,
-      required: true
-    },
-    profilePictureUrl: {
-      type: String,
-      required: true
-    },
-  },
+    type: Object as () => ContentProps,
+    required: true
+  }
 })
 
 const editMode = ref({
   name: false,
+  adress: false,
   email: false,
   phoneNumber: false,
   dateOfBirth: false
 });
 
 let viewableDate;
+let fieldChanged = false;
+let continueWatch = true;
 const local = ref(props.content);
+const emit = defineEmits<{(event: 'updateEvent', payload: object): void }>()
 
 watch(() => props.content, (newValue) => {
-  local.value = { ...newValue };
-  local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
+  if(newValue && continueWatch) {
+    local.value = { ...newValue };
+    local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
 
-  convertToViewAble( new Date(local.value.dateOfBirth));
-  console.log(viewableDate);
-  console.log(local.value.profilePictureUrl);
+    viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
+    //Prevents props from syncing with the local which is needed to check if a field has changed and not remained the same
+    continueWatch = false
+  }
+
 });
 
 const saveText = (field: keyof Content) => {
-  if (local.value[field]?.toString() !== '') {
+  if (local.value[field] !== '' ) {
     editMode.value[field] = false;
-
-    props.content[field] = local.value[field];
-    convertToViewAble( new Date(local.value.dateOfBirth));
-    console.log(local.value);
+    checkFfFieldsChanged()
+    viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
+    console.log(fieldChanged)
   }
 };
+function checkFfFieldsChanged(){
+  fieldChanged = false;
+  
+  for (const key in props.content) {
+    
+    const field = key as keyof ContentProps;
+    console.log("i am here " + field);
+
+    const localValue = local.value[field];
+
+    const propValue = (field === 'dateOfBirth')
+        ? props.content[field].toString().split('T')[0]
+        : props.content[field];
+    if (String(localValue) !== String(propValue)) {
+      fieldChanged = true;
+      break; 
+    }
+  }
+}
+function handleUpdate(){
+  
+  emit("updateEvent", local.value);
+  fieldChanged = false;
+}
 
 function convertToViewAble(date){
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  viewableDate =  date.toLocaleDateString('en-GB', options);
+  return date.toLocaleDateString('en-GB', options);
 }
 
 const deleteFlexWorker = async () => {
@@ -149,29 +169,37 @@ function showErrorPopup(message: string) {
     </div>
 
     <div class="profilePicture">
-      <img :src="content.profilePictureUrl || '/icons/avatar.svg'" alt="Profile Picture" />
+      <img :src="local.profilePictureUrl" alt="Profile Picture" />
     </div>
 
     <div class="textContainer">
-      <div @click="editMode.name = true" class="editable-field">
-        <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
-        <input v-else class="inputBox xl" type="text" @blur="saveText('name')" @keydown.enter="saveText('name')" v-model="local.name">
-      </div>
-
-      <div @click="editMode.email = true" class="editable-field">
-        <p class="text" v-if="!editMode.email">{{local.email}}</p>
-        <input v-else class="inputBox" type="email" @blur="saveText('email')" @keydown.enter="saveText('email')" v-model="local.email">
-      </div>
-
-      <div @click="editMode.dateOfBirth = true" class="editable-field">
-        <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
-        <input v-else class="inputBox" type="date" @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')" v-model="local.dateOfBirth">
-      </div>
-
-      <div @click="editMode.phoneNumber = true" class="editable-field">
-        <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
-        <input v-else class="inputBox" type="tel" @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')" v-model="local.phoneNumber">
-      </div>
+      
+        <div @click="editMode.name = true" class="editable-field">
+          <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
+          <UIInputField v-else  @blur="saveText('name')" @keydown.enter="saveText('name')"
+                        v-model="local.name" placeholder="Name" style="font-size: 1.5rem"/>
+        </div>
+        <div @click="editMode.adress = true" class="editable-field">
+          <p class="text" v-if="!editMode.adress">{{local.adress}}</p>
+          <UIInputField  v-else  @blur="saveText('adress')" @keydown.enter="saveText('adress')"
+                         v-model="local.adress" placeholder="Adress" />
+        </div>
+        <div @click="editMode.email = true" class="editable-field">
+          <p class="text" v-if="!editMode.email">{{local.email}}</p>
+          <UIInputField v-else @blur="saveText('email')" @keydown.enter="saveText('email')" 
+                        v-model="local.email" placeholder="Email"  type="email" />
+        </div>
+        <div @click="editMode.dateOfBirth = true" class="editable-field">
+          <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
+          <UIInputField v-else  @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')"
+                        v-model="local.dateOfBirth" placeholder="Date of Birth"  type="date" />
+        </div>
+        <div @click="editMode.phoneNumber = true" class="editable-field">
+          <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
+          <UIInputField v-else  @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')"
+                        v-model="local.phoneNumber" placeholder="Phone number" type="tel" />
+        </div>
+      <UIButtonStandard v-if="fieldChanged" content="Save changes" @click="handleUpdate"></UIButtonStandard>
     </div>
 
     <div class="detailFlexBox">
@@ -271,7 +299,6 @@ function showErrorPopup(message: string) {
   font-family: 'Montserrat', sans-serif;
   background-color: #ffffff;
   padding: 1%;
-  margin-left: 0%;
   border-radius: 15px;
   box-shadow: 0px 0px 20px -10px;
   width: 50%;
