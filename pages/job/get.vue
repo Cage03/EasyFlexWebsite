@@ -1,5 +1,9 @@
 <script setup lang="ts">
 
+import {IconType} from "~/types/global-types";
+
+const useJob = UseJob();
+
 const api = useRuntimeConfig().public.apiUrl;
 
 const job = ref({ name: '', address: '', description: '', minHours: '', maxHours: '', startDate: '', endDate: '' })
@@ -31,13 +35,24 @@ onMounted(async () => {
     }
 });
 
+const handleDelete = async () => {
+  try {
+    await useJob.deleteJob(parseInt(<string>id));
+  } catch (err) {
+    console.error('Delete error:', err);
+  }
+};
+
 </script>
 
 <template>
     <div class="register_page">
         <div class="window">
             <div class="profile_data">
+              <div class="flex-wrapper">
                 <h1>{{ job.name }}</h1>
+                <UIButtonStandard :content="'delete'" :icon="IconType.Edit" :action="handleDelete"/>
+               </div> 
                 <div class="text-container">
                     <label>Address:</label>
                     <UIInputField id="address" :placeholder="'Address'" v-model="job.address" type="text" required />
@@ -106,6 +121,13 @@ h1 {
     justify-content: center;
     align-items: flex-start;
     gap: 0.625rem;
+  
+  .flex-wrapper{
+    display: flex;
+    width:100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 input,

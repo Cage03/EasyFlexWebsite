@@ -19,7 +19,7 @@ export const UseJob = () => {
     }
     
     async function deleteJob(id:number):Promise<any> {
-        const response = await fetch(`${apiUrl}/Job/GetJobs?id=${id}`, {
+        const response = await fetch(`${apiUrl}/Job/Delete?id=${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
