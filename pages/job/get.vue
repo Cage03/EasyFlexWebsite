@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import {IconType} from "~/types/global-types";
+const useJob = UseJob();
 
 const api = useRuntimeConfig().public.apiUrl;
 
@@ -29,6 +30,16 @@ const showErrorPopup = (message: string) => {
   popupMessage.value = message;
 }
 
+const showPopup = ref(false)
+const popupMessage = ref("")
+
+const shouldRedirect = ref(false);
+const togglePopup = () => {
+  if(shouldRedirect.value) {
+    router.push('/job');
+  }
+};
+
 onMounted(async () => {
     try {
         const res = await fetch(`${api}/Job/Get?id=${id}`, {
@@ -52,6 +63,25 @@ onMounted(async () => {
         showErrorPopup("Failed to fetch job data");
     }
 });
+
+const handleDelete = async () => {
+  const confirmed = window.confirm("Are you sure you want to delete this job?");
+  if (confirmed) {
+    try {
+      await useJob.deleteJob(parseInt(<string>id));
+      shouldRedirect.value = true;
+      popupMessage.value = "Job deleted successfully!";
+      showPopup.value = true;
+    } catch (err) {
+      console.log(err);
+      shouldRedirect.value = false;
+      popupMessage.value = "An error occurred while trying to delete job";
+      showPopup.value = true;
+    }
+  } else {
+    popupMessage.value = "Job deletion canceled.";
+  }
+};
 
 watch(job, (newValue) => {
   if (JSON.stringify(newValue) !== JSON.stringify(originalJob.value)) {
@@ -89,6 +119,14 @@ const saveChanges = async () => {
 </script>
 
 <template>
+    <div class="register_page">
+      <UIPopup :button-text="'Close'" @close="togglePopup()" :show="showPopup">{{popupMessage}}</UIPopup>
+        <div class="window">
+            <div class="profile_data">
+              <div class="flex-wrapper">
+                <h1>{{ job.name }}</h1>
+                <UIButtonStandard :content="'delete'" :icon="IconType.Edit" :action="handleDelete"/>
+               </div> 
   <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{popupMessage}}</UIPopup>
   <div class="register_page">
       <div class="window">
@@ -166,6 +204,13 @@ h1 {
     justify-content: center;
     align-items: flex-start;
     gap: 0.625rem;
+  
+  .flex-wrapper{
+    display: flex;
+    width:100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 input,
