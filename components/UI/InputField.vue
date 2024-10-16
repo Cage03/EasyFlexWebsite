@@ -12,16 +12,25 @@ const props = defineProps({
     default: true
   }
 })
+const inputRef = ref<HTMLInputElement | null>(null)
 
 const emit = defineEmits(['update:modelValue'])
 
 const updateValue = (event: Event) => {
   emit('update:modelValue', (event.target as HTMLInputElement).value)
 }
+const FocusOnInput = () =>  {
+  if (inputRef.value) {
+    inputRef.value.focus()
+  }
+}
+onMounted(() => {
+  FocusOnInput()
+})
 </script>
 
 <template>
-  <input :placeholder="placeholder" :type="type" :value="modelValue" @input="updateValue" :required="required">
+  <input ref="inputRef" :placeholder="placeholder" :type="type" :value="modelValue" @input="updateValue" :required="required">
 </template>
 
 <style scoped lang="scss">

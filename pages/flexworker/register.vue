@@ -24,6 +24,9 @@ const popupMessage = ref('');
 
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
+  // redirect to flexworker page
+  const router = useRouter();
+  router.push('/flexworker');
 };
 
 function showSuccessPopup() {
@@ -33,7 +36,7 @@ function showSuccessPopup() {
 
 function showErrorPopup(message: string) {
   showPopup.value = true;
-  popupMessage.value = 'Registration failed! \n' + message;
+  popupMessage.value = 'Failure to register flexworker';
 }
 
 function addLanguage(language: string) {
@@ -57,36 +60,39 @@ function addCertificate(certificate: string) {
   }
 }
 
-function registerFlexworker() {
-  console.log('registerFlexworker');
-  fetch(`${api}/Flexworker/Register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      name: name.value,
-      adress: adress.value,
-      dateOfBirth: dateOfBirth.value,
-      email: email.value,
-      phoneNumber: phoneNumber.value,
-      profilePictureUrl: profilePictureUrl.value,
-    })
-  })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
+const loading = ref(false);
+
+async function registerFlexworker() {
+  if (loading.value) return;
+  loading.value = true;
+  try {
+    const response = await fetch(`${api}/Flexworker/Register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name.value,
+        adress: adress.value,
+        dateOfBirth: dateOfBirth.value,
+        email: email.value,
+        phoneNumber: phoneNumber.value,
+        profilePictureUrl: profilePictureUrl.value,
       })
-      .then(data => {
-        console.log('Registration successful:', data);
-        showSuccessPopup();
-      })
-      .catch(err => {
-        console.error('Registration error:', err);
-        showErrorPopup(err.message);
-      });
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.text();
+    console.log('Registration successful:', data);
+    showSuccessPopup();
+  } catch (err: any) {
+    console.error('Registration error:', err);
+    showErrorPopup(err.message);
+  }
+  loading.value = false;
 }
 </script>
 

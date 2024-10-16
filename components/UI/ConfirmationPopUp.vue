@@ -1,41 +1,33 @@
 ﻿<script setup lang="ts">
-import {IconType} from "~/types/global-types";
 
 const props = defineProps({
   show: Boolean,
-  buttonText: String,
-
-  xButton: {
-      type: Boolean,
-      required: false,
-      default: false,
-  },
+  buttonTextCancel: String,
+  buttonTextConfirm: String,
 })
 
-const emit = defineEmits(['close', 'xButtonFunction']);
+const emit = defineEmits(['cancel','confirm']);
 
-const closePopup = () => {
-  emit('close');
+const cancelConfirmation = () => {
+  emit('cancel');
 };
-
-const xButtonFunction = () => {
-  emit('xButtonFunction');
-};
+const confirmConfirmation = () =>{
+  emit('confirm');
+}
 
 </script>
 
 <template>
   <div :class="['popup-overlay', { 'popup-show': show }]">
     <div class="popup-content">
-      <UIIcon v-if="xButton" :icon="IconType.X_symbol" class="close-button" @click="xButtonFunction()"/>
       <div class="popup-text">
         <slot/>
       </div>
-      <UIButtonStandard @click="closePopup" :content="buttonText"/>
+      <UIButtonStandard @click="cancelConfirmation" :content="buttonTextCancel"/>
+      <UIButtonStandard @click="confirmConfirmation" :content="buttonTextConfirm"/>
     </div>
   </div>
 </template>
-
 
 <style scoped lang="scss">
 
@@ -79,9 +71,9 @@ const xButtonFunction = () => {
 }
 
 .close-button {
-  position: relative;
-  top: 0rem;
-  left: 90%;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
   background: none;
   border: none;
   font-size: 1.5rem;
