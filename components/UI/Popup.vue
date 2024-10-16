@@ -12,10 +12,14 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'xButtonFunction']);
 
 const closePopup = () => {
   emit('close');
+};
+
+const xButtonFunction = () => {
+  emit('xButtonFunction');
 };
 
 </script>
@@ -23,7 +27,7 @@ const closePopup = () => {
 <template>
   <div :class="['popup-overlay', { 'popup-show': show }]">
     <div class="popup-content">
-      <UIButtonStandard v-if="xButton" :icon="IconType.X_symbol" :color="'transparent'" class="close-button""/>
+      <UIIcon v-if="xButton" :icon="IconType.X_symbol" class="close-button" @click="xButtonFunction()"/>
       <div class="popup-text">
         <slot/>
       </div>

@@ -7,12 +7,19 @@ const id = router.currentRoute.value.query.id;
 
 const showPopup = ref(false);
 const popupMessage = ref('');
+const successPopup = ref(false);
+const confirmButtonAction = ref<Function | null>(null);
 
 const toggleConfirmationPopup = () => {
   showPopup.value = true;
   popupMessage.value = 'Are you sure you want to delete this flexworker?';
+  confirmButtonAction.value = deleteFlexWorker;
+  xButtonFunction.value  
 };
 
+const closePopup = () => {
+  showPopup.value = false;
+};
 
 
 let props = defineProps({
@@ -75,7 +82,6 @@ function convertToViewAble(date){
   viewableDate =  date.toLocaleDateString('en-GB', options);
 }
 
-//delete flexworker function
 const deleteFlexWorker = async () => {
   try {
     const res = await fetch(`${api}/Flexworker/Delete?id=${id}`, {
@@ -88,11 +94,10 @@ const deleteFlexWorker = async () => {
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
-    
+
     console.log('FlexWorker deleted successfully!');
     showSuccessPopup();
-    router.push('/flexworker');
-    
+
   } catch (err: any) {
     showErrorPopup(err.message);
     console.error('Delete error:', err.message);
@@ -100,22 +105,48 @@ const deleteFlexWorker = async () => {
 };
 
 function showSuccessPopup() {
-  showPopup.value = true;
+  showPopup.value = false;
+  successPopup.value = true;
   popupMessage.value = 'Flexworker successfully deleted!';
+  confirmButtonAction.value = () => router.push('/flexworker');
 }
 
 function showErrorPopup(message: string) {
   showPopup.value = true;
   popupMessage.value = 'Delete failed! \n' + message;
+  confirmButtonAction.value = closePopup;
 }
 
 </script>
 
 <template>
-  <UIPopup :xButton="true" :show="showPopup" :buttonText="'Confirm'" @close="deleteFlexWorker">{{popupMessage}}</UIPopup>
+  <UIPopup 
+    :xButton="true" 
+    :show="showPopup" 
+    :buttonText="'Confirm'" 
+    @xButtonFunction="closePopup()" 
+    @close="confirmButtonAction()"
+  >
+    {{popupMessage}}
+  </UIPopup>
+
+  <UIPopup 
+    :xButton="false" 
+    :show="successPopup" 
+    :buttonText="'Confirm'" 
+    @close="confirmButtonAction()"
+  >
+    {{popupMessage}}
+  </UIPopup>
+
   <div class="box">
     <div class="deleteButton">
-      <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="toggleConfirmationPopup" />
+      <UIButtonStandard 
+        :color="'red'" 
+        :icon="IconType.Trashcan" 
+        :content="'Delete'" 
+        :action="toggleConfirmationPopup" 
+      />
     </div>
 
     <div class="profilePicture">
@@ -123,60 +154,58 @@ function showErrorPopup(message: string) {
     </div>
 
     <div class="textContainer">
-      
-        <div @click="editMode.name = true" class="editable-field">
-          <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
-          <input v-else class="inputBox xl" type="text" @blur="saveText('name')" @keydown.enter="saveText('name')" v-model="local.name">
-        </div>
+      <div @click="editMode.name = true" class="editable-field">
+        <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
+        <input v-else class="inputBox xl" type="text" @blur="saveText('name')" @keydown.enter="saveText('name')" v-model="local.name">
+      </div>
 
-        <div @click="editMode.email = true" class="editable-field">
-          <p class="text" v-if="!editMode.email">{{local.email}}</p>
-          <input v-else class="inputBox" type="email" @blur="saveText('email')" @keydown.enter="saveText('email')" v-model="local.email">
-        </div>
-        <div @click="editMode.dateOfBirth = true" class="editable-field">
-          <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
-          <input v-else class="inputBox" type="date" @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')" v-model="local.dateOfBirth">
-        </div>
-        <div @click="editMode.phoneNumber = true" class="editable-field">
-          <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
-          <input v-else class="inputBox" type="tel" @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')" v-model="local.phoneNumber">
-        </div>
-      
+      <div @click="editMode.email = true" class="editable-field">
+        <p class="text" v-if="!editMode.email">{{local.email}}</p>
+        <input v-else class="inputBox" type="email" @blur="saveText('email')" @keydown.enter="saveText('email')" v-model="local.email">
+      </div>
+
+      <div @click="editMode.dateOfBirth = true" class="editable-field">
+        <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
+        <input v-else class="inputBox" type="date" @blur="saveText('dateOfBirth')" @keydown.enter="saveText('dateOfBirth')" v-model="local.dateOfBirth">
+      </div>
+
+      <div @click="editMode.phoneNumber = true" class="editable-field">
+        <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
+        <input v-else class="inputBox" type="tel" @blur="saveText('phoneNumber')" @keydown.enter="saveText('phoneNumber')" v-model="local.phoneNumber">
+      </div>
     </div>
-
 
     <div class="detailFlexBox">
       <div class="detailContainer">
-      <p class="detailTitle">Languages:</p>
-      <div class="detailBox">
+        <p class="detailTitle">Languages:</p>
+        <div class="detailBox">
           <p>Dutch</p>
           <p>English</p>
           <p>French</p>
+        </div>
       </div>
-    </div>
-    
-    <div class="detailContainer">
-      <p class="detailTitle">Skills:</p>
-      <div class="detailBox">
+      
+      <div class="detailContainer">
+        <p class="detailTitle">Skills:</p>
+        <div class="detailBox">
           <p>programming</p>
           <p>front-end</p>
           <p>design</p>
+        </div>
       </div>
-    </div>
-    <div class="detailContainer">
-      <p class="detailTitle">Certificates:</p>
-      <div class="detailBox">
+
+      <div class="detailContainer">
+        <p class="detailTitle">Certificates:</p>
+        <div class="detailBox">
           <p>VWO</p>
           <p>Forklift license</p>
           <p>HBO ICT</p>
+        </div>
       </div>
     </div>
-    
-    </div>
-
-    
   </div>
 </template>
+
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@750;1000&display=swap');
 
