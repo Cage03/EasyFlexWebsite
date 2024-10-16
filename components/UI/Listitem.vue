@@ -52,8 +52,7 @@ const redirectTo = () => {
     width: 100%; 
 
     p {
-      overflow: hidden;
-      font-size: 1rem;
+      width:20rem;
       font-weight: 700;
       font-family: Montserrat, sans-serif;
       text-overflow: ellipsis;
