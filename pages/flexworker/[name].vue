@@ -13,7 +13,7 @@ interface flexworkerContent {
 }
 
 const api = useRuntimeConfig().public.apiUrl;
-const response = ref<flexworkerContent>({id:'',adress:'' ,name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureURL: ''});
+const responseMap = ref<flexworkerContent>({id:'',adress:'' ,name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureURL: ''});
 const error = ref(null);
 
 // get id from query params
@@ -23,29 +23,14 @@ const id = router.currentRoute.value.query.id;
 let viewableDate;
 let fieldChanged = false;
 let continueWatch = true;
-const local = ref(response.value);
+const local = ref(responseMap.value);
+const showPopup = ref(false);
+const showConfirmationPopup = ref(false);
+const popupMessage = ref('');
+const popupButtonText = ref('')
 
 onMounted(async () => {
-  try {
-    const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    const data = await res.json();
-    response.value = data;
-
-    //update url
-    router.push({path: '/flexworker/' + data.name , query:{id}});
-
-  } catch (err:any) {
-    error.value = err.message;
-    console.error('Fetch error:', err);
-  }
+  handleFetch()
 });
 
 const editMode = ref({
@@ -57,7 +42,7 @@ const editMode = ref({
 });
 
 
-watch(() => response.value, (newValue) => {
+watch(() => responseMap.value, (newValue) => {
   if(newValue && continueWatch) {
     local.value = { ...newValue };
     local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
@@ -80,7 +65,7 @@ const handleFieldChange = (field: keyof Content) => {
 function checkIfFieldsChanged(){
   fieldChanged = false;
 
-  for (const key in response.value) {
+  for (const key in responseMap.value) {
 
     const field = key as keyof flexworkerContent;
     console.log("i am here " + field);
@@ -88,8 +73,8 @@ function checkIfFieldsChanged(){
     const localValue = local.value[field];
 
     const propValue = (field === 'dateOfBirth')
-        ? response.value[field].toString().split('T')[0]
-        : response.value[field];
+        ? responseMap.value[field].toString().split('T')[0]
+        : responseMap.value[field];
     if (String(localValue) !== String(propValue)) {
       fieldChanged = true;
       break;
@@ -101,7 +86,28 @@ function convertToViewAble(date){
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return date.toLocaleDateString('en-GB', options);
 }
+async function handleFetch(){
+  try {
+    const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const data = await res.json();
+    responseMap.value = data;
 
+    //update url
+    router.push({path: '/flexworker/' + data.name , query:{id}});
+
+  } catch (err:any) {
+    error.value = err.message;
+    console.error('Fetch error:', err);
+  }
+}
 const deleteFlexWorker = async () => {
   try {
     const res = await fetch(`${api}/Flexworker/Delete?id=${id}`, {
@@ -125,56 +131,67 @@ const deleteFlexWorker = async () => {
 };
 
 async function handleUpdate() {
-  const content = ref<flexworkerContent>({
-    id: id,
-    name: local.value.name,
-    adress: local.value.adress,
-    dateOfBirth: local.value.dateOfBirth,
-    email: local.value.email,
-    phoneNumber: local.value.phoneNumber,
-    profilePictureUrl: local.value.profilePictureUrl
-  })
+  let confirmation = window.confirm("Are you sure you want to save")
+  if(confirmation) {
+    const content = ref<flexworkerContent>({
+      id: id,
+      name: local.value.name,
+      adress: local.value.adress,
+      dateOfBirth: local.value.dateOfBirth,
+      email: local.value.email,
+      phoneNumber: local.value.phoneNumber,
+      profilePictureUrl: local.value.profilePictureUrl
+    })
 
-  const res = await fetch(`${api}/Flexworker/Update`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(content.value)})
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-      })
-      .then(data => {
-        console.log('Registration successful:', data);
-        showSuccessPopup();
-      })
-      .catch(err => {
-        console.error('Registration error:', err);
-        showErrorPopup(err.message);
-      });
-
+    const res = await fetch(`${api}/Flexworker/Update`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(content.value)
+    })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            continueWatch = true;
+            handleFetch()
+          }
+        })
+        .then(data => {
+          console.log('Registration successful:', data);
+          showSuccessPopup();
+        })
+        .catch(err => {
+          console.error('Registration error:', err);
+          showErrorPopup(err.message);
+        });
+  }
 }
 
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
 };
+const toggleConfirmationPopup = () => {
+  showConfirmationPopup.value = !showConfirmationPopup.value;
+};
 
 function showSuccessPopup() {
   showPopup.value = true;
-  popupMessage.value = 'Registration successful!';
+  popupButtonText.value = 'Close'
+  popupMessage.value = 'You have updated successfully!';
 }
 
 function showErrorPopup(message: string) {
   showPopup.value = true;
-  popupMessage.value = 'Registration failed! \n' + message;
+  popupButtonText.value = 'Close'
+  popupMessage.value = 'The update was unsuccessful \n' + message;
 }
 </script>
 
 <template>
-  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{popupMessage}}</UIPopup>
+  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup" >{{popupMessage}}</UIPopup>
+<!--  <UIConfirmationPopUp :show="showConfirmationPopup" :buttonTextCancel="cancel" :buttonTextConfirm="Confirm" @cancel="toggleConfirmationPopup" @confirm="handleUpdate" ></UIConfirmationPopUp>-->
 
   <div class="register_page">
     <div class="window">
@@ -222,7 +239,8 @@ function showErrorPopup(message: string) {
 <!--        <div class="register-button-container">-->
 <!--          <UIButtonStandard :content="'Register'" />-->
 <!--        </div>-->
-        <UIButtonStandard v-if="fieldChanged" :content="'Save changes'" ></UIButtonStandard>
+        <UIButtonStandard v-if="fieldChanged" :content="'Save changes'"></UIButtonStandard>
+        
       </form>
     </div>
   </div>
