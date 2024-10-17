@@ -120,7 +120,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .flexworker-overview-page {
-  height: 100%;
+  height: calc(100% - 1rem);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -157,13 +157,28 @@ onMounted(async () => {
       padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
-      height: 42rem;
+      height: 25rem;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;
       border-radius: 1rem;
       overflow: auto;
       gap: 1rem;
+
+      &::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: var(--white-95);
+        border-radius: 1rem;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--text-primary-color);
+        border-radius: 1rem;
+        border: 3px solid #f1f1f1;
+      }
     }
   }
 }
