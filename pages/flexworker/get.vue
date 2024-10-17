@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import FeatureBox from "~/components/UI/FeatureBox.vue";
+import {IconType} from "~/types/global-types";
 
 interface flexworkerContent {
   id: string,
@@ -30,7 +29,7 @@ const popupMessage = ref('');
 const popupButtonText = ref('')
 
 onMounted(async () => {
-  handleFetch()
+  await handleFetch()
 });
 
 const editMode = ref({
@@ -59,7 +58,6 @@ const handleFieldChange = (field: keyof Content) => {
     editMode.value[field] = false;
     checkIfFieldsChanged()
     viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
-
   }
 };
 function checkIfFieldsChanged(){
@@ -87,6 +85,8 @@ function convertToViewAble(date){
   return date.toLocaleDateString('en-GB', options);
 }
 async function handleFetch(){
+  
+  continueWatch = true;
   try {
     const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
       method: 'GET',
@@ -101,11 +101,9 @@ async function handleFetch(){
 
 
     const data = await res.json();
-    console.log("ID from database:", data.id);
-    console.log("Fetched data:", data);
     responseMap.value = data;
-    router.push({ path: '/flexworker/' + data.name, query: { id } });
-      
+    router.push({ path: '/flexworker/get', query: { id } });
+    
 
   } catch (err: any) {
     error.value = err.message;
@@ -128,7 +126,7 @@ const deleteFlexWorker = async () => {
 
     console.log('FlexWorker deleted successfully!');
 
-    router.push('/flexworker/index');
+    router.push('/flexworker/');
 
   } catch (err: any) {
     console.error('Delete error:', err.message);
@@ -159,13 +157,13 @@ async function handleUpdate() {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           } else {
-            continueWatch = true;
             handleFetch()
           }
         })
         .then(data => {
           console.log('Registration successful:', data);
-          showSuccessPopup();
+          showSuccessPopup('You have updated successfully!');
+          fieldChanged = false;
         })
         .catch(err => {
           console.error('Registration error:', err);
@@ -181,21 +179,21 @@ const toggleConfirmationPopup = () => {
   showConfirmationPopup.value = !showConfirmationPopup.value;
 };
 
-function showSuccessPopup() {
-  showPopup.value = true;
+function showSuccessPopup(message: string) {
+  togglePopup()
   popupButtonText.value = 'Close'
-  popupMessage.value = 'You have updated successfully!';
+  popupMessage.value = message;
 }
 
 function showErrorPopup(message: string) {
-  showPopup.value = true;
+  togglePopup()
   popupButtonText.value = 'Close'
   popupMessage.value = 'The update was unsuccessful \n' + message;
 }
 </script>
 
 <template>
-  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup" >{{popupMessage}}</UIPopup>
+  <UIPopup :show="showPopup" :buttonText="popupButtonText" @close="togglePopup" @xButtonFunction="togglePopup">{{popupMessage}}</UIPopup>
 <!--  <UIConfirmationPopUp :show="showConfirmationPopup" :buttonTextCancel="cancel" :buttonTextConfirm="Confirm" @cancel="toggleConfirmationPopup" @confirm="handleUpdate" ></UIConfirmationPopUp>-->
 
   <div class="register_page">
@@ -206,6 +204,7 @@ function showErrorPopup(message: string) {
           <div class="profile_picture">
             <img :src="local.profilePictureUrl" alt="Profile Picture" style="    width: 18.75rem; height: 18.75rem" />
           </div>
+          
           <div class="profile_data">
             <div  @click="editMode.name = true" class="editable-field">
               <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
@@ -236,6 +235,7 @@ function showErrorPopup(message: string) {
 <!--            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />-->
           </div>
         </div>
+
 <!--        <div class="features-window">-->
 <!--          <FeatureBox title="Languages" :features="languages" :newFeature="newLanguage" :addFeature="addLanguage" />-->
 <!--          <FeatureBox title="Skills" :features="skills" :newFeature="newSkill" :addFeature="addSkill" />-->
@@ -247,6 +247,14 @@ function showErrorPopup(message: string) {
         <UIButtonStandard v-if="fieldChanged" :content="'Save changes'"></UIButtonStandard>
         
       </form>
+      <div class="deleteButton">
+        <UIButtonStandard
+            :color="'red'"
+            :icon="IconType.Trashcan"
+            :content="'Delete'"
+            :action="deleteFlexWorker"
+        />
+      </div>
     </div>
   </div>
 </template>
