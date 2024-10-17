@@ -13,7 +13,7 @@
       <div class="overview">
         <template v-for="flexworker in flexworkers">
           <UIListitem :properties="formatFlexworkerProperties(flexworker)"
-                      :redirect="`/flexworker/name?id=${flexworker.id}`"/>
+                      :redirect="`/flexworker/get?id=${flexworker.id}`"/>
         </template>
         <div ref="bottom" class="bottom-marker"></div>
       </div>
