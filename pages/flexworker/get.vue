@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import {IconType} from "~/types/global-types";
+import { IconType } from "~/types/global-types";
+
+const useFlexworker = UseFlexworker();
 
 interface flexworkerContent {
   id: string,
@@ -12,7 +14,7 @@ interface flexworkerContent {
 }
 
 const api = useRuntimeConfig().public.apiUrl;
-const responseMap = ref<flexworkerContent>({id:'',adress:'' ,name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureURL: ''});
+const responseMap = ref<flexworkerContent>({ id: '', adress: '', name: '', dateOfBirth: '', email: '', phoneNumber: '', profilePictureURL: '' });
 const error = ref(null);
 
 // get id from query params
@@ -23,10 +25,18 @@ let viewableDate;
 let fieldChanged = false;
 let continueWatch = true;
 const local = ref(responseMap.value);
+const shouldRedirect = ref(false);
 const showPopup = ref(false);
 const showConfirmationPopup = ref(false);
 const popupMessage = ref('');
-const popupButtonText = ref('')
+const popupButtonText = ref('Close')
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+  if (shouldRedirect.value) {
+    router.push('/flexworker');
+  }
+};
 
 onMounted(async () => {
   await handleFetch()
@@ -42,11 +52,11 @@ const editMode = ref({
 
 
 watch(() => responseMap.value, (newValue) => {
-  if(newValue && continueWatch) {
+  if (newValue && continueWatch) {
     local.value = { ...newValue };
-    local.value.dateOfBirth =  local.value.dateOfBirth.toString().split('T')[0]
+    local.value.dateOfBirth = local.value.dateOfBirth.toString().split('T')[0]
 
-    viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
+    viewableDate = convertToViewAble(new Date(local.value.dateOfBirth));
     //Prevents props from syncing with the local which is needed to check if a field has changed and not remained the same
     continueWatch = false
   }
@@ -54,13 +64,13 @@ watch(() => responseMap.value, (newValue) => {
 });
 
 const handleFieldChange = (field: keyof Content) => {
-  if (local.value[field] !== '' ) {
+  if (local.value[field] !== '') {
     editMode.value[field] = false;
     checkIfFieldsChanged()
-    viewableDate = convertToViewAble( new Date(local.value.dateOfBirth));
+    viewableDate = convertToViewAble(new Date(local.value.dateOfBirth));
   }
 };
-function checkIfFieldsChanged(){
+function checkIfFieldsChanged() {
   fieldChanged = false;
 
   for (const key in responseMap.value) {
@@ -71,8 +81,8 @@ function checkIfFieldsChanged(){
     const localValue = local.value[field];
 
     const propValue = (field === 'dateOfBirth')
-        ? responseMap.value[field].toString().split('T')[0]
-        : responseMap.value[field];
+      ? responseMap.value[field].toString().split('T')[0]
+      : responseMap.value[field];
     if (String(localValue) !== String(propValue)) {
       fieldChanged = true;
       break;
@@ -80,12 +90,12 @@ function checkIfFieldsChanged(){
   }
 }
 
-function convertToViewAble(date){
+function convertToViewAble(date) {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return date.toLocaleDateString('en-GB', options);
 }
-async function handleFetch(){
-  
+async function handleFetch() {
+
   continueWatch = true;
   try {
     const res = await fetch(`${api}/Flexworker/GetById?id=${id}`, {
@@ -103,7 +113,7 @@ async function handleFetch(){
     const data = await res.json();
     responseMap.value = data;
     router.push({ path: '/flexworker/get', query: { id } });
-    
+
 
   } catch (err: any) {
     error.value = err.message;
@@ -112,47 +122,47 @@ async function handleFetch(){
   }
 }
 const deleteFlexWorker = async () => {
-  try {
-    const res = await fetch(`${api}/Flexworker/Delete?id=${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  const confirmed = window.confirm("Are you sure you want to delete this flexworker?");
+  if (confirmed) {
+    try {
+      console.log("calling delete");
+      await useFlexworker.deleteFlexworker(parseInt(<string>id));
+      shouldRedirect.value = true;
+      popupMessage.value = "Flexworker deleted successfully!";
+      showPopup.value = true;
+      console.log('FlexWorker deleted successfully!');
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+    } catch (err: any) {
+      console.log(err);
+      shouldRedirect.value = false;
+      popupMessage.value = "An error occurred while trying to delete the flexworker";
+      showPopup.value = true;
     }
+  } else {
+      popupMessage.value = "Job deletion canceled.";
+    }
+  };
 
-    console.log('FlexWorker deleted successfully!');
+  async function handleUpdate() {
+    let confirmation = window.confirm("Are you sure you want to save")
+    if (confirmation) {
+      const content = ref<flexworkerContent>({
+        id: id,
+        name: local.value.name,
+        adress: local.value.adress,
+        dateOfBirth: local.value.dateOfBirth,
+        email: local.value.email,
+        phoneNumber: local.value.phoneNumber,
+        profilePictureUrl: local.value.profilePictureUrl
+      })
 
-    router.push('/flexworker/');
-
-  } catch (err: any) {
-    console.error('Delete error:', err.message);
-  }
-};
-
-async function handleUpdate() {
-  let confirmation = window.confirm("Are you sure you want to save")
-  if(confirmation) {
-    const content = ref<flexworkerContent>({
-      id: id,
-      name: local.value.name,
-      adress: local.value.adress,
-      dateOfBirth: local.value.dateOfBirth,
-      email: local.value.email,
-      phoneNumber: local.value.phoneNumber,
-      profilePictureUrl: local.value.profilePictureUrl
-    })
-
-    const res = await fetch(`${api}/Flexworker/Update`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(content.value)
-    })
+      const res = await fetch(`${api}/Flexworker/Update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(content.value)
+      })
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -169,99 +179,93 @@ async function handleUpdate() {
           console.error('Registration error:', err);
           showErrorPopup(err.message);
         });
+    }
   }
-}
 
-const togglePopup = () => {
-  showPopup.value = !showPopup.value;
-};
-const toggleConfirmationPopup = () => {
-  showConfirmationPopup.value = !showConfirmationPopup.value;
-};
+  
+  const toggleConfirmationPopup = () => {
+    showConfirmationPopup.value = !showConfirmationPopup.value;
+  };
 
-function showSuccessPopup(message: string) {
-  togglePopup()
-  popupButtonText.value = 'Close'
-  popupMessage.value = message;
-}
+  function showSuccessPopup(message: string) {
+    togglePopup()
+    popupButtonText.value = 'Close'
+    popupMessage.value = message;
+  }
 
-function showErrorPopup(message: string) {
-  togglePopup()
-  popupButtonText.value = 'Close'
-  popupMessage.value = 'The update was unsuccessful \n' + message;
-}
+  function showErrorPopup(message: string) {
+    togglePopup()
+    popupButtonText.value = 'Close'
+    popupMessage.value = 'The update was unsuccessful \n' + message;
+  }
 </script>
 
 <template>
-  <UIPopup :show="showPopup" :buttonText="popupButtonText" @close="togglePopup" @xButtonFunction="togglePopup">{{popupMessage}}</UIPopup>
-<!--  <UIConfirmationPopUp :show="showConfirmationPopup" :buttonTextCancel="cancel" :buttonTextConfirm="Confirm" @cancel="toggleConfirmationPopup" @confirm="handleUpdate" ></UIConfirmationPopUp>-->
+  <UIPopup :show="showPopup" :buttonText="popupButtonText" @close="togglePopup" @xButtonFunction="togglePopup">
+    {{ popupMessage }}</UIPopup>
+  <!--  <UIConfirmationPopUp :show="showConfirmationPopup" :buttonTextCancel="cancel" :buttonTextConfirm="Confirm" @cancel="toggleConfirmationPopup" @confirm="handleUpdate" ></UIConfirmationPopUp>-->
 
   <div class="register_page">
     <div class="window">
       <form @submit.prevent="handleUpdate">
         <div class="profile_data_header">
-          
+
           <div class="profile_picture">
             <img :src="local.profilePictureUrl" alt="Profile Picture" style="    width: 18.75rem; height: 18.75rem" />
           </div>
-          
+
           <div class="profile_data">
-            <div  @click="editMode.name = true" class="editable-field">
-              <h1 class="text" v-if="!editMode.name">{{local.name}}</h1>
+            <div @click="editMode.name = true" class="editable-field">
+              <h1 class="text" v-if="!editMode.name">{{ local.name }}</h1>
               <UIInputField v-else @blur="handleFieldChange('name')" @keydown.enter="handleFieldChange('name')"
-                            v-model="local.name" placeholder="Name" style="font-size: 1.5rem"/>
+                v-model="local.name" placeholder="Name" style="font-size: 1.5rem" />
             </div>
 
             <div @click="editMode.adress = true" class="editable-field">
-              <p class="text" v-if="!editMode.adress">{{local.adress}}</p>
+              <p class="text" v-if="!editMode.adress">{{ local.adress }}</p>
               <UIInputField v-else @blur="handleFieldChange('adress')" @keydown.enter="handleFieldChange('adress')"
-                            v-model="local.adress" placeholder="Adress" />
+                v-model="local.adress" placeholder="Adress" />
             </div>
             <div @click="editMode.email = true" class="editable-field">
-              <p class="text" v-if="!editMode.email">{{local.email}}</p>
+              <p class="text" v-if="!editMode.email">{{ local.email }}</p>
               <UIInputField v-else @blur="handleFieldChange('email')" @keydown.enter="handleFieldChange('email')"
-                            v-model="local.email" placeholder="Email" type="email" />
+                v-model="local.email" placeholder="Email" type="email" />
             </div>
             <div @click="editMode.dateOfBirth = true" class="editable-field">
-              <p class="text" v-if="!editMode.dateOfBirth">{{viewableDate}}</p>
-              <UIInputField v-else @blur="handleFieldChange('dateOfBirth')" @keydown.enter="handleFieldChange('dateOfBirth')"
-                            v-model="local.dateOfBirth" placeholder="Date of Birth" type="date" />
+              <p class="text" v-if="!editMode.dateOfBirth">{{ viewableDate }}</p>
+              <UIInputField v-else @blur="handleFieldChange('dateOfBirth')"
+                @keydown.enter="handleFieldChange('dateOfBirth')" v-model="local.dateOfBirth"
+                placeholder="Date of Birth" type="date" />
             </div>
             <div @click="editMode.phoneNumber = true" class="editable-field">
-              <p class="text" v-if="!editMode.phoneNumber">{{local.phoneNumber}}</p>
-              <UIInputField v-else @blur="handleFieldChange('phoneNumber')" @keydown.enter="handleFieldChange('phoneNumber')"
-                            v-model="local.phoneNumber" placeholder="Phone number" type="tel" />
+              <p class="text" v-if="!editMode.phoneNumber">{{ local.phoneNumber }}</p>
+              <UIInputField v-else @blur="handleFieldChange('phoneNumber')"
+                @keydown.enter="handleFieldChange('phoneNumber')" v-model="local.phoneNumber" placeholder="Phone number"
+                type="tel" />
             </div>
-<!--            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />-->
+            <!--            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />-->
           </div>
         </div>
 
-<!--        <div class="features-window">-->
-<!--          <FeatureBox title="Languages" :features="languages" :newFeature="newLanguage" :addFeature="addLanguage" />-->
-<!--          <FeatureBox title="Skills" :features="skills" :newFeature="newSkill" :addFeature="addSkill" />-->
-<!--          <FeatureBox title="Certificates" :features="certificates" :newFeature="newCertificate" :addFeature="addCertificate" />-->
-<!--        </div>-->
-<!--        <div class="register-button-container">-->
-<!--          <UIButtonStandard :content="'Register'" />-->
-<!--        </div>-->
+        <!--        <div class="features-window">-->
+        <!--          <FeatureBox title="Languages" :features="languages" :newFeature="newLanguage" :addFeature="addLanguage" />-->
+        <!--          <FeatureBox title="Skills" :features="skills" :newFeature="newSkill" :addFeature="addSkill" />-->
+        <!--          <FeatureBox title="Certificates" :features="certificates" :newFeature="newCertificate" :addFeature="addCertificate" />-->
+        <!--        </div>-->
+        <!--        <div class="register-button-container">-->
+        <!--          <UIButtonStandard :content="'Register'" />-->
+        <!--        </div>-->
         <UIButtonStandard v-if="fieldChanged" :content="'Save changes'"></UIButtonStandard>
-        
+
       </form>
-      <div class="deleteButton">
-        <UIButtonStandard
-            :color="'red'"
-            :icon="IconType.Trashcan"
-            :content="'Delete'"
-            :action="deleteFlexWorker"
-        />
+      <div class="delete-button">
+        <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexWorker" />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-
-
 input {
   width: 100%;
   padding: 0.5rem;
@@ -318,6 +322,15 @@ input {
   }
 }
 
+.delete-button {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align-items: center;
+  gap: 2.5rem;
+  align-self: stretch;
+}
+
 .features-window {
   display: flex;
   padding: 1rem;
@@ -328,7 +341,7 @@ input {
   align-self: stretch;
 }
 
-.feature-text{
+.feature-text {
   color: #000;
   font-family: Montserrat;
   font-size: 1.5rem;
@@ -337,7 +350,9 @@ input {
   line-height: normal;
 }
 
-.languages-box, .skills-box, .certificates-box {
+.languages-box,
+.skills-box,
+.certificates-box {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -345,7 +360,9 @@ input {
   align-self: stretch;
 }
 
-.languages, .skills, .certificates {
+.languages,
+.skills,
+.certificates {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -373,19 +390,19 @@ input {
   line-height: normal;
 }
 
-.add-certificate-container, .add-skill-container, .add-language-container {
+.add-certificate-container,
+.add-skill-container,
+.add-language-container {
   display: flex;
   gap: 0.625rem;
   margin-left: auto;
 }
 
-.register-button-container{
+.register-button-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 2.5rem;
   align-self: stretch;
 }
-
-
 </style>
