@@ -133,7 +133,7 @@ const saveChanges = async () => {
         <div class="flex-wrapper">
           <h1 @click="toggleEditName" v-if="!isEditingname">{{ job.name || 'Name' }}</h1>
           <input v-if="isEditingname" v-model="job.name" @blur="toggleEditName" style="font-size: 1.5rem">
-          <UIButtonStandard v-if="!isEdited" :content="'delete'" :icon="IconType.Edit" :action="handleDelete"/>
+          <UIButtonStandard v-if="!isEdited" :content="'delete'" :icon="IconType.Trashcan" :color="'red'" :action="handleDelete"/>
         </div>
           <div class="text-container">
             <label>Address:</label>

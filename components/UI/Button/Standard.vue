@@ -51,10 +51,7 @@ let props = defineProps(
   align-items:center;
   flex-direction: row;
   transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
-  
-  .icon{
-    margin-top:-0.5rem;
-  }
+
   
   &:hover{
     transform: translateY(-0.2rem);
