@@ -133,7 +133,6 @@ const saveChanges = async () => {
         <div class="flex-wrapper">
           <h1 @click="toggleEditName" v-if="!isEditingname">{{ job.name || 'Name' }}</h1>
           <input v-if="isEditingname" v-model="job.name" @blur="toggleEditName" style="font-size: 1.5rem">
-          <UIButtonStandard v-if="!isEdited" :content="'delete'" :icon="IconType.Trashcan" :color="'red'" :action="handleDelete"/>
         </div>
           <div class="text-container">
             <label>Address:</label>
@@ -165,6 +164,9 @@ const saveChanges = async () => {
           <div class="save-button-container" v-if="isEdited">
             <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
           </div>
+          <div class="delete-button">
+        <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexWorker" />
+      </div>
         </div>
       </div>
     </div>
@@ -213,6 +215,15 @@ h1 {
     flex-direction: row;
     justify-content: space-between;
   }
+}
+
+.delete-button {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align-items: center;
+  gap: 2.5rem;
+  align-self: stretch;
 }
 
 input,

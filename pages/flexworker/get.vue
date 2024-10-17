@@ -243,6 +243,7 @@ const deleteFlexWorker = async () => {
                 @keydown.enter="handleFieldChange('phoneNumber')" v-model="local.phoneNumber" placeholder="Phone number"
                 type="tel" />
             </div>
+            
             <!--            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />-->
           </div>
         </div>
