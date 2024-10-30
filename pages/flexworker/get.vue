@@ -30,7 +30,7 @@ const showPopup = ref(false);
 const showConfirmationPopup = ref(false);
 const popupMessage = ref('');
 const popupButtonText = ref('Close')
-
+const phoneNumberRegex = ref("^\\+?[0-9]{1,3}[ \\-]?\\(?[0-9]{1,4}\\)?[ \\-]?[0-9]{3}[ \\-]?[0-9]{3,4}$");
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
   if (shouldRedirect.value) {
@@ -241,7 +241,7 @@ const deleteFlexWorker = async () => {
               <p class="text" v-if="!editMode.phoneNumber">{{ local.phoneNumber }}</p>
               <UIInputField v-else @blur="handleFieldChange('phoneNumber')"
                 @keydown.enter="handleFieldChange('phoneNumber')" v-model="local.phoneNumber" placeholder="Phone number"
-                type="tel" />
+                type="tel" :pattern=phoneNumberRegex title="Please enter a valid phone number (e.g., +1 234-567-8901)" required/>
             </div>
             
             <!--            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />-->
