@@ -11,6 +11,8 @@ const email = ref('');
 const phoneNumber = ref('');
 const profilePictureUrl = ref('');
 
+const phoneNumberRegex = ref("^\\+?[0-9]{1,3}[ \\-]?\\(?[0-9]{1,4}\\)?[ \\-]?[0-9]{3}[ \\-]?[0-9]{3,4}$");
+
 const languages = ref<string[]>([]);
 const skills = ref<string[]>([]);
 const certificates = ref<string[]>([]);
@@ -111,7 +113,9 @@ async function registerFlexworker() {
             <UIInputField placeholder="Adress" v-model="adress" />
             <UIInputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
             <UIInputField placeholder="Email" v-model="email" type="email" />
-            <UIInputField placeholder="Phone number" v-model="phoneNumber" type="tel" />
+            <UIInputField placeholder="Phone number" v-model="phoneNumber" type="tel" :pattern=phoneNumberRegex
+                          title="Please enter a valid phone number (e.g., +1 234-567-8901)"
+                          required/>
             <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />
           </div>
         </div>
