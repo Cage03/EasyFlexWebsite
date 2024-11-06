@@ -19,9 +19,10 @@ const props = defineProps({
 //   }));
 //   return categoryNames;
 // }
-const skills = ref(props.skills).value;
+const skills = ref(props.skills);
+
 const groupedSkills = computed(() => {
-  return skills.reduce((acc, skill) => {
+  return skills.value.reduce((acc, skill) => {
     if (!acc[skill.categoryId]) {
       acc[skill.categoryId] = [];
     }
@@ -30,10 +31,13 @@ const groupedSkills = computed(() => {
   }, {} as Record<number, skill[]>);
 });
 
+watch(() => props.skills, (newSkills) => {
+  skills.value = newSkills;
+});
+
 </script>
 
 <template>
-
   <div>
     <UIFeatureBox
     v-for="(skills, categoryId) in groupedSkills"

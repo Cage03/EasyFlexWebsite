@@ -6,7 +6,7 @@ const props = defineProps({
     default: null
   },
   skills: {
-    type: Array,
+    type: Array<skill>,
     required: true
   }
 });
@@ -17,7 +17,7 @@ const props = defineProps({
   <div class="feature-box">
     <h1 class="feature-text">{{ title }}</h1>
     <div class="feature-container">
-      <div v-for="feature in skills" class="features">{{ feature }}</div>
+      <div v-for="skill in skills" class="features">{{ skill.name }}</div>
     </div>
   </div>
 </template>

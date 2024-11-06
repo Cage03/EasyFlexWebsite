@@ -149,6 +149,7 @@ const deleteFlexworker = async () => {
           <label for="profilePictureUrl">Profile picture:</label>
           <UIInputField id="profilePictureUrl" v-model="flexworker.profilePictureUrl" placeholder="Profile picture" type="url"/>
         </div>
+        <CategoriesBox :skills="flexworker.skills"/>
         <div class="save-button-container" v-if="isEdited">
           <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
