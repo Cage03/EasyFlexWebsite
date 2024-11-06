@@ -16,7 +16,6 @@ const baseFetch = async (method: string, url: string, target: FetchTarget, opts?
     const res = await useFetch(url, {
         baseURL: urls[target],
         server: true,
-        credentials: "include",
         headers,
         // @ts-ignore
         method,
