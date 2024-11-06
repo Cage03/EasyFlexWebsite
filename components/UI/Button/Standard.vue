@@ -83,5 +83,11 @@ let props = defineProps(
   }
 }
 
+.white {
+  background-color: transparent;
+  color: var(--text-primary-color);
+  border: solid 2px #000000;
+}
+
 
 </style>
