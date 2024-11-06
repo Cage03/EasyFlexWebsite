@@ -1,9 +1,9 @@
 import {Utils} from "~/scripts/script-collection";
 
 export interface Skill{
-  id:number,
-  categoryId:number,
-  name:string
+  id?:number,
+  categoryId?:number,
+  name?:string
 }
 
 export const UseSkill = () => {
@@ -20,7 +20,7 @@ export const UseSkill = () => {
   async function createSkill(skill:Skill):Promise<void>{
     try{
       const res = await fetchFromClient.post('/Skill/Create', 'main-api', {
-        body:JSON.stringify(skill)
+        body:JSON.stringify({name:skill.name, categoryId:1}) //todo add proper category id when implementing
       })
       
       if(!res.ok){
