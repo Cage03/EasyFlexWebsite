@@ -8,7 +8,6 @@ const baseFetch = (method: string, url: string, target: FetchTarget, opts?: Requ
 
     return $fetch.raw(url, {
         baseURL: urls[target],
-        credentials: "include",
         // @ts-ignore
         method,
         // headers: {
