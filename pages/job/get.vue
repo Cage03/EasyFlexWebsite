@@ -134,42 +134,42 @@ const saveChanges = async () => {
           <h1 @click="toggleEditName" v-if="!isEditingname">{{ job.name || 'Name' }}</h1>
           <input v-if="isEditingname" v-model="job.name" @blur="toggleEditName" style="font-size: 1.5rem">
         </div>
-          <div class="text-container">
-            <label>Address:</label>
-            <UIInputField id="address" :placeholder="'Address'" v-model="job.address" type="text" required/>
-          </div>
-          <div class="text-container">
-            <label>Description:</label>
-            <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="job.description"
-                                   type="text" rows="5" autoResize required/>
-          </div>
-          <div class="text-container">
-            <label>Min hours:</label>
-            <UIInputField class="hours" :placeholder="'Min hours'" v-model="job.minHours" type="number"
-                          required/>
-          </div>
-          <div class="text-container">
-            <label>Max hours:</label>
-            <UIInputField class="hours" :placeholder="'Max hours'" v-model="job.maxHours" type="number"
-                          required/>
-          </div>
-          <div class="date-picker-container">
-            <label>Start date:</label>
-            <UIInputField class="date-picker" v-model="job.startDate" type="date" required/>
-          </div>
-          <div class="date-picker-container">
-            <label>End date:</label>
-            <UIInputField class="date-picker" v-model="job.endDate" type="date" required/>
-          </div>
-          <div class="save-button-container" v-if="isEdited">
-            <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
-          </div>
-          <div class="delete-button">
-        <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteJob" />
-      </div>
+        <div class="text-container">
+          <label>Address:</label>
+          <UIInputField id="address" :placeholder="'Address'" v-model="job.address" type="text" required/>
+        </div>
+        <div class="text-container">
+          <label>Description:</label>
+          <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="job.description"
+                                 type="text" rows="5" autoResize required/>
+        </div>
+        <div class="text-container">
+          <label>Min hours:</label>
+          <UIInputField class="hours" :placeholder="'Min hours'" v-model="job.minHours" type="number"
+                        required/>
+        </div>
+        <div class="text-container">
+          <label>Max hours:</label>
+          <UIInputField class="hours" :placeholder="'Max hours'" v-model="job.maxHours" type="number"
+                        required/>
+        </div>
+        <div class="date-picker-container">
+          <label>Start date:</label>
+          <UIInputField class="date-picker" v-model="job.startDate" type="date" required/>
+        </div>
+        <div class="date-picker-container">
+          <label>End date:</label>
+          <UIInputField class="date-picker" v-model="job.endDate" type="date" required/>
+        </div>
+        <div class="save-button-container" v-if="isEdited">
+          <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
+        </div>
+        <div class="delete-button">
+          <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteJob"/>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
