@@ -33,6 +33,7 @@ const createCategory = async () =>{
       console.log("calling create");
       await useCategory.createCategory(categoryCreateModelName.value);
       console.log('category created successfully!');
+      toggleCreateCategoryPopup()
 
     } catch (err: any) {
       console.log(err);
@@ -53,7 +54,7 @@ const createCategory = async () =>{
     </UIPopup>
     <h1>Category and skill manager</h1>
     <div class="profile_data">
-      <UIButtonStandard :action="toggleCreateCategoryPopup"  :content="'new category'"></UIButtonStandard>
+      <UIButtonStandard :action="toggleCreateCategoryPopup"  :content="'add category'"></UIButtonStandard>
     </div>
   </div>
 </div>
