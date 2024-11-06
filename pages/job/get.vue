@@ -70,7 +70,7 @@ onMounted(async () => {
   }
 });
 
-const handleDelete = async () => {
+const deleteJob = async () => {
   const confirmed = window.confirm("Are you sure you want to delete this job?");
   if (confirmed) {
     try {
@@ -165,7 +165,7 @@ const saveChanges = async () => {
             <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
           </div>
           <div class="delete-button">
-        <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexWorker" />
+        <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteJob" />
       </div>
         </div>
       </div>
