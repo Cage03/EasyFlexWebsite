@@ -45,8 +45,25 @@ export const UseSkill = () => {
     }
   }
   
+  async function updateSkill(skill:Skill):Promise<void>{
+    try{
+      const res = await fetchFromClient.post('/Skill/Update', 'main-api', {
+        body:JSON.stringify(skill)
+      })
+
+      if(!res.ok){
+        throw new Error(res.statusText);
+      }
+    }
+    catch(e:any){
+      throw new Error(e.message);
+    }
+  }
+  
   return{
     data,
-    createSkill
+    createSkill,
+    deleteSkill,
+    updateSkill
   }
 }
