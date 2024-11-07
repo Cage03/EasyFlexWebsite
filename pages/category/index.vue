@@ -4,7 +4,7 @@
     <UIPopup :button-text="'Confirm'" @close="createCategory"  @xButtonFunction="toggleCreateCategoryPopup" :x-button="true" :show="creatCategoryPopupTrigger">
       <UIInputField v-model="categoryCreateModelName" placeholder="Name" style="font-size: 1.5rem" />
     </UIPopup>
-
+    <UIPopup :button-text="'Close'" :show="showMiscPopup" @close="toggleMiscPopup()">{{ miscPopupMessage }}</UIPopup>
     <h1>Category and skill manager</h1>
     <div class="functionality">
       <div class="search-bar-container">
@@ -43,6 +43,10 @@ const page = ref(1);
 const limit = 10;
 const loading = ref(false);
 
+const showMiscPopup = ref(false)
+const miscPopupMessage = ref("")
+const canFetchAgain = ref(true)
+
 const searchQuery = ref('') ///currently does nothing
 // const popUpSelect = ref({
 //   createCategory: false,
@@ -55,8 +59,19 @@ const searchQuery = ref('') ///currently does nothing
 //     console.warn(`Property ${popUpName} does not exist in popUpSelect`);
 //   }
 // };
+function showSuccessPopup( message: string ) {
+  toggleMiscPopup()
+  miscPopupMessage.value = message;
+}
 
+function showErrorPopup(message: string) {
+  toggleMiscPopup()
+  miscPopupMessage.value = 'Something went wrong! \n' + message;
+}
 
+const toggleMiscPopup = () => {
+  showMiscPopup.value = !showMiscPopup.value;
+}
 const toggleCreateCategoryPopup =()=>{
   creatCategoryPopupTrigger.value = !creatCategoryPopupTrigger.value;
 }
@@ -64,32 +79,38 @@ const createCategory = async () =>{
   const confirmed = window.confirm("Are you sure you want to add a new category?");
   if (confirmed) {
     try {
-      console.log("calling create");
-      await useCategory.createCategory(categoryCreateModelName.value);
-      console.log('category created successfully!');
-      toggleCreateCategoryPopup()
-
+      await useCategory.createCategory(categoryCreateModelName.value)
+          .then(response =>{
+            if(response.ok){
+              toggleCreateCategoryPopup();
+            }
+          })
     } catch (err: any) {
-      console.log(err);
-
+      if (err.response._data.isDuplicate) {
+        showErrorPopup("This category already exists.");
+      } else{
+        showErrorPopup("Failed to create a new category.");
+      }
     }
   }
 }
 
 const loadMoreCategories = async () => {
   if (loading.value) return;
+
   loading.value = true;
 
   try {
-    const newCategories = await useCategory.fecthCategories(limit,page.value );
+    const newCategories = await useCategory.fetchCategories(limit,page.value );
     if (newCategories.length) {
       categories.value.push(...newCategories);
       page.value++;
       console.log(categories.value);
     }
   } catch (error) {
-    // popupMessage.value = "Error occured while trying to get jobs";
-    // showPopup.value = true;
+    canFetchAgain.value = false;
+    showErrorPopup("Failed to load categories, comeback later");
+
   } finally {
     loading.value = false;
   }
@@ -100,7 +121,8 @@ onMounted(async () =>
   await loadMoreCategories();
 
   const observer = new IntersectionObserver(async (entries) => {
-    if (entries[0].isIntersecting) {
+    if (entries[0].isIntersecting && canFetchAgain.value ) {
+      console.log("Observer canFetchCheck :" + canFetchAgain.value)
       await loadMoreCategories();
     }
   }, {
