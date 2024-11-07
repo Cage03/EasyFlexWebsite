@@ -12,7 +12,7 @@ export const UseCategory = () => {
                 body: JSON.stringify({name: name})
             })
         if (!response.ok) {
-            throw new Error(`Failed to fetch categories: ${response.statusText}`);
+            throw new Error(`Failed to create categories: ${response.statusText}`);
         }
 
     }
@@ -34,6 +34,22 @@ export const UseCategory = () => {
         }
         return response._data;
     }
+
+    async function updateCategory(id:string, name :string):Promise<any>{
+        const response = await fetchFromClient.put(
+            `/Category/Update`,
+            "main-api",
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({id: id,name: name})
+            })
+        if (!response.ok) {
+            throw new Error(`Failed to update categories: ${response.statusText}`);
+        }
+    }
+
     return{
         createCategory,
         fetchCategories
