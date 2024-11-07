@@ -1,42 +1,47 @@
-import { fetchFromClient } from "~/composables/fetchFromClient"
+import {type Skill, UseSkill} from "./useSkill";
+export interface Category {
+    id:number,
+    name:string,
+    skills:Array<Skill>
+}
 
 export const UseCategory = () => {
-    async function createCategory(name :string):Promise<any>{
-        const response = await fetchFromClient.post(
-            `/Category/Create`,
-            "main-api",
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name: name})
-            })
-        if (!response.ok) {
-            throw new Error(`Failed to fetch categories: ${response.statusText}`);
-        }
+    const config = useRuntimeConfig();
+    const apiUrl = config.public.apiUrl;
 
+    async function createCategory(name: string): Promise<any> {
+        console.log(`Create category: ${name}`);
+        console.log(`Create new category: ${JSON.stringify(name)}`);
+        const response = await fetch(`${apiUrl}/Category/Create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: name})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to create category: ${response.statusText}`);
+        }
     }
 
 
-    async function fetchCategories(limit:number, pageNumber = 1):Promise<any> {
-
-        const response = await fetchFromClient.get(
-            `/Category/GetCategories?pageNumber=${pageNumber}&limit=${limit}`,
-            "main-api",
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+    async function fetchCategories(limit: number, pageNumber = 1): Promise<any> {
+        const response = await fetch(`${apiUrl}/Category/GetCategories?pageNumber=${pageNumber}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
-        )
+        });
         if (!response.ok) {
             throw new Error(`Failed to fetch categories: ${response.statusText}`);
         }
-        return response._data;
+        // console.log(await response.json());
+        return await response.json();
     }
-    return{
+    return {
         createCategory,
         fetchCategories
-    }
+    };
 
-}
+};

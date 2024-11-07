@@ -1,3 +1,4 @@
+import type {Skill} from "~/composables/useSkill";
 
 export interface flexworker {
     id: string;
@@ -7,7 +8,7 @@ export interface flexworker {
     email: string;
     phoneNumber: string;
     profilePictureUrl: string;
-    skills: [];
+    skills: Skill[];
 }
 
 export const UseFlexworker = () => {
