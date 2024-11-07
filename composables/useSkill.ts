@@ -32,6 +32,19 @@ export const UseSkill = () => {
     }
   }
   
+  async function deleteSkill(id:number):Promise<void>{
+    try{
+      const res = await fetchFromClient.delete(`/Skill/Delete?id=${id}`, "main-api");
+
+      if(!res.ok){
+        throw new Error(res.statusText);
+      }
+    }
+    catch(e:any){
+      throw new Error(e.message);
+    }
+  }
+  
   return{
     data,
     createSkill
