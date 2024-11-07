@@ -81,7 +81,7 @@ const loadMoreCategories = async () => {
   loading.value = true;
 
   try {
-    const newCategories = await useCategory.fecthCategories(limit,page.value );
+    const newCategories = await useCategory.fetchCategories(limit,page.value );
     if (newCategories.length) {
       categories.value.push(...newCategories);
       page.value++;

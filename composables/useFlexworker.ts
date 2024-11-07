@@ -54,10 +54,24 @@ export const UseFlexworker = () => {
 
         return await response.json();
     }
+
+    // add skills to flexworker
+    async function addSkillsToFlexworker(flexworkerId: string, skills: number[]): Promise<any> {
+        const response = await fetchFromClient.post(`/Flexworker/AddSkills`, "main-api", {
+            body: JSON.stringify({flexWorkerId: flexworkerId, skillIds: skills})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to add skills to flexworker: ${response.statusText}`);
+        }
+
+        return await response.json();
+    }
     
     return{
         getFlexworker,
         deleteFlexworker,
-        updateFlexworker
+        updateFlexworker,
+        addSkillsToFlexworker
     }
 }

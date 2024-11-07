@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
-import type {skill} from "~/composables/skill";
 import CategoriesBox from "~/components/UI/CategoriesBox.vue";
+import AddSkillsBox from "~/components/UI/AddSkillsBox.vue";
 
 const useFlexworker = UseFlexworker();
 
@@ -58,7 +58,8 @@ const togglePopup = () => {
   }
 };
 
-onMounted(async () => {
+
+async function getFlexWorkerData() {
   try {
     const data = await useFlexworker.getFlexworker(id);
     flexworker.value = data;
@@ -68,6 +69,10 @@ onMounted(async () => {
     error.value = err.message;
     showErrorPopup("Error occured while trying to get flexworker");
   }
+}
+
+onMounted(async () => {
+  await getFlexWorkerData();
 })
 
 watch(flexworker, (newValue) => {
@@ -113,12 +118,25 @@ const deleteFlexworker = async () => {
     popupMessage.value = "Flexworker deletion canceled.";
   }
 }
+
+const addSkills = ref(false);
+const addSkill = () => {
+  addSkills.value = !addSkills.value;
+}
+
+const reload = () => {
+  addSkills.value = false;
+  getFlexWorkerData();
+  console.log(flexworker.value);
+}
+
 </script>
 
 <template>
   <div class="register_page">
     <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
-    <div class="window">
+      <AddSkillsBox v-if="addSkills" :flexworker="flexworker" @close="reload"/>
+    <div class="window" v-if="!addSkills">
       <div class="profile_data">
         <div class="name-profile-picture">
           <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"
@@ -150,6 +168,8 @@ const deleteFlexworker = async () => {
           <UIInputField id="profilePictureUrl" v-model="flexworker.profilePictureUrl" placeholder="Profile picture" type="url"/>
         </div>
         <CategoriesBox :skills="flexworker.skills"/>
+        <UIButtonStandard :action="addSkill" :icon="IconType.Plus" :content="'Add skills'"/>
+
         <div class="save-button-container" v-if="isEdited">
           <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
