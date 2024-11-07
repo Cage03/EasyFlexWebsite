@@ -52,7 +52,8 @@ export const UseCategory = () => {
 
     return{
         createCategory,
-        fetchCategories
+        fetchCategories,
+        updateCategory
     }
 
 }
