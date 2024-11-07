@@ -1,25 +1,25 @@
 ﻿<script setup lang="ts">
 
-interface Skill {
-  id: string,
-  name: string
-}
-interface Category {
-  id: string;
-  name: string;
-  skills: Skill[];
-}
+import type {Category} from "~/composables/useCategory";
+import Feature from "~/components/UI/Feature.vue";
+import {IconType} from "~/types/global-types";
+
 const props = defineProps<{
   category: Category;
 }>();
 
 const collapsableValue= ref(false);
 
+const emit = defineEmits(['openAddSkillModal']);
+
 const toggleCollapsable = () => {
   collapsableValue.value = !collapsableValue.value;
   console.log(collapsableValue.value);
 }
 
+const openAddSkillModal = () => {
+  emit('openAddSkillModal', props.category.id);
+}
 
 </script>
 
@@ -27,10 +27,10 @@ const toggleCollapsable = () => {
 <div class="list-item">
   <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
   <div v-if='collapsableValue'>
-    <div class="properties" v-for="skill in category.skills" :key="skill.id">
-      {{skill.name}}
+    <div class="properties">
+      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name"></Feature>
+      <UIButtonStandard :action="openAddSkillModal" :icon="IconType.Plus"></UIButtonStandard>
     </div>
-    <div>(+)</div>
   </div>
 </div>
 </template>

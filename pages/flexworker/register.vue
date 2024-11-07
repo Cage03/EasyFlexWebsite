@@ -5,7 +5,7 @@ import FeatureBox from "~/components/UI/FeatureBox.vue";
 const api = useRuntimeConfig().public.apiUrl;
 
 const name = ref('');
-const adress = ref('');
+const address = ref('');
 const dateOfBirth = ref('');
 const email = ref('');
 const phoneNumber = ref('');
@@ -75,7 +75,7 @@ async function registerFlexworker() {
       },
       body: JSON.stringify({
         name: name.value,
-        adress: adress.value,
+        address: address.value,
         dateOfBirth: dateOfBirth.value,
         email: email.value,
         phoneNumber: phoneNumber.value,
@@ -110,7 +110,7 @@ async function registerFlexworker() {
           </div>
           <div class="profile_data">
             <UIInputField placeholder="Name" v-model="name" style="font-size: 1.5rem"/>
-            <UIInputField placeholder="Adress" v-model="adress" />
+            <UIInputField placeholder="Address" v-model="address" />
             <UIInputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
             <UIInputField placeholder="Email" v-model="email" type="email" />
             <UIInputField placeholder="Phone number" v-model="phoneNumber" type="tel" :pattern=phoneNumberRegex

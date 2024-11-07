@@ -1,31 +1,23 @@
 ﻿<script setup lang="ts">
 import { defineProps, ref } from 'vue';
 const props = defineProps({
-  title: String,
-  features: Array as PropType<string[]>,
-  newFeature: String,
-  addFeature: Function as PropType<(feature: string) => void>
+  title: {
+    type: String,
+    default: null
+  },
+  skills: {
+    type: Array<skill>,
+    required: true
+  }
 });
 
-const newFeatureInput = ref(props.newFeature);
-
-function handleAddFeature() {
-  if (newFeatureInput.value) {
-    props.addFeature(newFeatureInput.value);
-    newFeatureInput.value = '';
-  }
-}
 </script>
 
 <template>
   <div class="feature-box">
     <h1 class="feature-text">{{ title }}</h1>
     <div class="feature-container">
-      <div v-for="feature in features" :key="feature" class="features">{{ feature }}</div>
-      <div class="add-feature-container">
-        <input placeholder="Add new feature" type="text" v-model="newFeatureInput">
-        <button type="button" @click="handleAddFeature">Add</button>
-      </div>
+      <div v-for="skill in skills" class="features">{{ skill.name }}</div>
     </div>
   </div>
 </template>
