@@ -1,6 +1,6 @@
 <template>
   <div class="skill-modal">
-    <UIInputField class="input" v-model="skillName" :type="'text'" :placeholder="'Category...'" />
+    <UIInputField class="input" v-model="skillName" :type="'text'" :placeholder="'Skill...'" />
     <div class="button-container">
       <UIButtonStandard :color="'white'" :content="'Cancel'" :action="closeModal" />
       <UIButtonStandard :color="'yellow'" :content="'Save'" :action="handleSave" />
