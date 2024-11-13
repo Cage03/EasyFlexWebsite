@@ -77,7 +77,7 @@ const toggleMiscPopup = () => {
 const toggleCreateCategoryPopup =()=>{
   creatCategoryPopupTrigger.value = !creatCategoryPopupTrigger.value;
 }
-const deleteCategory = async (id:String) =>{
+const deleteCategory = async (id:string) =>{
   console.log("Attempted delete of ID: " + id);
 }
 
@@ -100,7 +100,7 @@ const updateCategory = async (category:{id:string, name:string}) =>{
   if (confirmed) {
     let result =checkIfSameOrExist(category);
     if(result.isTrue){
-      showSuccessPopup(result.message)
+      showErrorPopup(result.message)
     }
     else{
       try{

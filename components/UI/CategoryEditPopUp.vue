@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: [],
-  deleteCategory:[id:String],
+  deleteCategory:[id:string],
   updateCategory:[category:Category],
 }>()
 
