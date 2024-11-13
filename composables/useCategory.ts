@@ -39,9 +39,26 @@ export const UseCategory = () => {
         // console.log(await response.json());
         return await response.json();
     }
+
+    async function fetchCategoryById(id: number): Promise<any> {
+        const response = await fetch(`${apiUrl}/Category/Get?id=${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch category: ${response.statusText}`);
+        }
+
+        return await response.json();
+    }
+
     return {
         createCategory,
-        fetchCategories
+        fetchCategories,
+        fetchCategoryById
     };
 
 };
