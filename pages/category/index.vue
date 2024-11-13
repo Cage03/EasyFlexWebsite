@@ -91,7 +91,6 @@ const createCategory = async () =>{
         } else{
           showErrorPopup("Failed to create a new category.");
         }
-
     }
   }
 }
@@ -106,7 +105,6 @@ const loadMoreCategories = async () => {
     if (newCategories.length) {
       categories.value.push(...newCategories);
       page.value++;
-      console.log(categories.value);
     }
   } catch (error) {
     canFetchAgain.value = false;
@@ -123,7 +121,6 @@ onMounted(async () =>
 
   const observer = new IntersectionObserver(async (entries) => {
     if (entries[0].isIntersecting && canFetchAgain.value ) {
-      console.log("Observer canFetchCheck :" + canFetchAgain.value)
       await loadMoreCategories();
     }
   }, {
