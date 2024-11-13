@@ -64,8 +64,6 @@ export const UseFlexworker = () => {
         if (!response.ok) {
             throw new Error(`Failed to add skills to flexworker: ${response.statusText}`);
         }
-
-        return await response.json();
     }
     
     return{

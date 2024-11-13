@@ -26,8 +26,6 @@ const originalFlexworker = ref<flexworker>({
   skills: []
 });
 
-
-const api = useRuntimeConfig().public.apiUrl;
 const error = ref(null);
 
 const isEditingname = ref(false);
@@ -64,7 +62,6 @@ async function getFlexWorkerData() {
     const data = await useFlexworker.getFlexworker(id);
     flexworker.value = data;
     originalFlexworker.value = JSON.parse(JSON.stringify(data));
-    console.log(flexworker.value);
   } catch (err: any) {
     error.value = err.message;
     showErrorPopup("Error occured while trying to get flexworker");
@@ -109,7 +106,6 @@ const deleteFlexworker = async () => {
       popupMessage.value = "Flexworker deleted successfully!";
       showPopup.value = true;
     } catch (err) {
-      console.log(err);
       shouldRedirect.value = false;
       popupMessage.value = "An error occurred while trying to delete flexworker";
       showPopup.value = true;
@@ -127,7 +123,6 @@ const addSkill = () => {
 const reload = () => {
   addSkills.value = false;
   getFlexWorkerData();
-  console.log(flexworker.value);
 }
 
 </script>

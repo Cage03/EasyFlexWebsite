@@ -51,10 +51,6 @@ const loadCategories = async () => {
 
 onMounted(async () => {
   await loadCategories();
-
-  console.log("Flexworker", flexworkerCategories.value);
-  console.log("NotInFlexworker: ", allCategoriesExceptFlexworker.value);
-  console.log("allcat:", allCategories.value);
 });
 
 const openAddSkillModal = (categoryId: number) => {
@@ -71,7 +67,6 @@ const skillsAvailable = ref<Skill[]>([]);
 const skillsToAdd = ref<Skill[]>([]);
 
 const addSkill = (skill: Skill) => {
-  console.log("CLICK")
   skillsToAdd.value.push(skill);
 
   // remove the skill from the allcategories except flexworker list
@@ -121,18 +116,53 @@ const deselectSkill = (skill: Skill) => {
   });
 };
 
-const saveSkills = () => {
+const errorMessage = ref<string | null>(null);
+
+const saveSkills = async () => {
   const useFlexworker = UseFlexworker();
-  useFlexworker.addSkillsToFlexworker(props.flexworker.id, skillsToAdd.value.map(skill => skill.id));
-  skillsToAdd.value = [];
+  try {
+    console.log("Adding skills");
+    await useFlexworker.addSkillsToFlexworker(props.flexworker.id, skillsToAdd.value.map(skill => skill.id));
+    console.log("Skills added");
+    skillsToAdd.value = [];
+    console.log("Skills added");
+    emit('close');
+  }
+  catch (e) {
+    errorMessage.value = 'Failed to add skills. Please try again.';
+    showErrorPopup(errorMessage.value);
+  }
+};
+
+const showPopup = ref(false);
+const popupMessage = ref("");
+
+const showSuccessPopup = () => {
+  showPopup.value = true;
+  popupMessage.value = 'Changes saved!';
+}
+
+const showErrorPopup = (message: string) => {
+  showPopup.value = true;
+  popupMessage.value = message;
+}
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+};
+
+const close = () => {
   emit('close');
 };
+
 
 </script>
 
 <template>
   <div class="overview-container">
+    <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{popupMessage}}</UIPopup>
     <div class="functionality">
+      <UIButtonStandard :action="close" :content="'Close'" :color="'red'"/>
       <div class="search-bar-container">
       </div>
       <UISearch :placeholder="'Search...'"/>
