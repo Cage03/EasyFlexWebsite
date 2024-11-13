@@ -65,8 +65,7 @@ const deleteSkill = (skillId: number) => {
 
   .properties {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
+    flex-wrap: wrap;
     width: 100%;
 
     p {
