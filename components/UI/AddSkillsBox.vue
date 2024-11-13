@@ -29,7 +29,7 @@ const loadCategories = async () => {
   allCategories.value = response;
 
   // Filter categories to include only the skills owned by the flexworker
-  flexworkerCategories.value = response.map((category) => {
+  flexworkerCategories.value = response.map((category : Category) => {
     return {
       ...category,
       skills: category.skills.filter(skill => props.flexworker.skills.some(flexSkill => flexSkill.id === skill.id))
@@ -37,12 +37,12 @@ const loadCategories = async () => {
   });
 
   // Filter categories to exclude the skills owned by the flexworker
-  allCategoriesExceptFlexworker.value = response.map((category) => {
+  allCategoriesExceptFlexworker.value = response.map((category : Category) => {
     return {
       ...category,
       skills: category.skills.filter(skill => !props.flexworker.skills.some(flexSkill => flexSkill.id === skill.id))
     };
-  }).filter(category => category.skills.length > 0);
+  }).filter((category : Category) => category.skills.length > 0);
 
 
   page.value++;
