@@ -1,7 +1,4 @@
 ﻿<script setup lang="ts">
-
-import type {Category} from "~/composables/useCategory";
-import Feature from "~/components/UI/Feature.vue";
 import {IconType} from "~/types/global-types";
 
 const props = defineProps<{
@@ -28,7 +25,7 @@ const openAddSkillModal = () => {
   <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
   <div v-if='collapsableValue'>
     <div class="properties">
-      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name"></Feature>
+      <UIFeature v-for="skill in category.skills" :key="skill.id" :title="skill.name"></UIFeature>
       <UIButtonStandard :action="openAddSkillModal" :icon="IconType.Plus"></UIButtonStandard>
     </div>
   </div>

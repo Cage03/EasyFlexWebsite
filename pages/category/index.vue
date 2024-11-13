@@ -24,21 +24,11 @@
 </div>
 </template>
 <script setup lang="ts">
-import {IconType} from "~/types/global-types";
-import {UseCategory} from "~/composables/useCategory";
 const useCategory = UseCategory();
 
-interface CategoryInterface {
-  id: string,
-  name: string,
-  skills:{
-    id: string,
-    name: string,
-  }[]
-}
 const creatCategoryPopupTrigger = ref(false);
 const categoryCreateModelName = ref('')
-let categories = ref<CategoryInterface[]>([])
+let categories = ref<Category[]>([])
 const page = ref(1);
 const limit = 10;
 const loading = ref(false);
