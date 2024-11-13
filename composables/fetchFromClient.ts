@@ -5,7 +5,6 @@ const baseFetch = (method: string, url: string, target: FetchTarget, opts?: Requ
     const urls = {
         "main-api": config.public.apiUrl,
     };
-    console.log(urls)
     return $fetch.raw(url, {
         baseURL: urls[target],
         // @ts-ignore
