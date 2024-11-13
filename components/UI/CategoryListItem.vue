@@ -32,8 +32,7 @@ const deleteSkill = (skillId: number) => {
   <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
   <div v-if='collapsableValue'>
     <div class="properties">
-      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name">
-        <UIButtonStandard :action="() => deleteSkill(skill.id)" :icon="IconType.Trashcan" :color="'red'"></UIButtonStandard>
+      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name" :onclick="() => deleteSkill(skill.id)" class="feature">
       </Feature>
       <UIButtonStandard :action="openAddSkillModal" :icon="IconType.Plus"></UIButtonStandard>
     </div>
@@ -42,6 +41,17 @@ const deleteSkill = (skillId: number) => {
 </template>
 
 <style scoped lang="scss">
+
+.feature {
+  position: relative;
+
+  :hover{
+    transition: 0.2s;
+    background-color: #d23535;
+    color: white;
+  }
+}
+
 .list-item {
   position: relative;
   width: calc(100% - (4rem + 4px));

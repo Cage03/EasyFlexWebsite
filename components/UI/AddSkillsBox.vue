@@ -85,10 +85,11 @@ const addSkill = async (skill: Skill) => {
     showErrorPopup(errorMessage.value);
   }
   addSkills.value = false;
-  reload();
+  await reload();
 };
 
 const handleDeleteSkill = async (skillId: number) => {
+  if (!confirm('Are you sure you want to delete this skill?')) return;
   const useFlexworker = UseFlexworker();
   try{
     await useFlexworker.removeSkillsFromFlexworker(props.flexworker.id, [skillId]);
@@ -97,7 +98,7 @@ const handleDeleteSkill = async (skillId: number) => {
     errorMessage.value = 'Failed to remove skill. Please try again.';
     showErrorPopup(errorMessage.value);
   }
-  reload();
+  await reload();
 };
 
 const errorMessage = ref<string | null>(null);
@@ -147,9 +148,10 @@ const close = () => {
         <h1>Add skills</h1>
         <UIButtonStandard :action="() => addSkills = false" :content="'Close'" :color="'red'"/>
       </div>
-      <UIFeature v-for="skill in skillsAvailable" :key="skill.id" :title="skill.name">
-        <UIButtonStandard :action="() => addSkill(skill)" :content="'Add'"/>
+      <div class="skills">
+      <UIFeature v-for="skill in skillsAvailable" :key="skill.id" :title="skill.name" :onclick="() => addSkill(skill)" class="skill-available">
       </UIFeature>
+      </div>
     </div>
   </div>
 </template>
@@ -232,18 +234,23 @@ const close = () => {
   width: 100%;
   height: 3rem;
   justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .skill-selection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
+  flex-wrap: wrap;
   background-color: var(--white-95);
   padding: 1rem;
   border-radius: 1rem;
   width: 50%;
-  height: 50%;
+  min-height: 50%;
+}
+
+.skills{
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .skills-to-add-container {
@@ -252,6 +259,15 @@ const close = () => {
   gap: 1rem;
   align-items: center;
   justify-content: center;
+}
+
+.skill-available{
+  height: fit-content;
+  :hover{
+    background-color: var(--button-primary-color);
+    color: var(--white-95);
+    border: 1px solid transparent;
+  }
 }
 
 </style>
