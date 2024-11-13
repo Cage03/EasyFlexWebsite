@@ -26,6 +26,16 @@ const originalFlexworker = ref<flexworker>({
   skills: []
 });
 
+const phoneNumberRegex = ref("^\\+?[0-9]{1,3}[ \\-]?\\(?[0-9]{1,4}\\)?[ \\-]?[0-9]{3}[ \\-]?[0-9]{3,4}$");
+
+const restrictToNumbers = (event: KeyboardEvent) => {
+  const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Delete", "+", "(", ")", " "];
+  if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+};
+
+const api = useRuntimeConfig().public.apiUrl;
 const error = ref(null);
 
 const isEditingname = ref(false);
@@ -148,7 +158,10 @@ const reload = () => {
         </div>
         <div class="text-container">
           <label for="phoneNumber">Phone number:</label>
-          <UIInputField id="phoneNumber" v-model="flexworker.phoneNumber" placeholder="Phone number" required/>
+          <UIInputField id="phoneNumber" @keydown="restrictToNumbers" v-model="flexworker.phoneNumber" placeholder="Phone number"
+                        type="tel" inputmode="numeric"
+                        :pattern="phoneNumberRegex" title="Please enter a valid phone number (e.g., +1 234-567-8901)"
+                        required/>
         </div>
         <div class="text-container">
           <label for="address">Address:</label>
@@ -221,7 +234,7 @@ h1 {
   }
 }
 
-.name-profile-picture{
+.name-profile-picture {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
