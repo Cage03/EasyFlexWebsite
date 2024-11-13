@@ -264,6 +264,7 @@ const close = () => {
 .skill-available{
   height: fit-content;
   :hover{
+    transition: 0.2s;
     background-color: var(--button-primary-color);
     color: var(--white-95);
     border: 1px solid transparent;
