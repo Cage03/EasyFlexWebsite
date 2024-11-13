@@ -29,7 +29,7 @@ const content = Array(10).fill(null);
 
 let pageData = {
   job: {
-    title: 'Forklift driver'
+    title: 'Software Developer'
   },
   result: [
     {
@@ -118,13 +118,13 @@ onMounted(async () => {
   const totalDuration = 10000;
   const intervalDuration = 50; 
   const steps = totalDuration / intervalDuration; 
-  const increment = 99 / steps; 
+  const increment = 100 / steps; 
 
   const interval = setInterval(() => {
     percentage.value += increment;
 
-    if (percentage.value >= 99) {
-      percentage.value = 99;
+    if (percentage.value >= 100) {
+      percentage.value = 100;
       clearInterval(interval);
     }
     
@@ -177,6 +177,12 @@ watch(percentage, (newVal) => {
       border-radius: 1rem;
       box-shadow: var(--shadow-four-sides);
       padding: 1rem;
+      
+      &:first-child {
+        .profile-picture-orb{
+          border-color:#4E8798;
+        }
+      }
 
       .profile-picture-orb {
         display: flex;
@@ -246,8 +252,8 @@ watch(percentage, (newVal) => {
         font-weight: bold;
         white-space: nowrap;
         background: linear-gradient(
-                to right,
-                var(--primary-logo) var(--loading-progress),
+                70deg,
+                #4E8798 var(--loading-progress),
                 transparent 1%
         );
         background-size: calc(var(--loading-progress) * 1%);
