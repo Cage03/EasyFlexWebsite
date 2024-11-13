@@ -52,6 +52,7 @@ const miscPopupMessage = ref("")
 const canFetchAgain = ref(true)
 
 const searchQuery = ref('') ///currently does nothing
+
 function showSuccessPopup( message: string ) {
   toggleMiscPopup()
   miscPopupMessage.value = message;
