@@ -8,6 +8,8 @@ const props = defineProps<{
   flexworker: flexworker;
 }>();
 
+let thisFlexworker = props.flexworker;
+
 const emit = defineEmits(['close']);
 
 const responseCategories = ref<Category[]>([]);
@@ -32,7 +34,7 @@ const loadCategories = async () => {
   flexworkerCategories.value = response.map((category : Category) => {
     return {
       ...category,
-      skills: category.skills.filter(skill => props.flexworker.skills.some(flexSkill => flexSkill.id === skill.id))
+      skills: category.skills.filter(skill => thisFlexworker.skills.some(flexSkill => flexSkill.id === skill.id))
     };
   });
 
@@ -40,12 +42,10 @@ const loadCategories = async () => {
   allCategoriesExceptFlexworker.value = response.map((category : Category) => {
     return {
       ...category,
-      skills: category.skills.filter(skill => !props.flexworker.skills.some(flexSkill => flexSkill.id === skill.id))
+      skills: category.skills.filter(skill => !thisFlexworker.skills.some(flexSkill => flexSkill.id === skill.id))
     };
   }).filter((category : Category) => category.skills.length > 0);
 
-
-  page.value++;
   loading.value = false;
 };
 
@@ -64,75 +64,43 @@ const addSkills = ref(false);
 const addskillsCategoryId = ref(0);
 const skillsAvailable = ref<Skill[]>([]);
 
-const skillsToAdd = ref<Skill[]>([]);
+const reload = async () => {
+  // get flexworker
+  const useFlexworker = UseFlexworker();
+  thisFlexworker = await useFlexworker.getFlexworker(props.flexworker.id);
+  await loadCategories();
+  console.log('reloaded');
+  console.log(thisFlexworker);
+  console.log(flexworkerCategories.value);
+  console.log(allCategories.value);
+}
 
-const addSkill = (skill: Skill) => {
-  skillsToAdd.value.push(skill);
-
-  // remove the skill from the allcategories except flexworker list
-  allCategoriesExceptFlexworker.value = allCategoriesExceptFlexworker.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: category.skills.filter((s) => s.id !== skill.id)
-      };
-    }
-    return category;
-  });
-
-  // add the skill to the flexworker categories list
-  flexworkerCategories.value = flexworkerCategories.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: [...category.skills, skill]
-      };
-    }
-    return category;
-  });
+const addSkill = async (skill: Skill) => {
+  const useFlexworker = UseFlexworker();
+  try{
+    await useFlexworker.addSkillsToFlexworker(props.flexworker.id, [skill.id]);
+  }
+  catch (e) {
+    errorMessage.value = 'Failed to add skill. Please try again.';
+    showErrorPopup(errorMessage.value);
+  }
   addSkills.value = false;
+  reload();
 };
 
-const deselectSkill = (skill: Skill) => {
-  skillsToAdd.value = skillsToAdd.value.filter((s) => s.id !== skill.id);
-  allCategoriesExceptFlexworker.value = allCategoriesExceptFlexworker.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: [...category.skills, skill]
-      };
-    }
-    return category;
-  });
-
-  flexworkerCategories.value = flexworkerCategories.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: category.skills.filter((s) => s.id !== skill.id)
-      };
-    }
-    return category;
-  });
+const handleDeleteSkill = async (skillId: number) => {
+  const useFlexworker = UseFlexworker();
+  try{
+    await useFlexworker.removeSkillsFromFlexworker(props.flexworker.id, [skillId]);
+  }
+  catch (e) {
+    errorMessage.value = 'Failed to remove skill. Please try again.';
+    showErrorPopup(errorMessage.value);
+  }
+  reload();
 };
 
 const errorMessage = ref<string | null>(null);
-
-const saveSkills = async () => {
-  const useFlexworker = UseFlexworker();
-  try {
-    console.log("Adding skills");
-    await useFlexworker.addSkillsToFlexworker(props.flexworker.id, skillsToAdd.value.map(skill => skill.id));
-    console.log("Skills added");
-    skillsToAdd.value = [];
-    console.log("Skills added");
-    emit('close');
-  }
-  catch (e) {
-    errorMessage.value = 'Failed to add skills. Please try again.';
-    showErrorPopup(errorMessage.value);
-  }
-};
 
 const showPopup = ref(false);
 const popupMessage = ref("");
@@ -168,8 +136,8 @@ const close = () => {
       <UISearch :placeholder="'Search...'"/>
     </div>
     <div class="overview">
-      <CategoryListItem v-for="category in flexworkerCategories" :category="category"
-                        @openAddSkillModal="openAddSkillModal"/>
+      <CategoryListItem v-for="category in flexworkerCategories" :key="category.id" :category="category"
+                        @openAddSkillModal="openAddSkillModal" @deleteSkill="handleDeleteSkill"/>
     </div>
     <div ref="bottom" class="bottom-marker"></div>
   </div>
@@ -184,7 +152,6 @@ const close = () => {
       </UIFeature>
     </div>
   </div>
-    <UIButtonStandard :action="saveSkills" :content="'Save'" v-if="skillsToAdd.length > 0"/>
 </template>
 
 <style scoped lang="scss">

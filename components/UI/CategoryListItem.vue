@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const collapsableValue= ref(false);
 
-const emit = defineEmits(['openAddSkillModal']);
+const emit = defineEmits(['openAddSkillModal', 'deleteSkill']);
 
 const toggleCollapsable = () => {
   collapsableValue.value = !collapsableValue.value;
@@ -21,6 +21,10 @@ const openAddSkillModal = () => {
   emit('openAddSkillModal', props.category.id);
 }
 
+const deleteSkill = (skillId: number) => {
+  emit('deleteSkill', skillId);
+};
+
 </script>
 
 <template>
@@ -28,7 +32,9 @@ const openAddSkillModal = () => {
   <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
   <div v-if='collapsableValue'>
     <div class="properties">
-      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name"></Feature>
+      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name">
+        <UIButtonStandard :action="() => deleteSkill(skill.id)" :icon="IconType.Trashcan" :color="'red'"></UIButtonStandard>
+      </Feature>
       <UIButtonStandard :action="openAddSkillModal" :icon="IconType.Plus"></UIButtonStandard>
     </div>
   </div>
