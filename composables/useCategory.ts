@@ -14,7 +14,7 @@ export const UseCategory = () => {
         if (!response.ok) {
             throw new Error(`Failed to create categories: ${response.statusText}`);
         }
-
+        return response;
     }
 
 

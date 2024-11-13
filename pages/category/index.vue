@@ -78,19 +78,20 @@ const toggleCreateCategoryPopup =()=>{
 const createCategory = async () =>{
   const confirmed = window.confirm("Are you sure you want to add a new category?");
   if (confirmed) {
-    try {
-      await useCategory.createCategory(categoryCreateModelName.value)
-          .then(response =>{
-            if(response.ok){
-              toggleCreateCategoryPopup();
-            }
-          })
-    } catch (err: any) {
-      if (err.response._data.isDuplicate) {
-        showErrorPopup("This category already exists.");
-      } else{
-        showErrorPopup("Failed to create a new category.");
+    try{
+      const response = await useCategory.createCategory(categoryCreateModelName.value)
+      if(response.ok){
+        toggleCreateCategoryPopup();
+        showSuccessPopup("Successfully added a new Category!")
       }
+    }
+    catch (err :any ) {
+        if (err.response._data.isDuplicate) {
+          showErrorPopup("This category already exists.");
+        } else{
+          showErrorPopup("Failed to create a new category.");
+        }
+
     }
   }
 }
