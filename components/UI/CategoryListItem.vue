@@ -1,5 +1,7 @@
 ﻿<script setup lang="ts">
 
+import {IconType} from "~/types/global-types";
+
 interface Skill {
   id: string,
   name: string
@@ -11,6 +13,7 @@ interface Category {
 }
 const props = defineProps<{
   category: Category;
+  action?: () => void;
 }>();
 
 const collapsableValue= ref(false);
@@ -25,7 +28,11 @@ const toggleCollapsable = () => {
 
 <template>
 <div class="list-item">
-  <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
+  <div class="popup-buttons">
+    <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
+    <UIButtonStandard :action="action" :color="'transparent'" :icon="IconType.Edit"></UIButtonStandard>
+  </div>
+
   <div v-if='collapsableValue'>
     <div class="properties" v-for="skill in category.skills" :key="skill.id">
       {{skill.name}}
@@ -91,5 +98,11 @@ const toggleCollapsable = () => {
 .down {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
+}
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 </style>
