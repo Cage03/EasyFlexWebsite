@@ -35,7 +35,7 @@ export const UseCategory = () => {
         return response._data;
     }
 
-    async function updateCategory(id:string, name :string):Promise<any>{
+    async function updateCategory(category:{id:string, name: string}):Promise<any>{
         const response = await fetchFromClient.put(
             `/Category/Update`,
             "main-api",
@@ -43,11 +43,12 @@ export const UseCategory = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({id: id,name: name})
+                body: JSON.stringify({id: category.id,name: category.name})
             })
         if (!response.ok) {
             throw new Error(`Failed to update categories: ${response.statusText}`);
         }
+        return response
         /*
         Error Returns
         when a problem occurs it return a 400 error, this contains a message and 3 other fields, these fields are used to define why it's an error
