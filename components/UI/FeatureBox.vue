@@ -49,6 +49,7 @@ const props = defineProps({
   align-items: center;
   border-radius: 1rem;
   max-width: 75%;
+  width: 75%;
   min-height: 3rem;
   border: 2px solid var(--Primary-Solid, #000000);
   height: fit-content;

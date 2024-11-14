@@ -96,6 +96,10 @@ const toggleEditName = () => {
 
 const saveChanges = async () => {
   try {
+    // remove skills from flexworker object
+    const flexworkerCopy = JSON.parse(JSON.stringify(flexworker.value));
+    delete flexworkerCopy.skills;
+    flexworker.value = flexworkerCopy;
     await useFlexworker.updateFlexworker(flexworker.value);
   } catch (err: any) {
     error.value = err.message;
@@ -144,8 +148,7 @@ const reload = () => {
     <div class="window" v-if="!addSkills">
       <div class="profile_data">
         <div class="name-profile-picture">
-          <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"
-               style="width: 10rem; height: 10rem; border-radius: 50%; object-fit: cover;"/>
+          <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"/>
           <div class="flex-wrapper">
             <h1 @click="toggleEditName" v-if="!isEditingname">{{ flexworker.name || 'Name' }}</h1>
             <input v-if="isEditingname" v-model="flexworker.name" @blur="toggleEditName" style="font-size: 1.5rem">
@@ -195,8 +198,12 @@ const reload = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 }
 
 .window {
@@ -239,6 +246,13 @@ h1 {
   flex-direction: row;
   justify-content: space-between;
   align-items: start;
+
+  img {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 }
 
 .delete-button {
