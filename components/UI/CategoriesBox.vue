@@ -20,30 +20,61 @@ const props = defineProps({
 //   return categoryNames;
 // }
 const skills = ref(props.skills);
+const categoryNames = ref<Record<number, string>>({});
+
+const fetchCategoryNames = async () => {
+  const useCategory = UseCategory();
+  const uniqueCategoryIds = [...new Set(skills.value.map(skill => skill.categoryId))];
+  console.log("Unique Category IDs:", uniqueCategoryIds);
+
+  const names = await Promise.all(uniqueCategoryIds.map(async (categoryId) => {
+    try {
+      const category = await useCategory.fetchCategoryById(categoryId);
+      console.log("Fetched Category:", category);
+      return { id: categoryId, name: category.name };
+    } catch (error) {
+      console.error(`Failed to fetch category with ID ${categoryId}:`, error);
+      return { id: categoryId, name: `Category ${categoryId}` };
+    }
+  }));
+
+  console.log("Category Names:", names);
+  categoryNames.value = names.reduce((acc, { id, name }) => {
+    acc[id] = name;
+    return acc;
+  }, {} as Record<number, string>);
+};
 
 const groupedSkills = computed(() => {
-  return skills.value.reduce((acc, Skill) => {
-    if (!acc[Skill.categoryId]) {
-      acc[Skill.categoryId] = [];
+  return skills.value.reduce((acc, skill) => {
+    if (!acc[skill.categoryId]) {
+      acc[skill.categoryId] = { title: categoryNames.value[skill.categoryId] || `Category ${skill.categoryId}`, skills: [] };
     }
-    acc[Skill.categoryId].push(Skill);
+    acc[skill.categoryId].skills.push(skill);
     return acc;
-  }, {} as Record<number, Skill[]>);
+  }, {} as Record<number, { title: string, skills: Skill[] }>);
 });
 
 watch(() => props.skills, (newSkills) => {
   skills.value = newSkills;
+  fetchCategoryNames()
 });
+
+onMounted(() => {
+  fetchCategoryNames();
+});
+
+
 
 </script>
 
 <template>
   <div>
     <UIFeatureBox
-    v-for="(skills, categoryId) in groupedSkills"
+    v-for="(group, categoryId) in groupedSkills"
     :key="categoryId"
-    :title="`Category ${categoryId}`"
-    :skills="skills"
+    :title="group.title"
+    :skills="group.skills"
     />
   </div>
 </template>

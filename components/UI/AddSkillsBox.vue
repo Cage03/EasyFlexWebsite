@@ -8,6 +8,8 @@ const props = defineProps<{
   flexworker: flexworker;
 }>();
 
+let thisFlexworker = props.flexworker;
+
 const emit = defineEmits(['close']);
 
 const responseCategories = ref<Category[]>([]);
@@ -32,7 +34,7 @@ const loadCategories = async () => {
   flexworkerCategories.value = response.map((category : Category) => {
     return {
       ...category,
-      skills: category.skills.filter(skill => props.flexworker.skills.some(flexSkill => flexSkill.id === skill.id))
+      skills: category.skills.filter(skill => thisFlexworker.skills.some(flexSkill => flexSkill.id === skill.id))
     };
   });
 
@@ -40,12 +42,10 @@ const loadCategories = async () => {
   allCategoriesExceptFlexworker.value = response.map((category : Category) => {
     return {
       ...category,
-      skills: category.skills.filter(skill => !props.flexworker.skills.some(flexSkill => flexSkill.id === skill.id))
+      skills: category.skills.filter(skill => !thisFlexworker.skills.some(flexSkill => flexSkill.id === skill.id))
     };
   }).filter((category : Category) => category.skills.length > 0);
 
-
-  page.value++;
   loading.value = false;
 };
 
@@ -64,75 +64,44 @@ const addSkills = ref(false);
 const addskillsCategoryId = ref(0);
 const skillsAvailable = ref<Skill[]>([]);
 
-const skillsToAdd = ref<Skill[]>([]);
+const reload = async () => {
+  // get flexworker
+  const useFlexworker = UseFlexworker();
+  thisFlexworker = await useFlexworker.getFlexworker(props.flexworker.id);
+  await loadCategories();
+  console.log('reloaded');
+  console.log(thisFlexworker);
+  console.log(flexworkerCategories.value);
+  console.log(allCategories.value);
+}
 
-const addSkill = (skill: Skill) => {
-  skillsToAdd.value.push(skill);
-
-  // remove the skill from the allcategories except flexworker list
-  allCategoriesExceptFlexworker.value = allCategoriesExceptFlexworker.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: category.skills.filter((s) => s.id !== skill.id)
-      };
-    }
-    return category;
-  });
-
-  // add the skill to the flexworker categories list
-  flexworkerCategories.value = flexworkerCategories.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: [...category.skills, skill]
-      };
-    }
-    return category;
-  });
+const addSkill = async (skill: Skill) => {
+  const useFlexworker = UseFlexworker();
+  try{
+    await useFlexworker.addSkillsToFlexworker(props.flexworker.id, [skill.id]);
+  }
+  catch (e) {
+    errorMessage.value = 'Failed to add skill. Please try again.';
+    showErrorPopup(errorMessage.value);
+  }
   addSkills.value = false;
+  await reload();
 };
 
-const deselectSkill = (skill: Skill) => {
-  skillsToAdd.value = skillsToAdd.value.filter((s) => s.id !== skill.id);
-  allCategoriesExceptFlexworker.value = allCategoriesExceptFlexworker.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: [...category.skills, skill]
-      };
-    }
-    return category;
-  });
-
-  flexworkerCategories.value = flexworkerCategories.value.map((category) => {
-    if (category.id === addskillsCategoryId.value) {
-      return {
-        ...category,
-        skills: category.skills.filter((s) => s.id !== skill.id)
-      };
-    }
-    return category;
-  });
+const handleDeleteSkill = async (skillId: number) => {
+  if (!confirm('Are you sure you want to delete this skill?')) return;
+  const useFlexworker = UseFlexworker();
+  try{
+    await useFlexworker.removeSkillsFromFlexworker(props.flexworker.id, [skillId]);
+  }
+  catch (e) {
+    errorMessage.value = 'Failed to remove skill. Please try again.';
+    showErrorPopup(errorMessage.value);
+  }
+  await reload();
 };
 
 const errorMessage = ref<string | null>(null);
-
-const saveSkills = async () => {
-  const useFlexworker = UseFlexworker();
-  try {
-    console.log("Adding skills");
-    await useFlexworker.addSkillsToFlexworker(props.flexworker.id, skillsToAdd.value.map(skill => skill.id));
-    console.log("Skills added");
-    skillsToAdd.value = [];
-    console.log("Skills added");
-    emit('close');
-  }
-  catch (e) {
-    errorMessage.value = 'Failed to add skills. Please try again.';
-    showErrorPopup(errorMessage.value);
-  }
-};
 
 const showPopup = ref(false);
 const popupMessage = ref("");
@@ -168,8 +137,8 @@ const close = () => {
       <UISearch :placeholder="'Search...'"/>
     </div>
     <div class="overview">
-      <CategoryListItem v-for="category in flexworkerCategories" :category="category"
-                        @openAddSkillModal="openAddSkillModal"/>
+      <CategoryListItem v-for="category in flexworkerCategories" :key="category.id" :category="category"
+                        @openAddSkillModal="openAddSkillModal" @deleteSkill="handleDeleteSkill"/>
     </div>
     <div ref="bottom" class="bottom-marker"></div>
   </div>
@@ -179,12 +148,12 @@ const close = () => {
         <h1>Add skills</h1>
         <UIButtonStandard :action="() => addSkills = false" :content="'Close'" :color="'red'"/>
       </div>
-      <UIFeature v-for="skill in skillsAvailable" :key="skill.id" :title="skill.name">
-        <UIButtonStandard :action="() => addSkill(skill)" :content="'Add'"/>
+      <div class="skills">
+      <UIFeature v-for="skill in skillsAvailable" :key="skill.id" :title="skill.name" :onclick="() => addSkill(skill)" class="skill-available">
       </UIFeature>
+      </div>
     </div>
   </div>
-    <UIButtonStandard :action="saveSkills" :content="'Save'" v-if="skillsToAdd.length > 0"/>
 </template>
 
 <style scoped lang="scss">
@@ -265,18 +234,23 @@ const close = () => {
   width: 100%;
   height: 3rem;
   justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .skill-selection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
+  flex-wrap: wrap;
   background-color: var(--white-95);
   padding: 1rem;
   border-radius: 1rem;
   width: 50%;
-  height: 50%;
+  min-height: 50%;
+}
+
+.skills{
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .skills-to-add-container {
@@ -285,6 +259,16 @@ const close = () => {
   gap: 1rem;
   align-items: center;
   justify-content: center;
+}
+
+.skill-available{
+  height: fit-content;
+  :hover{
+    transition: 0.2s;
+    background-color: var(--button-primary-color);
+    color: var(--white-95);
+    border: 1px solid transparent;
+  }
 }
 
 </style>

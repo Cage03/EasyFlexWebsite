@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
 const props = defineProps<{
@@ -7,7 +7,7 @@ const props = defineProps<{
 
 const collapsableValue= ref(false);
 
-const emit = defineEmits(['openAddSkillModal']);
+const emit = defineEmits(['openAddSkillModal', 'deleteSkill']);
 
 const toggleCollapsable = () => {
   collapsableValue.value = !collapsableValue.value;
@@ -18,6 +18,10 @@ const openAddSkillModal = () => {
   emit('openAddSkillModal', props.category.id);
 }
 
+const deleteSkill = (skillId: number) => {
+  emit('deleteSkill', skillId);
+};
+
 </script>
 
 <template>
@@ -25,7 +29,8 @@ const openAddSkillModal = () => {
   <button class="collapsible"   @click="toggleCollapsable"><p><i v-if="!collapsableValue" class="arrow right"></i> <i v-else class="arrow down"></i> {{category.name}}</p></button>
   <div v-if='collapsableValue'>
     <div class="properties">
-      <UIFeature v-for="skill in category.skills" :key="skill.id" :title="skill.name"></UIFeature>
+      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name" :onclick="() => deleteSkill(skill.id)" class="feature">
+      </Feature>
       <UIButtonStandard :action="openAddSkillModal" :icon="IconType.Plus"></UIButtonStandard>
     </div>
   </div>
@@ -33,6 +38,17 @@ const openAddSkillModal = () => {
 </template>
 
 <style scoped lang="scss">
+
+.feature {
+  position: relative;
+
+  :hover{
+    transition: 0.2s;
+    background-color: #d23535;
+    color: white;
+  }
+}
+
 .list-item {
   position: relative;
   width: calc(100% - (4rem + 4px));
@@ -46,8 +62,7 @@ const openAddSkillModal = () => {
 
   .properties {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
+    flex-wrap: wrap;
     width: 100%;
 
     p {

@@ -31,6 +31,7 @@ const props = defineProps({
   gap: 0.625rem;
   border-radius: 1rem;
   border: 1px solid var(--Primary-Solid, #4E8798);
+  height: fit-content;
 
   color: #000;
   font-size: 1.25rem;
