@@ -1,4 +1,10 @@
 import { fetchFromClient } from "~/composables/fetchFromClient"
+import {type Skill, UseSkill} from "./useSkill";
+export interface Category {
+    id:number,
+    name:string,
+    skills:Array<Skill>
+}
 
 export const UseCategory = () => {
     async function createCategory(name :string):Promise<any>{
@@ -66,11 +72,10 @@ export const UseCategory = () => {
         }
         */
     }
-
     return{
         createCategory,
         fetchCategories,
         updateCategory
-    }
+    };
 
-}
+};
