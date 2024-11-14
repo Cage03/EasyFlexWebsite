@@ -94,12 +94,12 @@ const checkIfSameOrExist = (category:{id:string, name:string}) =>{
     Message.value = "The name of the category is still the same";
     isTrue.value = true
   }
-  return {message: Message.value, isTrue: isTrue};
+  return {message: Message.value, isTrue: isTrue.value};
 }
 const updateCategory = async (category:{id:string, name:string}) =>{
   const confirmed = window.confirm("Are you sure you want to update this category?");
   if (confirmed) {
-    let result =checkIfSameOrExist(category);
+    let result = checkIfSameOrExist(category);
     if(result.isTrue){
       showErrorPopup(result.message)
     }

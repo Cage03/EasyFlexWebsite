@@ -20,7 +20,6 @@ const collapsableValue= ref(false);
 
 const toggleCollapsable = () => {
   collapsableValue.value = !collapsableValue.value;
-  console.log(collapsableValue.value);
 }
 
 
