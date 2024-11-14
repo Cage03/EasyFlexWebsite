@@ -78,9 +78,6 @@ const toggleMiscPopup = () => {
 const toggleCreateCategoryPopup =()=>{
   creatCategoryPopupTrigger.value = !creatCategoryPopupTrigger.value;
 }
-const deleteCategory = async (id:string) =>{
-  console.log("Attempted delete of ID: " + id);
-}
 
 const checkIfSameOrExist = (category:{id:string, name:string}) =>{
   let nameAlreadyExists = categories.value.some(x => x.name === category.name && x.id !== category.id)
@@ -145,6 +142,23 @@ const createCategory = async () =>{
         } else{
           showErrorPopup("Failed to create a new category.");
         }
+    }
+  }
+}
+
+const deleteCategory = async (id:string) =>{
+  console.log("Attempted delete of ID: " + id);
+  const confirmed = window.confirm("Are you sure you want to delete this category?");
+  if (confirmed) {
+    try{
+      const response = await useCategory.deleteCategory(id)
+      if(response.ok){
+        toggleCreateCategoryPopup();
+        showSuccessPopup("Successfully removed the category!")
+      }
+    }
+    catch (err :any ) {
+        showErrorPopup("Failed to delete this category.");
     }
   }
 }

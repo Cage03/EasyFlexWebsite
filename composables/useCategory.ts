@@ -66,11 +66,26 @@ export const UseCategory = () => {
         }
         */
     }
+    async function deleteCategory(id :string):Promise<any>{
+        const response = await fetchFromClient.delete(
+            `/Category/Delete/${id}`,
+            "main-api",
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        if (!response.ok) {
+            throw new Error(`Failed to delete categories: ${response.statusText}`);
+        }
+        return response
+    }
 
     return{
         createCategory,
         fetchCategories,
-        updateCategory
+        updateCategory,
+        deleteCategory
     }
 
 }
