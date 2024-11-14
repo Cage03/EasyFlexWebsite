@@ -47,6 +47,7 @@ export const UseSkill = () => {
   
   return{
     data,
-    createSkill
+    createSkill,
+    deleteSkill
   }
 }

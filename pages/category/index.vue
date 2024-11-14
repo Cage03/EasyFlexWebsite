@@ -16,7 +16,7 @@
     </div>
     <div class="overview">
       <template v-for="Category in categories" :key="Category.id">
-        <UICategoryListItem :category="Category"></UICategoryListItem>
+        <UICategoryListItem :category="Category" @deleteSkill="deleteSkill"></UICategoryListItem>
       </template>
       <div ref="bottom" class="bottom-marker"></div>
     </div>
@@ -25,6 +25,7 @@
 </template>
 <script setup lang="ts">
 const useCategory = UseCategory();
+const useSkill = UseSkill();
 
 const creatCategoryPopupTrigger = ref(false);
 const categoryCreateModelName = ref('')
@@ -85,6 +86,8 @@ const createCategory = async () =>{
   }
 }
 
+
+
 const loadMoreCategories = async () => {
   if (loading.value) return;
 
@@ -125,6 +128,21 @@ onMounted(async () =>
     observer.observe(bottomMarker);
   }
 });
+
+const deleteSkill = async (skillId: number) => {
+  const confirmed = window.confirm("Are you sure you want to delete this skill?");
+  if (confirmed) {
+    try {
+      await useSkill.deleteSkill(skillId);
+      categories.value = categories.value.map(category => {
+        category.skills = category.skills.filter(skill => skill.id !== skillId);
+        return category;
+      });
+    } catch (err: any) {
+      showErrorPopup("Failed to delete skill");
+    }
+  }
+}
 
 </script>
 <style scoped lang="scss">

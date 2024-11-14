@@ -1,4 +1,7 @@
 <script setup lang="ts">
+
+import type {Category} from "~/composables/useCategory";
+import Feature from "~/components/UI/Feature.vue";
 import {IconType} from "~/types/global-types";
 
 const props = defineProps<{
