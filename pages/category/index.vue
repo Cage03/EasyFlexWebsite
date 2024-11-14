@@ -138,6 +138,7 @@ const deleteSkill = async (skillId: number) => {
         category.skills = category.skills.filter(skill => skill.id !== skillId);
         return category;
       });
+      showSuccessPopup("Skill deleted successfully");
     } catch (err: any) {
       showErrorPopup("Failed to delete skill");
     }
