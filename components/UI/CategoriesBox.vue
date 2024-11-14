@@ -1,11 +1,11 @@
 ﻿<script setup lang="ts">
 import { computed } from 'vue';
-import type {skill} from "~/composables/skill";
+import {type Skill} from '~/composables/useSkill';
 import {list} from "postcss";
 
 const props = defineProps({
   skills: {
-    type: Array<skill>,
+    type: Array<Skill>,
     required: true
   }
 })
@@ -22,13 +22,13 @@ const props = defineProps({
 const skills = ref(props.skills);
 
 const groupedSkills = computed(() => {
-  return skills.value.reduce((acc, skill) => {
-    if (!acc[skill.categoryId]) {
-      acc[skill.categoryId] = [];
+  return skills.value.reduce((acc, Skill) => {
+    if (!acc[Skill.categoryId]) {
+      acc[Skill.categoryId] = [];
     }
-    acc[skill.categoryId].push(skill);
+    acc[Skill.categoryId].push(Skill);
     return acc;
-  }, {} as Record<number, skill[]>);
+  }, {} as Record<number, Skill[]>);
 });
 
 watch(() => props.skills, (newSkills) => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
-import type {skill} from "~/composables/skill";
 import CategoriesBox from "~/components/UI/CategoriesBox.vue";
+import AddSkillsBox from "~/components/UI/AddSkillsBox.vue";
 
 const useFlexworker = UseFlexworker();
 
@@ -26,6 +26,14 @@ const originalFlexworker = ref<flexworker>({
   skills: []
 });
 
+const phoneNumberRegex = ref("^\\+?[0-9]{1,3}[ \\-]?\\(?[0-9]{1,4}\\)?[ \\-]?[0-9]{3}[ \\-]?[0-9]{3,4}$");
+
+const restrictToNumbers = (event: KeyboardEvent) => {
+  const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Delete", "+", "(", ")", " "];
+  if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
+    event.preventDefault();
+  }
+};
 
 const api = useRuntimeConfig().public.apiUrl;
 const error = ref(null);
@@ -58,16 +66,20 @@ const togglePopup = () => {
   }
 };
 
-onMounted(async () => {
+
+async function getFlexWorkerData() {
   try {
     const data = await useFlexworker.getFlexworker(id);
     flexworker.value = data;
     originalFlexworker.value = JSON.parse(JSON.stringify(data));
-    console.log(flexworker.value);
   } catch (err: any) {
     error.value = err.message;
     showErrorPopup("Error occured while trying to get flexworker");
   }
+}
+
+onMounted(async () => {
+  await getFlexWorkerData();
 })
 
 watch(flexworker, (newValue) => {
@@ -104,7 +116,6 @@ const deleteFlexworker = async () => {
       popupMessage.value = "Flexworker deleted successfully!";
       showPopup.value = true;
     } catch (err) {
-      console.log(err);
       shouldRedirect.value = false;
       popupMessage.value = "An error occurred while trying to delete flexworker";
       showPopup.value = true;
@@ -113,12 +124,24 @@ const deleteFlexworker = async () => {
     popupMessage.value = "Flexworker deletion canceled.";
   }
 }
+
+const addSkills = ref(false);
+const addSkill = () => {
+  addSkills.value = !addSkills.value;
+}
+
+const reload = () => {
+  addSkills.value = false;
+  getFlexWorkerData();
+}
+
 </script>
 
 <template>
   <div class="register_page">
     <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
-    <div class="window">
+      <AddSkillsBox v-if="addSkills" :flexworker="flexworker" @close="reload"/>
+    <div class="window" v-if="!addSkills">
       <div class="profile_data">
         <div class="name-profile-picture">
           <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"
@@ -135,7 +158,10 @@ const deleteFlexworker = async () => {
         </div>
         <div class="text-container">
           <label for="phoneNumber">Phone number:</label>
-          <UIInputField id="phoneNumber" v-model="flexworker.phoneNumber" placeholder="Phone number" required/>
+          <UIInputField id="phoneNumber" @keydown="restrictToNumbers" v-model="flexworker.phoneNumber" placeholder="Phone number"
+                        type="tel" inputmode="numeric"
+                        :pattern="phoneNumberRegex" title="Please enter a valid phone number (e.g., +1 234-567-8901)"
+                        required/>
         </div>
         <div class="text-container">
           <label for="address">Address:</label>
@@ -150,6 +176,8 @@ const deleteFlexworker = async () => {
           <UIInputField id="profilePictureUrl" v-model="flexworker.profilePictureUrl" placeholder="Profile picture" type="url"/>
         </div>
         <CategoriesBox :skills="flexworker.skills"/>
+        <UIButtonStandard :action="addSkill" :icon="IconType.Plus" :content="'Add skills'"/>
+
         <div class="save-button-container" v-if="isEdited">
           <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
@@ -206,7 +234,7 @@ h1 {
   }
 }
 
-.name-profile-picture{
+.name-profile-picture {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

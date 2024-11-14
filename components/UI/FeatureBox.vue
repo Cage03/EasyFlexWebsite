@@ -1,12 +1,13 @@
 ﻿<script setup lang="ts">
 import { defineProps, ref } from 'vue';
+import type {Skill} from "~/composables/useSkill";
 const props = defineProps({
   title: {
     type: String,
     default: null
   },
   skills: {
-    type: Array<skill>,
+    type: Array<Skill>,
     required: true
   }
 });
