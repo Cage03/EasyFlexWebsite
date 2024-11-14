@@ -1,28 +1,7 @@
-<template>
-  <div v-if="!isLoading" class="matching-page">
-    <h2>Matches for "{{ pageData.job.title }}"</h2>
-    <div class="matches">
-      <div class="match" v-for="match in roundedResults" :key="match.flexWorkerId">
-        <div class="profile-picture-orb">
-          <img :src="match.profilePictureUrl" alt="Profile picture">
-          <h1 class="compatibility">{{ match.compatibility }}%</h1>
-        </div>
-        <h1>{{ match.name }}</h1>
-      </div>
-    </div>
-  </div>
-  <div v-if="isLoading" class="loading-screen">
-    <div class="loading-bar">
-      <div class="background">
-        <h1 :style="{ '--loading-progress': percentage + '%' }">Finding the perfect "{{ pageData.job.title }}"</h1>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
+const useJob = UseJob();
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const percentage = ref(0);
 const step = ref(0);
 const content = Array(10).fill(null);
@@ -138,6 +117,28 @@ watch(percentage, (newVal) => {
   document.documentElement.style.setProperty('--loading-progress', `${newVal}%`);
 });
 </script>
+
+<template>
+  <div v-if="!isLoading" class="matching-page">
+    <h2>Matches for "{{ pageData.job.title }}"</h2>
+    <div class="matches">
+      <div class="match" v-for="match in roundedResults" :key="match.flexWorkerId">
+        <div class="profile-picture-orb">
+          <img :src="match.profilePictureUrl" alt="Profile picture">
+          <h1 class="compatibility">{{ match.compatibility }}%</h1>
+        </div>
+        <h1>{{ match.name }}</h1>
+      </div>
+    </div>
+  </div>
+  <div v-if="isLoading" class="loading-screen">
+    <div class="loading-bar">
+      <div class="background">
+        <h1 :style="{ '--loading-progress': percentage + '%' }">Finding the perfect "{{ pageData.job.title }}"</h1>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="scss">
 .matching-page {
