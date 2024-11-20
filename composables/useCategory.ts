@@ -1,4 +1,10 @@
 import { fetchFromClient } from "~/composables/fetchFromClient"
+import {type Skill, UseSkill} from "./useSkill";
+export interface Category {
+    id:number,
+    name:string,
+    skills:Array<Skill>
+}
 
 export const UseCategory = () => {
     async function createCategory(name :string):Promise<any>{
@@ -81,11 +87,24 @@ export const UseCategory = () => {
         return response
     }
 
+    async function fetchCategoryById(id: number): Promise<any> {
+        const response = await fetchFromClient.get(`/Category/Get?id=${id}`, "main-api");
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch category: ${response.statusText}`);
+        }
+
+        return response._data;
+    }
+
+
     return{
         createCategory,
         fetchCategories,
         updateCategory,
-        deleteCategory
-    }
+        deleteCategory,
+        fetchCategoryById
+    };
+
 
 }

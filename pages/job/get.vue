@@ -173,13 +173,18 @@ const saveChanges = async () => {
 </template>
 
 <style scoped lang="scss">
+
 .register_page {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 }
 
 .window {

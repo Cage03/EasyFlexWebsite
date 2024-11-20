@@ -1,16 +1,9 @@
 ﻿<script setup lang="ts">
 
+import type {Category} from "~/composables/useCategory";
+import Feature from "~/components/UI/Feature.vue";
 import {IconType} from "~/types/global-types";
 
-interface Skill {
-  id: string,
-  name: string
-}
-interface Category {
-  id: string;
-  name: string;
-  skills: Skill[];
-}
 const props = defineProps<{
   category: Category;
   action?: () => void;
@@ -18,11 +11,19 @@ const props = defineProps<{
 
 const collapsableValue= ref(false);
 
+const emit = defineEmits(['openAddSkillModal', 'deleteSkill']);
+
 const toggleCollapsable = () => {
   collapsableValue.value = !collapsableValue.value;
-  console.log(collapsableValue.value);
 }
 
+const openAddSkillModal = () => {
+  emit('openAddSkillModal', props.category.id);
+}
+
+const deleteSkill = (skillId: number) => {
+  emit('deleteSkill', skillId);
+};
 
 </script>
 
@@ -34,15 +35,27 @@ const toggleCollapsable = () => {
   </div>
 
   <div v-if='collapsableValue'>
-    <div class="properties" v-for="skill in category.skills" :key="skill.id">
-      {{skill.name}}
+    <div class="properties">
+      <Feature v-for="skill in category.skills" :key="skill.id" :title="skill.name" :onclick="() => deleteSkill(skill.id)" class="feature">
+      </Feature>
+      <UIButtonStandard :action="openAddSkillModal" :icon="IconType.Plus"></UIButtonStandard>
     </div>
-    <div>(+)</div>
   </div>
 </div>
 </template>
 
 <style scoped lang="scss">
+
+.feature {
+  position: relative;
+
+  :hover{
+    transition: 0.2s;
+    background-color: #d23535;
+    color: white;
+  }
+}
+
 .list-item {
   position: relative;
   width: calc(100% - (4rem + 4px));
@@ -56,8 +69,7 @@ const toggleCollapsable = () => {
 
   .properties {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
+    flex-wrap: wrap;
     width: 100%;
 
     p {

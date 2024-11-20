@@ -70,7 +70,10 @@ const showEditPopUp = (category: CategoryInterface) => {
 const toggleEditPopupTrigger = () =>{
   categoryEditPopupTrigger.value = !categoryEditPopupTrigger.value
 }
-
+const setSelected = (id:string, name:string) =>{
+  selectedCategory.value.id = id
+  selectedCategory.value.name = name
+}
 const toggleMiscPopup = () => {
   showMiscPopup.value = !showMiscPopup.value;
 }
@@ -90,20 +93,30 @@ const checkIfSameOrExist = (category:{id:string, name:string}) =>{
     Message.value = "The name of the category is still the same";
     isTrue.value = true
   }
-  return {message: Message.value, isTrue: isTrue};
+  return {message: Message.value, isTrue: isTrue.value};
 }
 const updateCategory = async (category:{id:string, name:string}) =>{
   const confirmed = window.confirm("Are you sure you want to update this category?");
+  const categoryToUpdate = categories.value.find(x => x.id === category.id);
   if (confirmed) {
-    let result =checkIfSameOrExist(category);
+    let result = checkIfSameOrExist(category);
     if(result.isTrue){
       showErrorPopup(result.message)
+      if (categoryToUpdate) {
+        setSelected(categoryToUpdate.id, categoryToUpdate.name)
+      }
     }
     else{
       try{
         const response = await useCategory.updateCategory(category)
         if(response.ok){
           toggleEditPopupTrigger();
+          if (category) {
+            if (categoryToUpdate) {
+              categoryToUpdate.name = category.name;
+            }
+          }
+
           showSuccessPopup("Successfully updated the category!")
         }
       }
@@ -119,6 +132,11 @@ const updateCategory = async (category:{id:string, name:string}) =>{
         }
         else{
           showErrorPopup("Failed to create a new category.");
+        }
+      }
+      finally {
+        if (categoryToUpdate) {
+          setSelected(categoryToUpdate.id, categoryToUpdate.name)
         }
       }
     }
