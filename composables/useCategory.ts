@@ -72,6 +72,20 @@ export const UseCategory = () => {
         }
         */
     }
+    async function deleteCategory(id :string):Promise<any>{
+        const response = await fetchFromClient.delete(
+            `/Category/Delete?id=${id}`,
+            "main-api",
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        if (!response.ok) {
+            throw new Error(`Failed to delete categories: ${response.statusText}`);
+        }
+        return response
+    }
 
     async function fetchCategoryById(id: number): Promise<any> {
         const response = await fetchFromClient.get(`/Category/Get?id=${id}`, "main-api");
@@ -88,7 +102,9 @@ export const UseCategory = () => {
         createCategory,
         fetchCategories,
         updateCategory,
+        deleteCategory,
         fetchCategoryById
     };
 
-};
+
+}
