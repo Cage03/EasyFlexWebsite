@@ -68,7 +68,7 @@ export const UseCategory = () => {
     }
     async function deleteCategory(id :string):Promise<any>{
         const response = await fetchFromClient.delete(
-            `/Category/Delete/${id}`,
+            `/Category/Delete?id=${id}`,
             "main-api",
             {
                 headers: {

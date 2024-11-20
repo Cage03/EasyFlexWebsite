@@ -26,7 +26,6 @@
 </div>
 </template>
 <script setup lang="ts">
-import {IconType} from "~/types/global-types";
 import {UseCategory} from "~/composables/useCategory";
 const useCategory = UseCategory();
 
@@ -153,7 +152,7 @@ const deleteCategory = async (id:string) =>{
     try{
       const response = await useCategory.deleteCategory(id)
       if(response.ok){
-        toggleCreateCategoryPopup();
+        toggleEditPopupTrigger();
         showSuccessPopup("Successfully removed the category!")
       }
     }
