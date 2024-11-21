@@ -98,7 +98,7 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 1rem;
+  padding-top: 2.5rem;
 
   .overview-container {
     width: 70%;
