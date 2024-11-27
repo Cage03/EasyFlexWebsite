@@ -1,9 +1,6 @@
 ﻿import {Utils} from "~/scripts/script-collection";
 
-export const UseJob = () => {
-  const config = useRuntimeConfig();
-  const apiUrl = config.public.apiUrl;
-
+export const UseJob = () => {  
   const defaultData = {
     id: null,
     title: "",
