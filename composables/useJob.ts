@@ -38,21 +38,13 @@ export const UseJob = () => {
 
     loading.value = true;
     try {
-      const response = await fetch(
-        `${apiUrl}/Job/GetJobs?pageNumber=${page.value}&limit=${limit.value}&search=${searchQuery.value}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetchFromClient.get(`/Job/GetJobs?pageNumber=${page.value}&limit=${limit.value}&search=${searchQuery.value}`, "main-api");
 
       if (!response.ok) {
         throw new Error(`Failed to fetch jobs: ${response.statusText}`);
       }
+      const newJobs = await response._data as any;
 
-      const newJobs = await response.json();
       jobs.value = [...jobs.value, ...newJobs];
       page.value++;
     } catch (error: any) {
@@ -64,18 +56,13 @@ export const UseJob = () => {
 
   const fetchJobById = async (id: number) => {
     try {
-      const response = await fetch(`${apiUrl}/Job/Get?id=${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetchFromClient.get(`/Job/Get?id=${id}`, "main-api");
 
       if (!response.ok) {
         throw new Error(`Failed to fetch job: ${response.statusText}`);
       }
 
-      const jobData = await response.json();
+      const jobData = await response._data as any;
       currentJob.value = jobData;
       originalJob.value = Utils.deepCopy(jobData);
     } catch (error: any) {
@@ -85,11 +72,7 @@ export const UseJob = () => {
 
   const saveJob = async (job: typeof defaultData) => {
     try {
-      const response = await fetch(`${apiUrl}/Job/Update`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetchFromClient.post(`/Job/Update`, "main-api", {
         body: JSON.stringify(job),
       });
 
@@ -104,12 +87,7 @@ export const UseJob = () => {
   };
 
   const deleteJob = async (id: number) => {
-    const response = await fetch(`${apiUrl}/Job/Delete?id=${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetchFromClient.delete(`/Job/Delete?id=${id}`, "main-api");
 
     if (!response.ok) {
       throw new Error(`Failed to delete job: ${response.statusText}`);
@@ -136,6 +114,30 @@ export const UseJob = () => {
     },
   });
 
+  const registerJob = async (jobData: {
+    name: string;
+    address: string;
+    description: string;
+    minHours: string;
+    maxHours: string;
+    startDate: string;
+    endDate: string;
+  }) => {
+    const response = await fetch(`${apiUrl}/Job/Register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jobData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to register job: ${response.statusText}`);
+    }
+
+    return await response.json();
+  };
+
   const setters = {
     limit: (newLimit: number) => {
       limit.value = newLimit;
@@ -160,5 +162,6 @@ export const UseJob = () => {
     computedSearchQuery,
     setters,
     formatJobProperties,
+    registerJob
   };
 };
