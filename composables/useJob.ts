@@ -122,12 +122,9 @@ export const UseJob = () => {
     maxHours: string;
     startDate: string;
     endDate: string;
-  }) => {
-    const response = await fetch(`${apiUrl}/Job/Register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  }):Promise<number> => {
+    
+    const response = await fetchFromClient.post(`/Job/Register`, "main-api", {
       body: JSON.stringify(jobData),
     });
 
@@ -135,7 +132,7 @@ export const UseJob = () => {
       throw new Error(`Failed to register job: ${response.statusText}`);
     }
 
-    return await response.json();
+    return response._data as number;
   };
 
   const setters = {
