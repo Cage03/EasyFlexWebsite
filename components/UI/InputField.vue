@@ -25,7 +25,7 @@ const FocusOnInput = () =>  {
   }
 }
 onMounted(() => {
-  FocusOnInput()
+  //FocusOnInput()
 })
 </script>
 

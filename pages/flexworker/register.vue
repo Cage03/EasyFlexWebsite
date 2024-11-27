@@ -109,14 +109,12 @@ async function registerFlexworker() {
             <img src="public/icons/avatar.svg" alt="Profile Picture">
           </div>
           <div class="profile_data">
-            <UIInputField placeholder="Name" v-model="name" style="font-size: 1.5rem"/>
-            <UIInputField placeholder="Address" v-model="address" />
-            <UIInputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" />
-            <UIInputField placeholder="Email" v-model="email" type="email" />
-            <UIInputField placeholder="Phone number" v-model="phoneNumber" type="tel" :pattern=phoneNumberRegex
-                          title="Please enter a valid phone number (e.g., +1 234-567-8901)"
-                          required/>
-            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" />
+            <UIInputField placeholder="Name" v-model="name" style="font-size: 1.5rem" id="name-input" />
+            <UIInputField placeholder="Address" v-model="address" id="address-input" />
+            <UIInputField placeholder="Date of Birth" v-model="dateOfBirth" type="date" id="dob-input" />
+            <UIInputField placeholder="Email" v-model="email" type="email" id="email-input" />
+            <UIInputField placeholder="Phone number" v-model="phoneNumber" type="tel" :pattern=phoneNumberRegex title="Please enter a valid phone number (e.g., +1 234-567-8901)" required id="phone-input" />
+            <UIInputField placeholder="Profile picture url" v-model="profilePictureUrl" type="url" id="profile-picture-input" />
           </div>
         </div>
         <div class="features-window">
