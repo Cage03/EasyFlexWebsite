@@ -2,7 +2,7 @@
 import {IconType} from '~/types/global-types';
 
 const useJob = UseJob();
-const {data, fetchJobs, deleteJob} = useJob;
+const {data, fetchJobs} = useJob;
 
 const showPopup = ref(false);
 const popupMessage = ref('');
