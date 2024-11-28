@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "cross-env NUXT_ENV=development nuxt dev",
+    "test": "cross-env NUXT_ENV=test nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -14,6 +15,7 @@
     "vue": "latest"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "cypress": "^13.16.0",
     "sass": "^1.79.5",
     "sass-embedded": "^1.79.4"

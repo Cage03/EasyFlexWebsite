@@ -81,19 +81,19 @@ function showErrorPopup(message: string) {
         <UIInputField id="address" :placeholder="'Address'" v-model="address" type="text" required />
         <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="description" type="text" rows="5"
           autoResize required />
-        <UIInputField class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required />
-        <UIInputField class="hours" :placeholder="'Max hours'" v-model="maxHours" type="number" required />
+        <UIInputField id="min-hours" class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required />
+        <UIInputField id="max-hours" class="hours" :placeholder="'Max hours'" v-model="maxHours" type="number" required />
         <div class="date-picker-container">
           <label>Start date:</label>
-          <UIInputField class="date-picker" v-model="startDate" type="date" required />
+          <UIInputField id="start-date" class="date-picker" v-model="startDate" type="date" required />
         </div>
         <div class="date-picker-container">
           <label>End date:</label>
-          <UIInputField class="date-picker" v-model="endDate" type="date" required />
+          <UIInputField id="end-date" class="date-picker" v-model="endDate" type="date" required />
         </div>
       </div>
       <div class="register-button-container">
-        <UIButtonStandard :content="'Register'" />
+        <UIButtonStandard id="register-button" :content="'Register'" />
       </div>
     </form>
   </div>

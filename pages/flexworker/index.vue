@@ -62,23 +62,18 @@ const redirectToCreate = () => {
   router.push('/flexworker/register') //todo find right page to redirect to
 }
 
-const api = useRuntimeConfig().public.apiUrl;
 const error = ref(null);
 
 const fetchFlexworkers = async () => {
   if (loading.value) return;
   loading.value = true;
   try {
-    const res = await fetch(`${api}/Flexworker/Get?limit=${limit}&page=${page.value}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const res = await fetchFromClient.get(`/Flexworker/Get?limit=${limit}&page=${page.value}`, "main-api")
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
-    let data = await res.json();
+    let data = res._data as any;
+    console.log(data);
     data = data.map((flexworker: Flexworker) => ({
       id: flexworker.id,
       name: flexworker.name,
