@@ -83,11 +83,7 @@ onMounted(async () => {
 })
 
 watch(flexworker, (newValue) => {
-  if (JSON.stringify(newValue) !== JSON.stringify(originalFlexworker.value)) {
-    isEdited.value = true;
-  } else {
-    isEdited.value = false;
-  }
+  isEdited.value = JSON.stringify(newValue) !== JSON.stringify(originalFlexworker.value);
 }, {deep: true});
 
 const toggleEditName = () => {
