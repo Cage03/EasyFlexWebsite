@@ -2,8 +2,7 @@
 on:
   workflow_dispatch:
   workflow_run:
-    workflows:
-      - Integration
+    workflows: ["Integration"]
     types:
       - success
 
