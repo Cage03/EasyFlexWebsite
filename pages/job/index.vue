@@ -1,18 +1,71 @@
-﻿<template>
+﻿<script setup lang="ts">
+import {IconType} from '~/types/global-types';
+
+const useJob = UseJob();
+const {data, fetchJobs} = useJob;
+
+const showPopup = ref(false);
+const popupMessage = ref('');
+
+const togglePopup = () => {
+  showPopup.value = !showPopup.value;
+};
+
+const redirectToCreate = () => {
+  const router = useRouter();
+  router.push('/job/register');
+};
+
+onMounted(async () => {
+  try {
+    await fetchJobs();
+
+    const observer = new IntersectionObserver(
+        async (entries) => {
+          if (entries[0].isIntersecting) {
+            await fetchJobs();
+          }
+        },
+        {root: null, rootMargin: '0px', threshold: 1.0}
+    );
+
+    const bottomMarker = document.querySelector('.bottom-marker');
+    if (bottomMarker) {
+      observer.observe(bottomMarker);
+    }
+  } catch (error) {
+    popupMessage.value = 'Error occurred while trying to load jobs.';
+    togglePopup();
+  }
+});
+</script>
+
+<template>
   <div class="job-overview-page">
-    <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{popupMessage}}</UIPopup>
+    <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">
+      {{ popupMessage }}
+    </UIPopup>
     <div class="overview-container">
       <div class="functionality">
         <div class="search-bar-container">
-          <UISearch :placeholder="'Search...'" v-model="searchQuery"/>
+          <UISearch :placeholder="'Search...'" 
+                    v-model="useJob.computedSearchQuery.value"/>
         </div>
         <div class="buttons">
-          <UIButtonStandard :action="redirectToCreate" :icon="IconType.Plus" :content="'Create New'"/>
+          <UIButtonStandard
+              :action="redirectToCreate"
+              :icon="IconType.Plus"
+              :content="'Create New'"
+          />
         </div>
       </div>
       <div class="overview">
-        <template v-for="job in jobs">
-          <UIListitem :properties="formatJobProperties(job)" :redirect="`/job/get?id=${job.id}`"/>
+        <template v-for="job in data" :key="job.id">
+          <UIListitem
+              v-if="job"
+              :properties="useJob.formatJobProperties(job)"
+              :redirect="`/job/get?id=${job.id}`"
+          />
         </template>
         <div ref="bottom" class="bottom-marker"></div>
       </div>
@@ -20,75 +73,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import {IconType} from "~/types/global-types";
-
-const useJob = UseJob()
-
-const showPopup = ref(false)
-const popupMessage = ref("")
-
-const togglePopup = () => {
-  showPopup.value = !showPopup.value;
-}
-
-const page = ref(1);
-const limit = 10;
-const loading = ref(false);
-
-let jobs = ref([]) as any
-
-const formatJobProperties = (job: Record<string, any>) => {
-  return Object.entries(job)
-      .filter(([key]) => key !== 'id')
-      .slice(0, 3)
-      .map(([key, value]) => ({key, value}));
-};
-
-const searchQuery = ref("");
-
-const redirectToCreate = () => {
-  const router = useRouter();
-  router.push('/job/register')
-}
-
-const loadMoreJobs = async () => {
-  if (loading.value) return;
-  loading.value = true;
-
-  try {
-    const newJobs = await useJob.getJobs(page.value, limit);
-    if (newJobs.length) {
-      jobs.value = [...jobs.value, ...newJobs];
-      page.value++;
-    }
-  } catch (error) {
-    popupMessage.value = "Error occured while trying to get jobs";
-    showPopup.value = true;
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(async () => {
-  await loadMoreJobs();
-
-  const observer = new IntersectionObserver(async (entries) => {
-    if (entries[0].isIntersecting) {
-      await loadMoreJobs();
-    }
-  }, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 1.0
-  });
-
-  const bottomMarker = document.querySelector('.bottom-marker');
-  if (bottomMarker) {
-    observer.observe(bottomMarker);
-  }
-})
-</script>
 
 <style scoped lang="scss">
 .job-overview-page {
@@ -149,7 +133,7 @@ onMounted(async () => {
 
       &::-webkit-scrollbar-thumb {
         background-color: var(--text-primary-color);
-        border-radius: 1rem; 
+        border-radius: 1rem;
         border: 3px solid #f1f1f1;
       }
     }
