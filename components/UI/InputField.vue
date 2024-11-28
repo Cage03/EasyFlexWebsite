@@ -19,14 +19,7 @@ const emit = defineEmits(['update:modelValue'])
 const updateValue = (event: Event) => {
   emit('update:modelValue', (event.target as HTMLInputElement).value)
 }
-const FocusOnInput = () =>  {
-  if (inputRef.value) {
-    inputRef.value.focus()
-  }
-}
-onMounted(() => {
-  //FocusOnInput()
-})
+
 </script>
 
 <template>
