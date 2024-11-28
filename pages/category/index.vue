@@ -1,226 +1,154 @@
 <template>
-<div class="category-overview-page">
-  <div class="overview-container">
-    <UIPopup :button-text="'Confirm'" @close="createCategory"  @xButtonFunction="toggleCreateCategoryPopup" :x-button="true" :show="creatCategoryPopupTrigger">
-      <UIInputField v-model="categoryCreateModelName" placeholder="Name" style="font-size: 1.5rem" />
-    </UIPopup>
-    <UICategoryEditPopUp :category="{id:selectedCategory.id, name:selectedCategory.name}" :show="categoryEditPopupTrigger"
-                         @close="toggleEditPopupTrigger" @deleteCategory="deleteCategory"  @updateCategory="updateCategory" />
-    <UIPopup :button-text="'Close'" :show="showMiscPopup" @close="toggleMiscPopup()">{{ miscPopupMessage }}</UIPopup>
-    <h1>Category and skill manager</h1>
-    <div class="functionality">
-      <div class="search-bar-container">
-        <UISearch :placeholder="'Search...'" v-model="searchQuery"/>
+  <div class="category-overview-page">
+    <div class="overview-container">
+      <UIPopup
+          :button-text="'Confirm'"
+          @close="togglePopup('createCategory')"
+          :show="popupState.createCategory"
+      >
+        <UIInputField v-model="categoryNameInput" placeholder="Name" />
+      </UIPopup>
+      <UIPopup
+          :button-text="'Close'"
+          @close="togglePopup('misc')"
+          :show="popupState.misc"
+      >
+        {{ miscPopupMessage }}
+      </UIPopup>
+      <UICategoryEditPopUp
+          v-if="selectedCategory"
+          :category="selectedCategory as any"
+          :show="popupState.editCategory"
+          @close="togglePopup('editCategory')"
+          @updateCategory="updateCategory"
+          @deleteCategory="deleteCategory"
+      />
+      <h1>Category and Skill Manager</h1>
+      <div class="functionality">
+        <div class="search-bar-container">
+          <UISearch v-model="searchQuery" placeholder="Search..." />
+        </div>
+        <div class="buttons">
+          <UIButtonStandard
+              :action="() => togglePopup('createCategory')"
+              :content="'Add Category'"
+          />
+        </div>
       </div>
-      <div class="buttons">
-        <UIButtonStandard :action="toggleCreateCategoryPopup"  :content="'add category'"></UIButtonStandard>
+      <div class="overview">
+        <UICategoryListItem
+            v-for="category in categories"
+            :key="category.id"
+            :category="category"
+            :action="() => selectCategoryForEditing(category)"
+        />
+        <div ref="bottom" class="bottom-marker"></div>
       </div>
-    </div>
-    <div class="overview">
-      <template v-for="Category in categories" :key="Category.id">
-        <UICategoryListItem  :category="Category" :action="() => showEditPopUp(Category)"></UICategoryListItem>
-      </template>
-      <div ref="bottom" class="bottom-marker"></div>
     </div>
   </div>
-</div>
 </template>
+
 <script setup lang="ts">
-import {UseCategory} from "~/composables/useCategory";
+import { UseCategory } from "~/composables/useCategory";
+import type { Category } from "~/composables/useCategory";
+
 const useCategory = UseCategory();
 
-interface CategoryInterface {
-  id: string,
-  name: string,
-  skills:{
-    id: string,
-    name: string,
-  }[]
-}
-const creatCategoryPopupTrigger = ref(false);
-const categoryEditPopupTrigger = ref(false);
-const categoryCreateModelName = ref('')
-let categories = ref<CategoryInterface[]>([])
-let selectedCategory = ref<CategoryInterface>({id:'',name:'',skills:[]})
+const categories = ref<Category[]>([]);
+const selectedCategory = ref<Category | null>(null);
+
+const popupState = reactive({
+  createCategory: false,
+  editCategory: false,
+  misc: false,
+});
+
+const miscPopupMessage = ref("");
+
+const categoryNameInput = ref("");
+const searchQuery = ref("");
+
 const page = ref(1);
 const limit = 10;
-const loading = ref(false);
+const isLoading = ref(false);
+const canFetchMore = ref(true);
 
-const showMiscPopup = ref(false)
-const miscPopupMessage = ref("")
-const canFetchAgain = ref(true)
+const togglePopup = (popupKey: keyof typeof popupState) => {
+  popupState[popupKey] = !popupState[popupKey];
+};
 
-const searchQuery = ref('') ///currently does nothing
-
-function showSuccessPopup( message: string ) {
-  toggleMiscPopup()
+const showPopupMessage = (message: string) => {
   miscPopupMessage.value = message;
-}
-
-function showErrorPopup(message: string) {
-  toggleMiscPopup()
-  miscPopupMessage.value = 'Something went wrong! \n' + message;
-}
-const showEditPopUp = (category: CategoryInterface) => {
-
-  selectedCategory.value.id = category.id;
-  selectedCategory.value.name = category.name;
-  toggleEditPopupTrigger()
-}
-const toggleEditPopupTrigger = () =>{
-  categoryEditPopupTrigger.value = !categoryEditPopupTrigger.value
-}
-const setSelected = (id:string, name:string) =>{
-  selectedCategory.value.id = id
-  selectedCategory.value.name = name
-}
-const toggleMiscPopup = () => {
-  showMiscPopup.value = !showMiscPopup.value;
-}
-const toggleCreateCategoryPopup =()=>{
-  creatCategoryPopupTrigger.value = !creatCategoryPopupTrigger.value;
-}
-
-const checkIfSameOrExist = (category:{id:string, name:string}) =>{
-  let nameAlreadyExists = categories.value.some(x => x.name === category.name && x.id !== category.id)
-  let Message = ref('')
-  let isTrue = ref(false);
-  if(nameAlreadyExists){
-    Message.value = "A category with this name already exists";
-    isTrue.value =true
-  }
-  else if(category.name.toLowerCase() === selectedCategory.value.name.toLowerCase() && category.name === selectedCategory.value.name){
-    Message.value = "The name of the category is still the same";
-    isTrue.value = true
-  }
-  return {message: Message.value, isTrue: isTrue.value};
-}
-const updateCategory = async (category:{id:string, name:string}) =>{
-  const confirmed = window.confirm("Are you sure you want to update this category?");
-  const categoryToUpdate = categories.value.find(x => x.id === category.id);
-  if (confirmed) {
-    let result = checkIfSameOrExist(category);
-    if(result.isTrue){
-      showErrorPopup(result.message)
-      if (categoryToUpdate) {
-        setSelected(categoryToUpdate.id, categoryToUpdate.name)
-      }
-    }
-    else{
-      try{
-        const response = await useCategory.updateCategory(category)
-        if(response.ok){
-          toggleEditPopupTrigger();
-          if (category) {
-            if (categoryToUpdate) {
-              categoryToUpdate.name = category.name;
-            }
-          }
-
-          showSuccessPopup("Successfully updated the category!")
-        }
-      }
-      catch (err :any ) {
-        if (err.response._data.alreadyExists) {
-          showErrorPopup("A category with this name already exists");
-        }
-        else if(err.response._data.doesNotExist){
-          showErrorPopup("the category you are modifying doesn't exist");
-        }
-        else if(err.response._data.isSameName){
-          showErrorPopup("The name of the category is still the same");
-        }
-        else{
-          showErrorPopup("Failed to create a new category.");
-        }
-      }
-      finally {
-        if (categoryToUpdate) {
-          setSelected(categoryToUpdate.id, categoryToUpdate.name)
-        }
-      }
-    }
-  }
-}
-
-const createCategory = async () =>{
-  const confirmed = window.confirm("Are you sure you want to add a new category?");
-  if (confirmed) {
-    try{
-      const response = await useCategory.createCategory(categoryCreateModelName.value)
-      if(response.ok){
-        toggleCreateCategoryPopup();
-        showSuccessPopup("Successfully added a new Category!")
-      }
-    }
-    catch (err :any ) {
-        if (err.response._data.isDuplicate) {
-          showErrorPopup("This category already exists.");
-        } else{
-          showErrorPopup("Failed to create a new category.");
-        }
-    }
-  }
-}
-
-const deleteCategory = async (id:string) =>{
-  console.log("Attempted delete of ID: " + id);
-  const confirmed = window.confirm("Are you sure you want to delete this category?");
-  if (confirmed) {
-    try{
-      const response = await useCategory.deleteCategory(id)
-      if(response.ok){
-        toggleEditPopupTrigger();
-        showSuccessPopup("Successfully removed the category!")
-      }
-    }
-    catch (err :any ) {
-        showErrorPopup("Failed to delete this category.");
-    }
-  }
-}
+  popupState.misc = true;
+};
 
 const loadMoreCategories = async () => {
-  if (loading.value) return;
+  if (isLoading.value || !canFetchMore.value) return;
 
-  loading.value = true;
-
+  isLoading.value = true;
   try {
-    const newCategories = await useCategory.fetchCategories(limit,page.value );
+    const newCategories = await useCategory.fetchCategories(limit, page.value);
     if (newCategories.length) {
       categories.value.push(...newCategories);
       page.value++;
+    } else {
+      canFetchMore.value = false;
     }
-  } catch (error) {
-    canFetchAgain.value = false;
-    showErrorPopup("Failed to load categories, comeback later");
-
+  } catch (error: any) {
+    console.error("Error loading categories:", error);
+    showPopupMessage("Failed to load categories.");
+    canFetchMore.value = false;
   } finally {
-    loading.value = false;
+    isLoading.value = false;
   }
-}
+};
 
+const updateCategory = async (updatedCategory: { id: string; name: string }) => {
+  if (!updatedCategory.name.trim()) {
+    showPopupMessage("Category name cannot be empty.");
+    return;
+  }
 
-onMounted(async () =>
-{
+  try {
+    await useCategory.updateCategory(updatedCategory);
+    const category = categories.value.find((cat) => cat.id === +updatedCategory.id);
+    if (category) category.name = updatedCategory.name;
+    showPopupMessage("Category updated successfully.");
+    togglePopup("editCategory");
+  } catch (error: any) {
+    showPopupMessage(error.data?.message || "Failed to update category.");
+  }
+};
+
+const deleteCategory = async (id: string) => {
+  const confirmed = confirm("Are you sure you want to delete this category?");
+  if (!confirmed) return;
+
+  try {
+    await useCategory.deleteCategory(id);
+    categories.value = categories.value.filter((category) => category.id !== +id);
+    showPopupMessage("Category deleted successfully.");
+  } catch (error: any) {
+    showPopupMessage(error.data?.message || "Failed to delete category.");
+  }
+};
+
+const selectCategoryForEditing = (category: Category) => {
+  selectedCategory.value = category;
+  togglePopup("editCategory");
+};
+
+onMounted(async () => {
   await loadMoreCategories();
-
   const observer = new IntersectionObserver(async (entries) => {
-    if (entries[0].isIntersecting && canFetchAgain.value ) {
-      await loadMoreCategories();
-    }
-  }, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 1.0
-  });
-  const bottomMarker = document.querySelector('.bottom-marker');
-  if (bottomMarker) {
-    observer.observe(bottomMarker);
-  }
-});
+    if (entries[0].isIntersecting) await loadMoreCategories();
+  }, { root: null, rootMargin: "0px", threshold: 1.0 });
 
+  const bottomMarker = document.querySelector(".bottom-marker");
+  if (bottomMarker) observer.observe(bottomMarker);
+});
 </script>
+
 <style scoped lang="scss">
 .category-overview-page {
   height: calc(100% - 1rem);

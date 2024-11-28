@@ -1,110 +1,77 @@
-import { fetchFromClient } from "~/composables/fetchFromClient"
-import {type Skill, UseSkill} from "./useSkill";
+import { fetchFromClient } from "~/composables/fetchFromClient";
+import type { Skill } from "./useSkill";
+
 export interface Category {
-    id:number,
-    name:string,
-    skills:Array<Skill>
+    id: number;
+    name: string;
+    skills: Skill[];
 }
 
 export const UseCategory = () => {
-    async function createCategory(name :string):Promise<any>{
+    const handleResponse = async (response: any) => {
+        if (!response.ok) {
+            const errorData = await response._data.catch(() => ({}));
+            throw {
+                status: response.status,
+                message: response.statusText,
+                data: errorData,
+            };
+        }
+        return response._data || response;
+    };
+
+    const createCategory = async (name: string): Promise<Category> => {
         const response = await fetchFromClient.post(
-            `/Category/Create`,
-            "main-api",
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({name: name})
-            })
-        if (!response.ok) {
-            throw new Error(`Failed to create categories: ${response.statusText}`);
-        }
-        return response;
-    }
+          `/Category/Create`,
+          "main-api",
+          {
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name }),
+          }
+        );
+        return handleResponse(response);
+    };
 
-
-    async function fetchCategories(limit:number, pageNumber = 1):Promise<any> {
-
+    const fetchCategories = async (limit: number, pageNumber = 1): Promise<Category[]> => {
         const response = await fetchFromClient.get(
-            `/Category/GetCategories?pageNumber=${pageNumber}&limit=${limit}`,
-            "main-api",
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        )
-        if (!response.ok) {
-            throw new Error(`Failed to fetch categories: ${response.statusText}`);
-        }
-        return response._data;
-    }
+          `/Category/GetCategories?pageNumber=${pageNumber}&limit=${limit}`,
+          "main-api",
+          { headers: { "Content-Type": "application/json" } }
+        );
+        return handleResponse(response);
+    };
 
-    async function updateCategory(category:{id:string, name: string}):Promise<any>{
+    const updateCategory = async (category: { id: string; name: string }): Promise<Category> => {
         const response = await fetchFromClient.put(
-            `/Category/Update`,
-            "main-api",
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({id: category.id,name: category.name})
-            })
-        if (!response.ok) {
-            throw new Error(`Failed to update categories: ${response.statusText}`);
-        }
-        return response
-        /*
-        Error Returns
-        when a problem occurs it return a 400 error, this contains a message and 3 other fields, these fields are used to define why it's an error
-        the fields are as follows
-          "alreadyExists" --this field will be true if the name of the category already exists
-          "doesNotExist" --this field will be true if you are updating a category that doesn't exist
-          "isSameName" -- this field will be true if the new name matches the Old name (for example "CurrentName" == "CurrentName" will return a true)
+          `/Category/Update`,
+          "main-api",
+          {
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(category),
+          }
+        );
+        return handleResponse(response);
+    };
 
-        to access these for handling look below
-
-        catch(error:any){
-            let alreadyExists = error.response._data.alreadyExist
-            let doesNotExist = error.response._data.doesNotExist
-            let isSameName =  error.response._data.isSameName
-        }
-        */
-    }
-    async function deleteCategory(id :string):Promise<any>{
+    const deleteCategory = async (id: string): Promise<void> => {
         const response = await fetchFromClient.delete(
-            `/Category/Delete?id=${id}`,
-            "main-api",
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-        if (!response.ok) {
-            throw new Error(`Failed to delete categories: ${response.statusText}`);
-        }
-        return response
-    }
+          `/Category/Delete?id=${id}`,
+          "main-api",
+          { headers: { "Content-Type": "application/json" } }
+        );
+        return handleResponse(response);
+    };
 
-    async function fetchCategoryById(id: number): Promise<any> {
+    const fetchCategoryById = async (id: number): Promise<Category> => {
         const response = await fetchFromClient.get(`/Category/Get?id=${id}`, "main-api");
+        return handleResponse(response);
+    };
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch category: ${response.statusText}`);
-        }
-
-        return response._data;
-    }
-
-
-    return{
+    return {
         createCategory,
         fetchCategories,
         updateCategory,
         deleteCategory,
-        fetchCategoryById
+        fetchCategoryById,
     };
-
-
-}
+};
