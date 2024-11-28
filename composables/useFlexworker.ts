@@ -1,7 +1,7 @@
 import { Utils } from "~/scripts/script-collection";
 
-export interface flexworker {
-    id: string;
+export interface Flexworker {
+    id: number | null;
     address: string;
     name: string;
     dateOfBirth: string;
@@ -20,14 +20,14 @@ export const UseFlexworker = () => {
         phoneNumber: "",
         profilePictureUrl: "",
         skills: [],
-    };
+    } as Flexworker;
 
     const flexworkers = useState("flexworkers", () => [] as Array<typeof defaultData>);
     const page = ref(1);
     const limit = ref(10);
     const loading = ref(false);
     const searchQuery = ref("");
-    const currentFlexworker = ref({ ...defaultData });
+    const currentFlexworker = ref<Flexworker>({ ...defaultData });
     const originalFlexworker = ref({ ...defaultData });
 
     const data = computed(() => Utils.deepCopy(flexworkers.value));
