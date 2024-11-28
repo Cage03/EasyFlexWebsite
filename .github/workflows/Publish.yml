@@ -2,12 +2,13 @@
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Integration"]
+    workflows: ["Node.js CI"]
     types: [completed]
 
 jobs:
     on-success:
         runs-on: ubuntu-latest
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         permissions:
           packages: write
           contents: read
