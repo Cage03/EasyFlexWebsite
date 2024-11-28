@@ -1,36 +1,32 @@
-import type { requireModule } from "nuxt/kit";
-
-const useFlexworker = UseFlexworker();
+import { ref } from 'vue';
 
 export interface compatibleFlexworker {
-  id: string;
-  address: string;
+  id: number | 0;
   name: string;
-  dateOfBirth: string;
-  email: string;
-  phoneNumber: string;
   profilePictureUrl: string;
   skills: Skill[];
-  compatibilty: number;
+  compatibility: number;
 }
 
-export const useUseAlgorithm = () => {
-
+export const UseAlgorithm = () => {
   const flexworkers = ref<compatibleFlexworker[]>([]);
 
-  const addFlexworker = (newFlexworker: compatibleFlexworker) => {
-    flexworkers.value.push(newFlexworker);
+  const fetchFlexworkers = async (jobId: number) => {
+    try {
+      const response = await fetchFromClient.get(`'/Algorithm/GetFlexworkers?id=${jobId}'`, 'main-api');
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch flexworkers: ${response.statusText}`);
+      }
+
+      flexworkers.value = (await response._data) as compatibleFlexworker[];
+    } catch (error: any) {
+      throw new Error(error.message || "Error fetching flexworkers.");
+    }
   };
-
-  const getFlexworkers = async (jobId: number) => {
-    const response = await fetchFromClient.get('/Algorithm/GetFlexworkers', 'main-api');
-
-  };
-
-
-
 
   return {
-
-  }
-}
+    flexworkers,
+    fetchFlexworkers,
+  };
+};
