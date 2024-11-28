@@ -35,7 +35,6 @@ const restrictToNumbers = (event: KeyboardEvent) => {
   }
 };
 
-const api = useRuntimeConfig().public.apiUrl;
 const error = ref(null);
 
 const isEditingname = ref(false);
@@ -107,8 +106,11 @@ const saveChanges = async () => {
     showErrorPopup("Failed to save changes");
   }
   isEdited.value = false;
+  console.log("1");
   originalFlexworker.value = JSON.parse(JSON.stringify(flexworker.value));
+  console.log("2");
   showSuccessPopup();
+  console.log("3");
 }
 
 const deleteFlexworker = async () => {
@@ -150,8 +152,8 @@ const reload = () => {
         <div class="name-profile-picture">
           <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"/>
           <div class="flex-wrapper">
-            <h1 @click="toggleEditName" v-if="!isEditingname">{{ flexworker.name || 'Name' }}</h1>
-            <input v-if="isEditingname" v-model="flexworker.name" @blur="toggleEditName" style="font-size: 1.5rem">
+            <h1 id="name" @click="toggleEditName" v-if="!isEditingname">{{ flexworker.name || 'Name' }}</h1>
+            <input id="name-input" v-if="isEditingname" v-model="flexworker.name" @blur="toggleEditName" style="font-size: 1.5rem">
           </div>
         </div>
 
@@ -182,7 +184,7 @@ const reload = () => {
         <UIButtonStandard :action="addSkill" :icon="IconType.Plus" :content="'Add skills'"/>
 
         <div class="save-button-container" v-if="isEdited">
-          <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
+          <UIButtonStandard id="save-button" :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
         <div class="delete-button">
           <UIButtonStandard :color="'red'" :icon="IconType.Trashcan" :content="'Delete'" :action="deleteFlexworker"/>

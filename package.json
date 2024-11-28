@@ -11,12 +11,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "cypress": "^13.16.0",
     "nuxt": "^3.13.0",
     "vue": "latest"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "cypress": "^13.16.0",
     "sass": "^1.79.5",
     "sass-embedded": "^1.79.4"
   }
