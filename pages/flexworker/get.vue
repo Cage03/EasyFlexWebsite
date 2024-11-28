@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import {IconType} from "~/types/global-types";
+import CategoriesBox from "~/components/UI/CategoriesBox.vue";
+import AddSkillsBox from "~/components/UI/AddSkillsBox.vue";
 
 const useFlexworker = UseFlexworker();
 
@@ -64,24 +66,24 @@ const togglePopup = () => {
   }
 };
 
-onMounted(async () => {
+
+async function getFlexWorkerData() {
   try {
     const data = await useFlexworker.getFlexworker(id);
     flexworker.value = data;
     originalFlexworker.value = JSON.parse(JSON.stringify(data));
-    console.log(flexworker.value);
   } catch (err: any) {
     error.value = err.message;
     showErrorPopup("Error occured while trying to get flexworker");
   }
+}
+
+onMounted(async () => {
+  await getFlexWorkerData();
 })
 
 watch(flexworker, (newValue) => {
-  if (JSON.stringify(newValue) !== JSON.stringify(originalFlexworker.value)) {
-    isEdited.value = true;
-  } else {
-    isEdited.value = false;
-  }
+  isEdited.value = JSON.stringify(newValue) !== JSON.stringify(originalFlexworker.value);
 }, {deep: true});
 
 const toggleEditName = () => {
@@ -90,6 +92,10 @@ const toggleEditName = () => {
 
 const saveChanges = async () => {
   try {
+    // remove skills from flexworker object
+    const flexworkerCopy = JSON.parse(JSON.stringify(flexworker.value));
+    delete flexworkerCopy.skills;
+    flexworker.value = flexworkerCopy;
     await useFlexworker.updateFlexworker(flexworker.value);
   } catch (err: any) {
     error.value = err.message;
@@ -110,7 +116,6 @@ const deleteFlexworker = async () => {
       popupMessage.value = "Flexworker deleted successfully!";
       showPopup.value = true;
     } catch (err) {
-      console.log(err);
       shouldRedirect.value = false;
       popupMessage.value = "An error occurred while trying to delete flexworker";
       showPopup.value = true;
@@ -119,16 +124,27 @@ const deleteFlexworker = async () => {
     popupMessage.value = "Flexworker deletion canceled.";
   }
 }
+
+const addSkills = ref(false);
+const addSkill = () => {
+  addSkills.value = !addSkills.value;
+}
+
+const reload = () => {
+  addSkills.value = false;
+  getFlexWorkerData();
+}
+
 </script>
 
 <template>
   <div class="register_page">
     <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
-    <div class="window">
+      <AddSkillsBox v-if="addSkills" :flexworker="flexworker" @close="reload"/>
+    <div class="window" v-if="!addSkills">
       <div class="profile_data">
         <div class="name-profile-picture">
-          <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"
-               style="width: 10rem; height: 10rem; border-radius: 50%; object-fit: cover;"/>
+          <img v-if="flexworker.profilePictureUrl" :src="flexworker.profilePictureUrl" alt="Profile picture"/>
           <div class="flex-wrapper">
             <h1 @click="toggleEditName" v-if="!isEditingname">{{ flexworker.name || 'Name' }}</h1>
             <input v-if="isEditingname" v-model="flexworker.name" @blur="toggleEditName" style="font-size: 1.5rem">
@@ -156,9 +172,11 @@ const deleteFlexworker = async () => {
         </div>
         <div class="text-container">
           <label for="profilePictureUrl">Profile picture:</label>
-          <UIInputField id="profilePictureUrl" v-model="flexworker.profilePictureUrl" placeholder="Profile picture"
-                        type="url"/>
+          <UIInputField id="profilePictureUrl" v-model="flexworker.profilePictureUrl" placeholder="Profile picture" type="url"/>
         </div>
+        <CategoriesBox :skills="flexworker.skills"/>
+        <UIButtonStandard :action="addSkill" :icon="IconType.Plus" :content="'Add skills'"/>
+
         <div class="save-button-container" v-if="isEdited">
           <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
@@ -176,8 +194,12 @@ const deleteFlexworker = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
 }
 
 .window {
@@ -220,6 +242,13 @@ h1 {
   flex-direction: row;
   justify-content: space-between;
   align-items: start;
+
+  img {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 }
 
 .delete-button {

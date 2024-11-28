@@ -1,61 +1,58 @@
 ﻿<script setup lang="ts">
 import { defineProps, ref } from 'vue';
+import type {Skill} from "~/composables/useSkill";
 const props = defineProps({
-  title: String,
-  features: Array as PropType<string[]>,
-  newFeature: String,
-  addFeature: Function as PropType<(feature: string) => void>
+  title: {
+    type: String,
+    default: null
+  },
+  skills: {
+    type: Array<Skill>,
+    required: true
+  }
 });
 
-const newFeatureInput = ref(props.newFeature);
-
-function handleAddFeature() {
-  if (newFeatureInput.value) {
-    props.addFeature(newFeatureInput.value);
-    newFeatureInput.value = '';
-  }
-}
 </script>
 
 <template>
   <div class="feature-box">
     <h1 class="feature-text">{{ title }}</h1>
     <div class="feature-container">
-      <div v-for="feature in features" :key="feature" class="features">{{ feature }}</div>
-      <div class="add-feature-container">
-        <input placeholder="Add new feature" type="text" v-model="newFeatureInput">
-        <button type="button" @click="handleAddFeature">Add</button>
-      </div>
+      <div v-for="skill in skills" class="features">{{ skill.name }}</div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .feature-box {
+  margin: 0.625rem;
   display: flex;
+  text-align: start;
   flex-direction: row;
   gap: 0.625rem;
   align-self: stretch;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .feature-text{
   color: #000;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-style: italic;
   font-weight: 700;
   line-height: normal;
+  width: 10rem;
 }
 
 .feature-container{
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  flex: 1 0 0;
   border-radius: 1rem;
-  border: 1px solid #000;
   max-width: 75%;
+  width: 75%;
   min-height: 3rem;
+  border: 2px solid var(--Primary-Solid, #000000);
+  height: fit-content;
 }
 
 .features {
@@ -67,9 +64,8 @@ function handleAddFeature() {
   gap: 0.625rem;
   border-radius: 1rem;
   border: 1px solid var(--Primary-Solid, #4E8798);
-
   color: #000;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-style: italic;
   font-weight: 700;
   line-height: normal;
