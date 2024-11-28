@@ -60,15 +60,20 @@ async function registerFlexworker() {
   try {
     const flexworkerData = {
       ...useFlexworker.currentFlexworker.value,
-      languages: languages.value,
       skills: skills.value,
-      certificates: certificates.value,
     };
-
+    
     const response = await fetchFromClient.post(
         "/Flexworker/Register",
         "main-api",
-        { body: JSON.stringify(flexworkerData) }
+        { body: JSON.stringify({
+            name: flexworkerData.name,
+            address: flexworkerData.address,
+            dateOfBirth:flexworkerData.dateOfBirth,
+            email: flexworkerData.email,
+            phoneNumber: flexworkerData.phoneNumber,
+            profilePictureUrl: flexworkerData.profilePictureUrl
+          }) }
     );
 
     if (!response.ok) {
