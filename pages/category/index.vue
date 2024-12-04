@@ -3,8 +3,10 @@
     <div class="overview-container">
       <UIPopup
           :button-text="'Confirm'"
-          @close="togglePopup('createCategory')"
+          @close="createCategory"
           :show="popupState.createCategory"
+          :x-button="true"
+          @xButtonFunction="togglePopup('createCategory')"
       >
         <UIInputField v-model="categoryNameInput" placeholder="Name" />
       </UIPopup>
@@ -128,8 +130,25 @@ const deleteCategory = async (id: string) => {
     await useCategory.deleteCategory(id);
     categories.value = categories.value.filter((category) => category.id !== +id);
     showPopupMessage("Category deleted successfully.");
+    togglePopup("editCategory");
   } catch (error: any) {
     showPopupMessage(error.data?.message || "Failed to delete category.");
+  }
+};
+
+const createCategory = async () => {
+  if (!categoryNameInput.value.trim()) {
+    showPopupMessage("Category name cannot be empty.");
+    return;
+  }
+
+  try {
+    const newCategory = await useCategory.createCategory(categoryNameInput.value);
+    categories.value.unshift(newCategory);
+    showPopupMessage("Category added successfully.");
+    togglePopup("createCategory");
+  } catch (error: any) {
+    showPopupMessage(error.data?.message || "Failed to add category.");
   }
 };
 
