@@ -15,35 +15,63 @@
                 profilePictureUrl: 'https://example.com/profile.jpg',
             }
         }).then(() => {
-            // Step 2: Get the latest flexworker from the system
+            // Get the latest flexworker from the system
             cy.request({
                 method: 'GET',
-                url: 'https://localhost:7031/Flexworker/Get?limit=1000&page=0', // Assuming this endpoint retrieves all flexworkers
+                url: 'https://localhost:7031/Flexworker/Get?limit=1000&page=0',
             }).then((response) => {
-                // Step 3: Assume the latest flexworker is the last one in the list
+                // Assume the latest flexworker is the last one in the list
                 const flexworkers = response.body;
                 flexworkerId = flexworkers[flexworkers.length - 1].id;
             });
         });
     });
 
+    it('Add and delete skills to flexworker', () => {
+        // add skill
+        cy.visit(`http://localhost:3000/flexworker/get?id=${flexworkerId}`);
+        cy.get('h1').should('contain.text', testUser);
+        cy.get('#add-skills').click();
+        cy.get('div').contains('Languages').click();
+
+        cy.get('div').contains('Languages').parent().parent().find('button.yellow.button').click();
+        cy.get('div').contains('English').click();
+        cy.get('button.red.button').click();
+        cy.get('.features').should('contain.text', 'English');
+
+        // delete skill
+        cy.get('#add-skills').click();
+        cy.get('div').contains('Languages').click();
+        cy.get('div').contains('English').click();
+        cy.on('window:confirm', () => true);
+        cy.get('button.red.button').click();
+        cy.get('.features').should('not.exist');
+    });
+
     it('should show the flexworker and allow deleting', () => {
-        // Step 3: Visit the flexworker details page with the dynamically retrieved ID
+        // Visit the flexworker details page with the dynamically retrieved ID
         cy.visit(`http://localhost:3000/flexworker/get?id=${flexworkerId}`);
 
-        // Step 4: Check that the flexworker data is loaded
-        cy.get('h1').should('contain.text', testUser); // Assuming the name is displayed in an h1
+        // Check that the flexworker data is loaded
+        cy.get('h1').should('contain.text', testUser);
         cy.get('#email').should('have.value', `${testUser}@example.com`);
         cy.get('#phoneNumber').should('have.value', '+1 234 567 8901');
         cy.get('#address').should('have.value', '123 Main St');
         cy.get('#dateOfBirth').should('have.value', '1990-01-01');
         cy.get('#profilePictureUrl').should('have.value', 'https://example.com/profile.jpg');
 
-        // Step 5: Delete the flexworker
-        cy.get('.delete-button').find('button').click();  // Assuming delete button is inside a class called '.delete-button'
+        // Delete the flexworker
+        cy.get('.delete-button').find('button').click();
 
-        // Step 6: Confirm deletion and verify the popup message
+        // Confirm deletion and verify the popup message
         cy.on('window:confirm', () => true);  // Automatically accept the confirmation dialog
-        cy.get('.popup').should('contain.text', 'Flexworker deleted successfully!');
+        cy.get('#popup').should('contain.text', 'Flexworker deleted successfully!');
+
+        cy.get('button').contains('Close').click();
+
+        cy.visit(`http://localhost:3000/flexworker/get?id=${flexworkerId}`);
+
+        cy.get('#popup').should('contain.text', 'Error occured while trying to get flexworker');
     });
+
 })

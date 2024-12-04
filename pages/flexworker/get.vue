@@ -145,7 +145,7 @@ const reload = () => {
 
 <template>
   <div class="register_page">
-    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
+    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup" id="popup">{{ popupMessage }}</UIPopup>
       <AddSkillsBox v-if="addSkills" :flexworker="flexworker" @close="reload"/>
     <div class="window" v-if="!addSkills">
       <div class="profile_data">
@@ -181,7 +181,7 @@ const reload = () => {
           <UIInputField id="profilePictureUrl" v-model="flexworker.profilePictureUrl" placeholder="Profile picture" type="url"/>
         </div>
         <CategoriesBox :skills="flexworker.skills"/>
-        <UIButtonStandard :action="addSkill" :icon="IconType.Plus" :content="'Add skills'"/>
+        <UIButtonStandard id="add-skills" :action="addSkill" :icon="IconType.Plus" :content="'Add skills'"/>
 
         <div class="save-button-container" v-if="isEdited">
           <UIButtonStandard id="save-button" :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
