@@ -130,6 +130,7 @@ const deleteCategory = async (id: string) => {
     await useCategory.deleteCategory(id);
     categories.value = categories.value.filter((category) => category.id !== +id);
     showPopupMessage("Category deleted successfully.");
+    togglePopup("editCategory");
   } catch (error: any) {
     showPopupMessage(error.data?.message || "Failed to delete category.");
   }
