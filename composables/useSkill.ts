@@ -1,4 +1,6 @@
 import {Utils} from "~/scripts/script-collection";
+import {fetchFromClient} from "~/composables/fetchFromClient";
+import type {Category} from "~/composables/useCategory";
 
 export interface Skill{
   id?:number,
@@ -16,6 +18,18 @@ export const UseSkill = () => {
   const get = (): Skill[] => {
     return Utils.deepCopy(skillData.value);
   };
+
+  const handleResponse = async (response: any) => {
+    if (!response.ok) {
+      const errorData = await response._data.catch(() => ({}));
+      throw {
+        status: response.status,
+        message: response.statusText,
+        data: errorData,
+      };
+    }
+    return response._data || response;
+  };
   
   async function createSkill(skill:Skill):Promise<void>{
     try{
@@ -31,6 +45,18 @@ export const UseSkill = () => {
       throw new Error(e.message);
     }
   }
+
+  const updateSkill = async (skill: { id: string; name: string }): Promise<Skill> => {
+    const response = await fetchFromClient.put(
+        `/Skill/Update`,
+        "main-api",
+        {
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(skill),
+        }
+    );
+    return handleResponse(response);
+  };
   
   async function deleteSkill(id:number):Promise<void>{
     try{
@@ -45,9 +71,12 @@ export const UseSkill = () => {
     }
   }
   
+  
+  
   return{
     data,
     createSkill,
-    deleteSkill
+    deleteSkill,
+    updateSkill,
   }
 }
