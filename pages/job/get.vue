@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {UseJob} from "~/composables/useJob";
+import {IconType} from "~/types/global-types";
 
 const {
   currentJob,
@@ -17,6 +18,7 @@ const isEdited = computed(() =>
     JSON.stringify(currentJob.value) !== JSON.stringify(originalJob.value)
 );
 
+const skills :Skill[] = []
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
   if (popupMessage.value === "Job deleted successfully!") {
@@ -36,6 +38,7 @@ onMounted(async () => {
 const saveChanges = async () => {
   try {
     await saveJob(currentJob.value);
+    console.log(currentJob.value)
     popupMessage.value = "Changes saved!";
     showPopup.value = true;
   } catch (err: any) {
@@ -58,6 +61,16 @@ const handleDelete = async () => {
     }
   }
 };
+
+const addPreferences = ref(false);
+const toggleAddPreference = () => {
+  addPreferences.value = !addPreferences.value;
+  console.log(currentJob.value)
+};
+const handlePreferenceChanges = (preferences: Preference[]) => {
+  currentJob.value.preferences = preferences;
+}
+
 </script>
 
 <template>
@@ -66,8 +79,8 @@ const handleDelete = async () => {
     <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">
       {{ popupMessage }}
     </UIPopup>
-
-    <div class="window">
+    <UIAddPreferencesBox v-if="addPreferences" :skills="skills" :preferences="currentJob.preferences" @close="toggleAddPreference"/>
+    <div class="window"  v-if="!addPreferences">
       <div class="profile-data">
         <!-- Editable Job Name -->
         <div class="flex-wrapper">
@@ -106,6 +119,15 @@ const handleDelete = async () => {
           <UIInputField v-model="currentJob.endDate" type="date"/>
         </div>
 
+        <div>
+          <div v-for="preference in currentJob.preferences">
+            <label>{{skills.find(value => value.id ===preference.skillId).name}}</label>
+          </div>
+        </div>
+
+        <div class="Add-Preference-container">
+          <UIButtonStandard :action="toggleAddPreference" :icon="IconType.Plus" :content="'Add skills'"/>
+        </div>
         <!-- Save Changes Button -->
         <div v-if="isEdited" class="save-button-container">
           <UIButtonStandard :action="saveChanges" :content="'Save Changes'"/>
