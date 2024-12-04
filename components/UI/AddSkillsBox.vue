@@ -1,11 +1,11 @@
 ﻿<script setup lang="ts">
 import {type Category, UseCategory} from '~/composables/useCategory';
 import CategoryListItem from "~/components/UI/CategoryListItem.vue";
-import type {flexworker} from "~/composables/useFlexworker";
+import type {Flexworker} from "~/composables/useFlexworker";
 import type {Skill} from "~/composables/useSkill";
 
 const props = defineProps<{
-  flexworker: flexworker;
+  flexworker: Flexworker;
 }>();
 
 let thisFlexworker = props.flexworker;

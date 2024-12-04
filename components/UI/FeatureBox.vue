@@ -4,11 +4,24 @@ import type {Skill} from "~/composables/useSkill";
 const props = defineProps({
   title: {
     type: String,
-    default: null
+    required: true,
+  },
+  features: {
+    type: Array as PropType<string[]>,
+    required: true,
+  },
+  newFeature: {
+    type: String,
+    required: true,
+  },
+  addFeature: {
+    type: Function as PropType<(feature: string) => void>,
+    required: true,
   },
   skills: {
-    type: Array<Skill>,
-    required: true
+    type: Array as PropType<Skill[]>,
+    required: false,
+    default: () => [],
   }
 });
 

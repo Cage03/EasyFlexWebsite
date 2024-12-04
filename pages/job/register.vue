@@ -1,99 +1,87 @@
 <script setup lang="ts">
+import {UseJob} from "~/composables/useJob";
 
-const api = useRuntimeConfig().public.apiUrl;
+const { registerJob } = UseJob();
 const router = useRouter();
+
+const job = ref({
+  name: "",
+  address: "",
+  description: "",
+  minHours: "",
+  maxHours: "",
+  startDate: "",
+  endDate: "",
+});
 
 const id = ref(null);
 
-let name = '';
-let address = '';
-let description = '';
-let minHours = '';
-let maxHours = '';
-let startDate = '';
-let endDate = '';
-
-function registerJob() {
-  console.log('registerJob');
-  fetch(`${api}/Job/Register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      name: name,
-      address: address,
-      description: description,
-      minHours: minHours,
-      maxHours: maxHours,
-      startDate: startDate,
-      endDate: endDate
-    })
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(response => {
-      console.log('Registration successful:', response);
-      id.value = response;
-      showSuccessPopup();
-    })
-    .catch(err => {
-      console.error('Registration error:', err);
-      showErrorPopup(err.message);
-    });
-}
-
 const shouldRedirect = ref(false);
 const showPopup = ref(false);
-const popupMessage = ref('');
+const popupMessage = ref("");
 
-function togglePopup() {
+const togglePopup = () => {
   showPopup.value = !showPopup.value;
 
   if (shouldRedirect.value) {
-    router.push({ path: '/job/get', query: { id: id.value } });
+    router.push({ path: "/job/get", query: { id: id.value } });
   }
-}
+};
 
-function showSuccessPopup() {
+const showSuccessPopup = () => {
   showPopup.value = true;
   shouldRedirect.value = true;
-  popupMessage.value = 'Job successfully registered!';
-}
+  popupMessage.value = "Job successfully registered!";
+};
 
-function showErrorPopup(message: string) {
+const showErrorPopup = (message: string) => {
   showPopup.value = true;
-  popupMessage.value = 'Registration failed! \n' + message;
-}
+  popupMessage.value = `Registration failed! \n${message}`;
+};
+
+const handleRegisterJob = async () => {
+  try {
+    id.value = await registerJob(job.value);
+    showSuccessPopup();
+  } catch (err: any) {
+    console.error("Registration error:", err);
+    showErrorPopup(err.message);
+  }
+};
 </script>
 
 <template>
-  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">{{ popupMessage }}</UIPopup>
+  <UIPopup :show="showPopup" :buttonText="'Close'" @close="togglePopup">
+    {{ popupMessage }}
+  </UIPopup>
   <div class="register_page">
-    <form class="window" @submit.prevent="registerJob">
+    <form class="window" @submit.prevent="handleRegisterJob">
       <h1>Register Job</h1>
       <div class="profile_data">
-        <UIInputField id="name" :placeholder="'Name'" v-model="name" type="text" required />
-        <UIInputField id="address" :placeholder="'Address'" v-model="address" type="text" required />
-        <UIInputFieldMutliline id="description" :placeholder="'Description'" v-model="description" type="text" rows="5"
-          autoResize required />
-        <UIInputField id="min-hours" class="hours" :placeholder="'Min hours'" v-model="minHours" type="number" required />
-        <UIInputField id="max-hours" class="hours" :placeholder="'Max hours'" v-model="maxHours" type="number" required />
+        <UIInputField id="name" placeholder="Name" v-model="job.name" type="text" required />
+        <UIInputField id="address" placeholder="Address" v-model="job.address" type="text" required />
+        <UIInputFieldMutliline
+            id="description"
+            placeholder="Description"
+            v-model="job.description"
+            type="text"
+            rows="5"
+            autoResize
+            required
+        />
+        <UIInputField class="hours" placeholder="Min hours" v-model="job.minHours" type="number" required />
+        <UIInputField class="hours" placeholder="Max hours" v-model="job.maxHours" type="number" required />
         <div class="date-picker-container">
           <label>Start date:</label>
-          <UIInputField id="start-date" class="date-picker" v-model="startDate" type="date" required />
+          <UIInputField id="start-date" class="date-picker" v-model="job.startDate" type="date" required />
         </div>
         <div class="date-picker-container">
           <label>End date:</label>
-          <UIInputField id="end-date" class="date-picker" v-model="endDate" type="date" required />
+          <UIInputField id="end-date" class="date-picker" v-model="job.endDate" type="date" required />
         </div>
       </div>
       <div class="register-button-container">
-        <UIButtonStandard id="register-button" :content="'Register'" />
+        <UIButtonStandard id="register-button" content="Register" />
       </div>
     </form>
   </div>
@@ -123,7 +111,7 @@ h1 {
 
   border-radius: 1rem;
   background: var(--white-95, rgba(250, 250, 250, 0.95));
-  box-shadow: var(--shadow-four-sides)
+  box-shadow: var(--shadow-four-sides);
 }
 
 .profile_data {
@@ -143,18 +131,6 @@ textarea {
   border-radius: 0.25rem;
   background: none;
   font-style: italic;
-}
-
-#name {
-  width: 16rem;
-}
-
-#address {
-  width: 16rem;
-}
-
-#description {
-  width: 26rem;
 }
 
 .hours {
