@@ -69,7 +69,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="box">
     <UIFeatureBox
     v-for="(group, categoryId) in groupedSkills"
     :key="categoryId"
@@ -80,5 +80,9 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+
+.box {
+  width: 100%;
+}
 
 </style>

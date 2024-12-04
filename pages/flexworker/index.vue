@@ -1,19 +1,21 @@
 ﻿<template>
-  <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{popupMessage}}</UIPopup>
+  <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{ popupMessage }}</UIPopup>
   <div class="flexworker-overview-page">
     <div class="overview-container">
       <div class="functionality">
         <div class="search-bar-container">
-          <UISearch :placeholder="'Search...'" v-model="searchQuery"/>
+          <UISearch :placeholder="'Search...'" v-model="computedSearchQuery" />
         </div>
         <div class="buttons">
-          <UIButtonStandard :action="redirectToCreate" :icon="IconType.Plus" :content="'Create New'"/>
+          <UIButtonStandard :action="redirectToCreate" :icon="IconType.Plus" :content="'Create New'" />
         </div>
       </div>
       <div class="overview">
-        <template v-for="flexworker in flexworkers">
-          <UIListitem :properties="formatFlexworkerProperties(flexworker)"
-                      :redirect="`/flexworker/get?id=${flexworker.id}`"/>
+        <template v-for="flexworker in data" :key="flexworker.id">
+          <UIListitem
+              :properties="formatFlexworkerProperties(flexworker)"
+              :redirect="`/flexworker/get?id=${flexworker.id}`"
+          />
         </template>
         <div ref="bottom" class="bottom-marker"></div>
       </div>
@@ -22,80 +24,28 @@
 </template>
 
 <script setup lang="ts">
-import {IconType} from "~/types/global-types";
+import { UseFlexworker } from "~/composables/useFlexworker";
+import { IconType } from "~/types/global-types";
+
+const {
+  data,
+  fetchFlexworkers,
+  computedSearchQuery,
+  clearFlexworkers,
+  formatFlexworkerProperties,
+} = UseFlexworker();
 
 const showPopup = ref(false);
 const popupMessage = ref("");
 
 const togglePopup = () => {
   showPopup.value = !showPopup.value;
-}
-
-const showErrorPopup = (message: string) => {
-  popupMessage.value = "Failure to load flexworkers";
-  showPopup.value = true;
-}
-
-interface Flexworker {
-  id: number;
-  name: string;
-  email: string;
-  phoneNumber: string;
-}
-
-const flexworkers = ref<Flexworker[]>([])
-const page = ref(0);
-const limit = 10;
-const loading = ref(false);
-
-const formatFlexworkerProperties = (flexworker: Record<string, any>) => {
-  return Object.entries(flexworker)
-      .filter(([key]) => key !== 'id')
-      .map(([key, value]) => ({key, value}));
-}
-
-const searchQuery = ref("");
+};
 
 const redirectToCreate = () => {
   const router = useRouter();
-
-  router.push('/flexworker/register') //todo find right page to redirect to
-}
-
-const api = useRuntimeConfig().public.apiUrl;
-const error = ref(null);
-
-const fetchFlexworkers = async () => {
-  if (loading.value) return;
-  loading.value = true;
-  try {
-    const res = await fetch(`${api}/Flexworker/Get?limit=${limit}&page=${page.value}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    let data = await res.json();
-    data = data.map((flexworker: Flexworker) => ({
-      id: flexworker.id,
-      name: flexworker.name,
-      email: flexworker.email,
-      phoneNumber: flexworker.phoneNumber,
-    }));
-    flexworkers.value.push(...data);
-    page.value++;
-  } catch (err: any) {
-    error.value = err.message;
-    console.error('Fetch error:', err);
-    showErrorPopup(err.message);
-  } finally {
-    loading.value = false;
-  }
+  router.push("/flexworker/register");
 };
-
 
 onMounted(async () => {
   await fetchFlexworkers();
@@ -106,16 +56,15 @@ onMounted(async () => {
     }
   }, {
     root: null,
-    rootMargin: '0px',
-    threshold: 1.0
+    rootMargin: "0px",
+    threshold: 1.0,
   });
 
-  const bottomMarker = document.querySelector('.bottom-marker');
+  const bottomMarker = document.querySelector(".bottom-marker");
   if (bottomMarker) {
     observer.observe(bottomMarker);
   }
 });
-
 </script>
 
 <style scoped lang="scss">

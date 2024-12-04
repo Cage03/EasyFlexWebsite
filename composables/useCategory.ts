@@ -1,64 +1,77 @@
-import {type Skill, UseSkill} from "./useSkill";
+import { fetchFromClient } from "~/composables/fetchFromClient";
+import type { Skill } from "./useSkill";
+
 export interface Category {
-    id:number,
-    name:string,
-    skills:Array<Skill>
+    id: number;
+    name: string;
+    skills: Skill[];
 }
 
 export const UseCategory = () => {
-    const config = useRuntimeConfig();
-    const apiUrl = config.public.apiUrl;
-
-    async function createCategory(name: string): Promise<any> {
-        console.log(`Create category: ${name}`);
-        console.log(`Create new category: ${JSON.stringify(name)}`);
-        const response = await fetch(`${apiUrl}/Category/Create`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({name: name})
-        });
-
+    const handleResponse = async (response: any) => {
         if (!response.ok) {
-            throw new Error(`Failed to create category: ${response.statusText}`);
+            const errorData = await response._data.catch(() => ({}));
+            throw {
+                status: response.status,
+                message: response.statusText,
+                data: errorData,
+            };
         }
-    }
+        return response._data || response;
+    };
 
+    const createCategory = async (name: string): Promise<Category> => {
+        const response = await fetchFromClient.post(
+          `/Category/Create`,
+          "main-api",
+          {
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name }),
+          }
+        );
+        return handleResponse(response);
+    };
 
-    async function fetchCategories(limit: number, pageNumber = 1): Promise<any> {
-        const response = await fetch(`${apiUrl}/Category/GetCategories?pageNumber=${pageNumber}&limit=${limit}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch categories: ${response.statusText}`);
-        }
-        // console.log(await response.json());
-        return await response.json();
-    }
+    const fetchCategories = async (limit: number, pageNumber = 1): Promise<Category[]> => {
+        const response = await fetchFromClient.get(
+          `/Category/GetCategories?pageNumber=${pageNumber}&limit=${limit}`,
+          "main-api",
+          { headers: { "Content-Type": "application/json" } }
+        );
+        return handleResponse(response);
+    };
 
-    async function fetchCategoryById(id: number): Promise<any> {
-        const response = await fetch(`${apiUrl}/Category/Get?id=${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    const updateCategory = async (category: { id: string; name: string }): Promise<Category> => {
+        const response = await fetchFromClient.put(
+          `/Category/Update`,
+          "main-api",
+          {
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(category),
+          }
+        );
+        return handleResponse(response);
+    };
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch category: ${response.statusText}`);
-        }
+    const deleteCategory = async (id: string): Promise<void> => {
+        const response = await fetchFromClient.delete(
+          `/Category/Delete?id=${id}`,
+          "main-api",
+          { headers: { "Content-Type": "application/json" } }
+        );
+        return handleResponse(response);
+    };
 
-        return await response.json();
-    }
+    const fetchCategoryById = async (id: number): Promise<Category> => {
+        const response = await fetchFromClient.get(`/Category/Get?id=${id}`, "main-api");
+        return handleResponse(response);
+    };
 
     return {
         createCategory,
         fetchCategories,
-        fetchCategoryById
+        updateCategory,
+        deleteCategory,
+        fetchCategoryById,
     };
-
 };
