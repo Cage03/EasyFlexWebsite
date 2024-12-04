@@ -40,7 +40,7 @@ describe('Register Flexworker Page', () => {
     // Stub the API request to simulate failure
     cy.intercept('POST', '**/Flexworker/Register', {
       statusCode: 500,
-      body: 'Failure to register flexworker',
+      body: 'Failed to register flexworker',
     }).as('registerFlexworker');
 
     cy.contains('Register').click();
@@ -49,6 +49,6 @@ describe('Register Flexworker Page', () => {
       expect(interception.response.statusCode).to.eq(500);
     });
 
-    cy.contains('Failure to register flexworker').should('be.visible');
+    cy.contains('Failed to register flexworker').should('be.visible');
   });
 });

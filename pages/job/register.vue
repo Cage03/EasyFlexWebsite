@@ -69,8 +69,8 @@ const handleRegisterJob = async () => {
             autoResize
             required
         />
-        <UIInputField class="hours" placeholder="Min hours" v-model="job.minHours" type="number" required />
-        <UIInputField class="hours" placeholder="Max hours" v-model="job.maxHours" type="number" required />
+        <UIInputField id="min-hours" class="hours" placeholder="Min hours" v-model="job.minHours" type="number" required />
+        <UIInputField id="max-hours" class="hours" placeholder="Max hours" v-model="job.maxHours" type="number" required />
         <div class="date-picker-container">
           <label>Start date:</label>
           <UIInputField id="start-date" class="date-picker" v-model="job.startDate" type="date" required />
