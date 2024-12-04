@@ -41,6 +41,7 @@
             :key="category.id"
             :category="category"
             :action="() => selectCategoryForEditing(category)"
+            @deleteSkill="deleteSkill"
         />
         <div ref="bottom" class="bottom-marker"></div>
       </div>
@@ -148,6 +149,22 @@ onMounted(async () => {
   const bottomMarker = document.querySelector(".bottom-marker");
   if (bottomMarker) observer.observe(bottomMarker);
 });
+
+const deleteSkill = async (skillId: number) => {
+  const confirmed = window.confirm("Are you sure you want to delete this skill?");
+  if (confirmed) {
+    try {
+      await useSkill.deleteSkill(skillId);
+      categories.value = categories.value.map(category => {
+        category.skills = category.skills.filter(skill => skill.id !== skillId);
+        return category;
+      });
+      showPopupMessage("Skill deleted successfully");
+    } catch (err: any) {
+      showPopupMessage("Failed to delete skill");
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">
