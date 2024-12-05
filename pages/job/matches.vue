@@ -1,99 +1,34 @@
 <script setup lang="ts">
-const useJob = UseJob();
+import { UseAlgorithm, type compatibleFlexworker } from '~/composables/useAlgorithm';
+
+const router = useRouter();
+const useAlgorithm = UseAlgorithm();
+
+const jobId = ref<number>(0);
 
 const isLoading = ref(false);
 const percentage = ref(0);
 const step = ref(0);
 const content = Array(10).fill(null);
 
-let pageData = {
-  job: {
-    title: 'Software Developer'
-  },
-  result: [
-    {
-      flexWorkerId: 1,
-      compatibility: 91.12,
-      name: 'John Doe',
-      profilePictureUrl: "https://randomuser.me/api/portraits/men/1.jpg"
-    },
-    {
-      flexWorkerId: 2,
-      compatibility: 89.62,
-      name: 'Jane Doe',
-      profilePictureUrl: "https://randomuser.me/api/portraits/women/1.jpg"
-    },
-    {
-      flexWorkerId: 3,
-      compatibility: 87.18,
-      name: 'John Smith',
-      profilePictureUrl: "https://randomuser.me/api/portraits/men/2.jpg"
-    },
-    {
-      flexWorkerId: 4,
-      compatibility: 85.12,
-      name: 'Jane Smith',
-      profilePictureUrl: "https://randomuser.me/api/portraits/women/2.jpg"
-    },
-    {
-      flexWorkerId: 5,
-      compatibility: 83.12,
-      name: 'John Johnson',
-      profilePictureUrl: "https://randomuser.me/api/portraits/men/3.jpg"
-    },
-    {
-      flexWorkerId: 6,
-      compatibility: 81.12,
-      name: 'Jane Johnson',
-      profilePictureUrl: "https://randomuser.me/api/portraits/women/3.jpg"
-    },
-    {
-      flexWorkerId: 7,
-      compatibility: 79.12,
-      name: 'John Brown',
-      profilePictureUrl: "https://randomuser.me/api/portraits/men/4.jpg"
-    },
-    {
-      flexWorkerId: 8,
-      compatibility: 77.12,
-      name: 'Jane Brown',
-      profilePictureUrl: "https://randomuser.me/api/portraits/women/4.jpg"
-    },
-    {
-      flexWorkerId: 9,
-      compatibility: 75.12,
-      name: 'John White',
-      profilePictureUrl: "https://randomuser.me/api/portraits/men/5.jpg"
-    },
-    {
-      flexWorkerId: 10,
-      compatibility: 73.12,
-      name: 'Jane White',
-      profilePictureUrl: "https://randomuser.me/api/portraits/women/5.jpg"
-    },
-    {
-      flexWorkerId: 11,
-      compatibility: 71.12,
-      name: 'John Black',
-      profilePictureUrl: "https://randomuser.me/api/portraits/men/6.jpg"
-    },
-    {
-      flexWorkerId: 12,
-      compatibility: 69.12,
-      name: 'Jane Black',
-      profilePictureUrl: "https://randomuser.me/api/portraits/women/6.jpg"
-    }
-  ]
-}
+const fetchFlexworkers = async () => {
+  isLoading.value = true;
+  await useAlgorithm.fetchFlexworkers(jobId.value);
+  isLoading.value = false;
+};
 
 const roundedResults = computed(() => {
-  return pageData.result.map(match => ({
-    ...match,
-    compatibility: Math.round(match.compatibility)
+  return useAlgorithm.flexworkers.value.map(flexworker => ({
+    ...flexworker,
+    compatibility: Math.round(flexworker.compatibility)
   }));
 });
 
 onMounted(async () => {
+  jobId.value = parseInt(router.currentRoute.value.query.id as string);
+  await fetchFlexworkers();
+
+  /*
   const totalDuration = 10000;
   const intervalDuration = 50; 
   const steps = totalDuration / intervalDuration; 
@@ -111,23 +46,33 @@ onMounted(async () => {
       step.value += 1;
     }
   }, intervalDuration);
+  */
+  
 });
+
+let pageData = {
+  job: {
+    title: 'Software Developer'
+  },
+}
 
 watch(percentage, (newVal) => {
   document.documentElement.style.setProperty('--loading-progress', `${newVal}%`);
 });
+
+
 </script>
 
 <template>
   <div v-if="!isLoading" class="matching-page">
     <h2>Matches for "{{ pageData.job.title }}"</h2>
     <div class="matches">
-      <div class="match" v-for="match in roundedResults" :key="match.flexWorkerId">
+      <div class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
         <div class="profile-picture-orb">
-          <img :src="match.profilePictureUrl" alt="Profile picture">
-          <h1 class="compatibility">{{ match.compatibility }}%</h1>
+          <img :src="flexworker.profilePictureUrl" alt="Profile picture">
+          <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
         </div>
-        <h1>{{ match.name }}</h1>
+        <h1>{{ flexworker.name }}</h1>
       </div>
     </div>
   </div>
