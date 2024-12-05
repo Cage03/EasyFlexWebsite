@@ -9,6 +9,7 @@
       <router-link to="/">Home</router-link>
       <router-link to="/flexworker">Flexworkers</router-link>
       <router-link to="/job">Jobs</router-link>
+      <router-link to="/category">Skills</router-link>
     </div>
   </div>
 </template>
