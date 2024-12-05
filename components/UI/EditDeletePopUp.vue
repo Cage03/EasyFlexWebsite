@@ -1,38 +1,42 @@
 ﻿<script setup lang="ts">
 import {IconType} from "~/types/global-types";
 
-interface Category {
-  id: string;
-  name: string;
-}
 const props = defineProps<{
   show: Boolean,
-  category:Category,
+  id: number,
+  name: string,
+  xButton: Boolean,
 }>()
 
 const emit = defineEmits<{
   close: [],
-  deleteCategory:[id:string],
-  updateCategory:[category:Category],
+  delete:[id:number],
+  update:[id:number, name:string],
 }>()
+
+const localName = ref(props.name);
+
+watch(() => props.name, (newVal) => {
+  localName.value = newVal;
+});
 
 const closePopup = () => {
   emit('close');
 };
 const emitDelete =() =>{
-  emit('deleteCategory', props.category.id);
+  emit('delete', props.id);
 }
 const emitUpdate=() =>{
-  emit('updateCategory',props.category);
+  emit('update', props.id, localName.value);
 }
 </script>
 
 <template>
   <div :class="['popup-overlay', { 'popup-show': show }]">
     <div class="popup-content">
-      <UIIcon :icon="IconType.X_symbol" class="close-button" @click="closePopup()"/>
+      <UIIcon :icon="IconType.X_symbol" class="close-button" @click="closePopup()" v-if="xButton"/>
       <div class="popup-text">
-        <UIInputField v-model="category.name" type="text" />
+        <UIInputField v-model="localName" type="text" />
       </div>
       <div class="popup-buttons">
         <UIButtonStandard @click="emitDelete" :color="'red'" :icon="IconType.Trashcan" :content="'Delete'"/>
