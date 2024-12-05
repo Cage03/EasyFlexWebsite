@@ -103,7 +103,7 @@ export const UseFlexworker = () => {
         flexworkers.value = flexworkers.value.filter((flexworker) => flexworker.id !== id);
     };
 
-    const addSkillsToFlexworker = async (flexworkerId: string, skills: number[]) => {
+    const addSkillsToFlexworker = async (flexworkerId: number, skills: number[]) => {
         const response = await fetchFromClient.post(`/Flexworker/AddSkills`, "main-api", {
             body: JSON.stringify({ flexWorkerId: flexworkerId, skillIds: skills }),
         });
@@ -113,7 +113,7 @@ export const UseFlexworker = () => {
         }
     };
 
-    const removeSkillsFromFlexworker = async (flexworkerId: string, skills: number[]) => {
+    const removeSkillsFromFlexworker = async (flexworkerId: number, skills: number[]) => {
         const response = await fetchFromClient.delete(`/Flexworker/RemoveSkills`, "main-api", {
             body: JSON.stringify({ flexWorkerId: flexworkerId, skillIds: skills }),
         });

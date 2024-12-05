@@ -1,5 +1,13 @@
 ﻿import {Utils} from "~/scripts/script-collection";
 
+export interface Preference {
+  id?:number;
+  skillId:number;
+  isRequired:boolean;
+  weight:number;
+}
+
+
 export const UseJob = () => {  
   const defaultData = {
     id: null,
@@ -13,6 +21,7 @@ export const UseJob = () => {
     maxHours: "",
     startDate: "",
     endDate: "",
+    preferences: [] as Preference[],
   };
 
   const jobs = useState("jobs", () => [] as Array<typeof defaultData>);

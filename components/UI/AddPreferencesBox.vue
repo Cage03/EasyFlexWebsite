@@ -1,21 +1,26 @@
 ﻿<script setup lang="ts">
 import {type Category, UseCategory} from '~/composables/useCategory';
 import CategoryListItem from "~/components/UI/CategoryListItem.vue";
-import type {Flexworker} from "~/composables/useFlexworker";
+import type { Preference } from "~/composables/useJob";
 import type {Skill} from "~/composables/useSkill";
 
 const props = defineProps<{
-  flexworker: Flexworker;
+    skills : Skill[]
+    preferences: Preference[];
 }>();
 
-let thisFlexworker = props.flexworker;
+let preferences = props.preferences;
+let skills = props.skills;
 
-const emit = defineEmits(['close']);
-
+const emit =  defineEmits<{
+  close: []
+  preferencesChanged: [value: Preference[]]
+}>()
+const { currentJob } = UseJob()
 const responseCategories = ref<Category[]>([]);
 const allCategories = ref<Category[]>([]);
-const flexworkerCategories = ref<Category[]>([]);
-const allCategoriesExceptFlexworker = ref<Category[]>([]);
+const jobCategories = ref<Category[]>([]);
+const allCategoriesExceptJob = ref<Category[]>([]);
 
 const limit = 20;
 const page = ref(1);
@@ -30,21 +35,22 @@ const loadCategories = async () => {
   responseCategories.value = response;
   allCategories.value = response;
 
-  // Filter categories to include only the skills owned by the flexworker
-  flexworkerCategories.value = response.map((category : Category) => {
+  // Filter categories to include only the skills owned by the job
+  jobCategories.value = response.map((category : Category) => {
     return {
       ...category,
-      skills: category.skills.filter(skill => thisFlexworker.skills.some(flexSkill => flexSkill.id === skill.id))
+      skills: category.skills.filter(skill => preferences.some(preference => preference.skillId === skill.id))
     };
   });
 
-  // Filter categories to exclude the skills owned by the flexworker
-  allCategoriesExceptFlexworker.value = response.map((category : Category) => {
+  // Filter categories to exclude the skills owned by the job
+  allCategoriesExceptJob.value = response.map((category : Category) => {
     return {
       ...category,
-      skills: category.skills.filter(skill => !thisFlexworker.skills.some(flexSkill => flexSkill.id === skill.id))
+      skills: category.skills.filter(skill => !preferences.some(preference => preference.skillId === skill.id))
     };
   }).filter((category : Category) => category.skills.length > 0);
+
 
   loading.value = false;
 };
@@ -56,7 +62,7 @@ onMounted(async () => {
 const openAddSkillModal = (categoryId: number) => {
   addSkills.value = true;
   addskillsCategoryId.value = categoryId;
-  skillsAvailable.value = allCategoriesExceptFlexworker.value.find((category) => category.id === categoryId)?.skills || [];
+  skillsAvailable.value = allCategoriesExceptJob.value.find((category) => category.id === categoryId)?.skills || [];
 
 };
 
@@ -65,19 +71,29 @@ const addskillsCategoryId = ref(0);
 const skillsAvailable = ref<Skill[]>([]);
 
 const reload = async () => {
-  // get flexworker
-  const useFlexworker = UseFlexworker();
-  if (!props.flexworker.id) return;
-  await useFlexworker.fetchFlexworkerById(props.flexworker.id);
-  thisFlexworker = useFlexworker.currentFlexworker.value;
+  // get job
   await loadCategories();
+  console.log('reloaded');
+  console.log(currentJob.value);
+  // console.log(jobCategories.value);
+  // console.log(allCategories.value);
 }
 
 const addSkill = async (skill: Skill) => {
-  const useFlexworker = UseFlexworker();
   try{
-    if (!props.flexworker.id) return;
-    await useFlexworker.addSkillsToFlexworker(props.flexworker.id, [skill.id]);
+
+
+    const skillExists = skills.some((existingSkill: Skill) => existingSkill.id === skill.id);
+    if (!skillExists) skills.push(skill)
+
+    let newPreference :Preference = {id:undefined,
+      skillId: skill.id,
+      isRequired:false,
+      weight:0
+    };
+    const preferenceExists = preferences.some((existingPreference: Preference) => existingPreference.skillId == skill.id)
+    if (!preferenceExists) preferences.push(newPreference)
+    console.log(currentJob.value);
   }
   catch (e) {
     errorMessage.value = 'Failed to add skill. Please try again.';
@@ -89,10 +105,19 @@ const addSkill = async (skill: Skill) => {
 
 const handleDeleteSkill = async (skillId: number) => {
   if (!confirm('Are you sure you want to delete this skill?')) return;
-  const useFlexworker = UseFlexworker();
-  if (!props.flexworker.id) return;
   try{
-    await useFlexworker.removeSkillsFromFlexworker(props.flexworker.id, [skillId]);
+    const indexSkill = skills.findIndex(skill => skill.id === skillId);
+    const indexPreference = preferences.findIndex(preference  => preference.skillId === skillId );
+    if (indexPreference > -1) {
+      preferences.splice(indexPreference, 1);
+    }
+    if(indexSkill > -1){
+      skills.splice(indexSkill, 1);
+    }
+
+    // currentJob.value.skills = skills;
+    // currentJob.value.preferences = preferences;
+    console.log(currentJob.value);
   }
   catch (e) {
     errorMessage.value = 'Failed to remove skill. Please try again.';
@@ -137,7 +162,7 @@ const close = () => {
       <UISearch :placeholder="'Search...'"/>
     </div>
     <div class="overview">
-      <CategoryListItem v-for="category in flexworkerCategories" :key="category.id" :category="category"
+      <CategoryListItem v-for="category in jobCategories" :key="category.id" :category="category"
                         @openAddSkillModal="openAddSkillModal" @deleteSkill="handleDeleteSkill"/>
     </div>
     <div ref="bottom" class="bottom-marker"></div>
@@ -149,8 +174,8 @@ const close = () => {
         <UIButtonStandard :action="() => addSkills = false" :content="'Close'" :color="'red'"/>
       </div>
       <div class="skills">
-      <UIFeature v-for="skill in skillsAvailable" :key="skill.id" :title="skill.name" :onclick="() => addSkill(skill)" class="skill-available">
-      </UIFeature>
+        <UIFeature v-for="skill in skillsAvailable" :key="skill.id" :title="skill.name" :onclick="() => addSkill(skill)" class="skill-available">
+        </UIFeature>
       </div>
     </div>
   </div>
