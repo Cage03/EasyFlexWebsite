@@ -22,6 +22,7 @@ FROM base
 ENV PORT=$PORT
 ENV NODE_ENV=production
 
+# To define what API it must use use NUXT_PUBLIC_API_URL="your-api-url" Environment variable which follows the structure based on the one in nuxt.config.json
 
 COPY --from=build /src/.output /src/.output
 # Optional, only needed if you rely on unbundled dependencies

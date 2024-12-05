@@ -41,19 +41,20 @@ export const UseCategory = () => {
         return handleResponse(response);
     };
 
-    const updateCategory = async (category: { id: string; name: string }): Promise<Category> => {
+    const updateCategory = async ( id: number, name: string ): Promise<Category> => {
+        let category = { id, name };
         const response = await fetchFromClient.put(
           `/Category/Update`,
           "main-api",
           {
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(category),
+                body: JSON.stringify(category),
           }
         );
         return handleResponse(response);
     };
 
-    const deleteCategory = async (id: string): Promise<void> => {
+    const deleteCategory = async (id: number): Promise<void> => {
         const response = await fetchFromClient.delete(
           `/Category/Delete?id=${id}`,
           "main-api",
