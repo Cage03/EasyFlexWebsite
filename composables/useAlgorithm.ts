@@ -13,7 +13,8 @@ export const UseAlgorithm = () => {
 
   const fetchFlexworkers = async (jobId: number) => {
     try {
-      const response = await fetchFromClient.get(`'/Algorithm/GetFlexworkers?id=${jobId}'`, 'main-api');
+      console.log(`'/Job/Matches?id=${jobId}'`)
+      const response = await fetchFromClient.get(`/Job/Matches?id=${jobId}`, 'main-api');
 
       if (!response.ok) {
         throw new Error(`Failed to fetch flexworkers: ${response.statusText}`);

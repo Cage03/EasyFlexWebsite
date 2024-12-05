@@ -26,6 +26,7 @@ const roundedResults = computed(() => {
 
 onMounted(async () => {
   jobId.value = parseInt(router.currentRoute.value.query.id as string);
+  console.log(jobId.value);
   await fetchFlexworkers();
 
   /*
