@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UseAlgorithm, type compatibleFlexworker } from '~/composables/useAlgorithm';
 
 const router = useRouter();
 const useAlgorithm = UseAlgorithm();
@@ -14,7 +13,6 @@ const content = Array(10).fill(null);
 const fetchFlexworkers = async () => {
   isLoading.value = true;
   await useAlgorithm.fetchFlexworkers(jobId.value);
-  isLoading.value = false;
 };
 
 const roundedResults = computed(() => {
@@ -26,11 +24,9 @@ const roundedResults = computed(() => {
 
 onMounted(async () => {
   jobId.value = parseInt(router.currentRoute.value.query.id as string);
-  console.log(jobId.value);
   await fetchFlexworkers();
-
-  /*
-  const totalDuration = 10000;
+  
+  const totalDuration = 3000;
   const intervalDuration = 50; 
   const steps = totalDuration / intervalDuration; 
   const increment = 100 / steps; 
@@ -40,6 +36,7 @@ onMounted(async () => {
 
     if (percentage.value >= 100) {
       percentage.value = 100;
+      isLoading.value = false;
       clearInterval(interval);
     }
     
@@ -47,7 +44,6 @@ onMounted(async () => {
       step.value += 1;
     }
   }, intervalDuration);
-  */
   
 });
 
@@ -68,13 +64,13 @@ watch(percentage, (newVal) => {
   <div v-if="!isLoading" class="matching-page">
     <h2 v-if="useAlgorithm.flexworkers.value.length > 0">Matches for "{{ pageData.job.title }}"</h2>
     <div class="matches">
-        <div class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
+        <NuxtLink :to="`../flexworker/get?id=${flexworker.id}`" class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
           <div class="profile-picture-orb">
             <img :src="flexworker.profilePictureUrl" alt="Profile picture">
             <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
           </div>
           <h1>{{ flexworker.name }}</h1>
-        </div>
+        </NuxtLink>
       </div>
     <div v-if="useAlgorithm.flexworkers.value.length <= 0">
       <h2>No matches found for "{{ pageData.job.title }}"</h2>
@@ -127,6 +123,9 @@ watch(percentage, (newVal) => {
       border-radius: 1rem;
       box-shadow: var(--shadow-four-sides);
       padding: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary-color);
       
       &:first-child {
         .profile-picture-orb{
@@ -169,6 +168,7 @@ watch(percentage, (newVal) => {
       h1 {
         font-size: 2.5rem;
         font-weight: bold;
+        text-align:center;
       }
     }
   }
