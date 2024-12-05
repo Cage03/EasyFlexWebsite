@@ -11,20 +11,43 @@
         <UIInputField v-model="categoryNameInput" placeholder="Name" />
       </UIPopup>
       <UIPopup
+          :button-text="'Confirm'"
+          @close="addSkill"
+          :show="popupState.addSkill"
+          :x-button="true"
+          @xButtonFunction="togglePopup('addSkill')"
+      >
+        <UIInputField v-model="skillNameInput" placeholder="Name" />
+      </UIPopup>
+      <UIPopup
           :button-text="'Close'"
           @close="togglePopup('misc')"
           :show="popupState.misc"
       >
         {{ miscPopupMessage }}
       </UIPopup>
-      <UICategoryEditPopUp
+
+      <UIEditDeletePopUp
+          :x-button="true"
           v-if="selectedCategory"
-          :category="selectedCategory as any"
+          :name="selectedCategory.name"
+          :id="selectedCategory.id"
           :show="popupState.editCategory"
           @close="togglePopup('editCategory')"
-          @updateCategory="updateCategory"
-          @deleteCategory="deleteCategory"
+          @delete="deleteCategory"
+          @update="updateCategory"
       />
+
+      <UIEditDeletePopUp
+          :x-button="true"
+          v-if="selectedSkill"
+          :name="selectedSkill.name"
+          :id="selectedSkill.id"
+          :show="popupState.editSkill"
+          @close="togglePopup('editSkill')"
+          @delete="deleteSkill"
+          @update="updateSkill"
+          />
       <h1>Category and Skill Manager</h1>
       <div class="functionality">
         <div class="search-bar-container">
@@ -43,6 +66,8 @@
             :key="category.id"
             :category="category"
             :action="() => selectCategoryForEditing(category)"
+            @openAddSkillModal="openAddSkillModal"
+            @deleteSkill="openUpdateSkillModal"
         />
         <div ref="bottom" class="bottom-marker"></div>
       </div>
@@ -53,20 +78,28 @@
 <script setup lang="ts">
 import { UseCategory } from "~/composables/useCategory";
 import type { Category } from "~/composables/useCategory";
+import type {Skill} from "~/composables/useSkill";
 
 const useCategory = UseCategory();
+const useSkill = UseSkill();
+
+const skillNameInput = ref("");
 
 const categories = ref<Category[]>([]);
 const selectedCategory = ref<Category | null>(null);
+const selectedSkill = ref<Skill | null>(null);
 
 const popupState = reactive({
   createCategory: false,
   editCategory: false,
   misc: false,
+  editSkill: false,
+  addSkill: false,
 });
 
 const miscPopupMessage = ref("");
 
+const skillToAddCategoryId = ref(0);
 const categoryNameInput = ref("");
 const searchQuery = ref("");
 
@@ -105,16 +138,19 @@ const loadMoreCategories = async () => {
   }
 };
 
-const updateCategory = async (updatedCategory: { id: string; name: string }) => {
-  if (!updatedCategory.name.trim()) {
+const updateCategory = async ( id: number, name: string ) => {
+  if (!name.trim()) {
     showPopupMessage("Category name cannot be empty.");
     return;
   }
 
   try {
-    await useCategory.updateCategory(updatedCategory);
-    const category = categories.value.find((cat) => cat.id === +updatedCategory.id);
-    if (category) category.name = updatedCategory.name;
+    await useCategory.updateCategory(id, name);
+    // reload
+    categories.value = [];
+    page.value = 1;
+    canFetchMore.value = true;
+    await loadMoreCategories();
     showPopupMessage("Category updated successfully.");
     togglePopup("editCategory");
   } catch (error: any) {
@@ -122,7 +158,7 @@ const updateCategory = async (updatedCategory: { id: string; name: string }) => 
   }
 };
 
-const deleteCategory = async (id: string) => {
+const deleteCategory = async (id: number) => {
   const confirmed = confirm("Are you sure you want to delete this category?");
   if (!confirmed) return;
 
@@ -149,6 +185,78 @@ const createCategory = async () => {
     togglePopup("createCategory");
   } catch (error: any) {
     showPopupMessage(error.data?.message || "Failed to add category.");
+  }
+};
+
+const openUpdateSkillModal = async (skillId : number) => {
+  selectedSkill.value = await useSkill.fetchSkill(skillId);
+  togglePopup("editSkill");
+};
+
+const openAddSkillModal = (categoryId: number) => {
+  skillNameInput.value = "";
+  skillToAddCategoryId.value = categoryId;
+  togglePopup("addSkill");
+};
+
+const addSkill = async () => {
+  if (!skillNameInput.value.trim()) {
+    showPopupMessage("Skill name cannot be empty.");
+    return;
+  }
+  try {
+    let skill : Skill = {
+      id: 0,
+      name: skillNameInput.value,
+      categoryId: skillToAddCategoryId.value,
+    };
+    await useSkill.createSkill(skill);
+    // reload the page
+    categories.value = [];
+    page.value = 1;
+    canFetchMore.value = true;
+    await loadMoreCategories();
+    showPopupMessage("Skill added successfully.");
+    togglePopup("addSkill");
+  } catch (error: any) {
+    showPopupMessage(error.data?.message || "Failed to add skill.");
+  }
+};
+
+const updateSkill = async (skillId: number, name: string) => {
+  if (!name.trim()) {
+    showPopupMessage("Skill name cannot be empty.");
+    return;
+  }
+
+  try {
+    let skill : Skill = await useSkill.fetchSkill(skillId);
+    skill.name = name;
+    await useSkill.updateSkill(skill);
+    categories.value = [];
+    page.value = 1;
+    canFetchMore.value = true;
+    await loadMoreCategories();
+    showPopupMessage("Skill updated successfully.");
+    togglePopup("editSkill");
+  } catch (error: any) {
+    showPopupMessage(error.data?.message || "Failed to update skill.");
+  }
+};
+
+const deleteSkill = async (skillId: number) => {
+  const confirmed = confirm("Are you sure you want to delete this skill?");
+  if (!confirmed) return;
+
+  try {
+    await useSkill.deleteSkill(skillId);
+    categories.value.forEach((category) => {
+      category.skills = category.skills.filter((skill) => skill.id !== skillId);
+    });
+    showPopupMessage("Skill deleted successfully.");
+    togglePopup("editSkill");
+  } catch (error: any) {
+    showPopupMessage(error.data?.message || "Failed to delete skill.");
   }
 };
 
