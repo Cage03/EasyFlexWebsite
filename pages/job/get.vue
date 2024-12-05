@@ -159,10 +159,17 @@ const bindSkillsToPreference = async () =>{
         <div>
           <div v-for="preference in currentJob.preferences">
             <UIFeature :title="getSkillName(preference.skillId)" v-if="skillsLoaded">
-              <input v-model="preference.weight" @change="updateWeight(preference, $event)"
-                            type="range" readonly :disabled="preference.isRequired === true"/>
-              <label for="checkboxInput">required:</label>
-              <input id="checkboxInput" v-model="preference.isRequired" @change="updateIsRequired(preference, $event)" type="checkbox"/>
+              <div class="preference-item">
+                <label for="weightInput">Weight:</label>
+                <input id="weightInput" v-model="preference.weight" @change="updateWeight(preference, $event)"
+                       type="range" readonly :disabled="preference.isRequired === true"
+                       min="0"  max="100" step="1"/>
+                <span>{{ preference.weight }}%</span>
+              </div>
+              <div class="preference-item">
+                <label for="checkboxInput">required:</label>
+                <input id="checkboxInput" v-model="preference.isRequired" @change="updateIsRequired(preference, $event)" type="checkbox"/>
+              </div>
             </UIFeature>
 
           </div>
@@ -186,6 +193,16 @@ const bindSkillsToPreference = async () =>{
 </template>
 
 <style scoped lang="scss">
+.preference-item{
+  display: flex;
+  align-items: center;
+  label{
+    font-weight: normal;
+  }
+  span{
+    font-weight: bold;
+  }
+}
 .job-page {
   flex: 1;
   display: flex;
