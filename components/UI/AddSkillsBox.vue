@@ -67,17 +67,16 @@ const skillsAvailable = ref<Skill[]>([]);
 const reload = async () => {
   // get flexworker
   const useFlexworker = UseFlexworker();
-  thisFlexworker = await useFlexworker.getFlexworker(props.flexworker.id);
+  if (!props.flexworker.id) return;
+  await useFlexworker.fetchFlexworkerById(props.flexworker.id);
+  thisFlexworker = useFlexworker.currentFlexworker.value;
   await loadCategories();
-  console.log('reloaded');
-  console.log(thisFlexworker);
-  console.log(flexworkerCategories.value);
-  console.log(allCategories.value);
 }
 
 const addSkill = async (skill: Skill) => {
   const useFlexworker = UseFlexworker();
   try{
+    if (!props.flexworker.id) return;
     await useFlexworker.addSkillsToFlexworker(props.flexworker.id, [skill.id]);
   }
   catch (e) {
@@ -91,6 +90,7 @@ const addSkill = async (skill: Skill) => {
 const handleDeleteSkill = async (skillId: number) => {
   if (!confirm('Are you sure you want to delete this skill?')) return;
   const useFlexworker = UseFlexworker();
+  if (!props.flexworker.id) return;
   try{
     await useFlexworker.removeSkillsFromFlexworker(props.flexworker.id, [skillId]);
   }
