@@ -66,15 +66,18 @@ watch(percentage, (newVal) => {
 
 <template>
   <div v-if="!isLoading" class="matching-page">
-    <h2>Matches for "{{ pageData.job.title }}"</h2>
+    <h2 v-if="useAlgorithm.flexworkers.value.length > 0">Matches for "{{ pageData.job.title }}"</h2>
     <div class="matches">
-      <div class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
-        <div class="profile-picture-orb">
-          <img :src="flexworker.profilePictureUrl" alt="Profile picture">
-          <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
+        <div class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
+          <div class="profile-picture-orb">
+            <img :src="flexworker.profilePictureUrl" alt="Profile picture">
+            <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
+          </div>
+          <h1>{{ flexworker.name }}</h1>
         </div>
-        <h1>{{ flexworker.name }}</h1>
       </div>
+    <div v-if="useAlgorithm.flexworkers.value.length <= 0">
+      <h2>No matches found for "{{ pageData.job.title }}"</h2>
     </div>
   </div>
   <div v-if="isLoading" class="loading-screen">
