@@ -51,6 +51,7 @@ const loadCategories = async () => {
     };
   }).filter((category : Category) => category.skills.length > 0);
 
+
   loading.value = false;
 };
 

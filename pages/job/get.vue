@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {UseJob} from "~/composables/useJob";
 import {IconType} from "~/types/global-types";
+import {type Category, UseCategory} from "~/composables/useCategory";
 
 const {
   currentJob,
@@ -14,6 +15,7 @@ const router = useRouter();
 const id = router.currentRoute.value.query.id;
 const showPopup = ref(false);
 const popupMessage = ref("");
+const skillsLoaded = ref(false);
 const isEdited = computed(() =>
     JSON.stringify(currentJob.value) !== JSON.stringify(originalJob.value)
 );
@@ -29,6 +31,7 @@ const togglePopup = () => {
 onMounted(async () => {
   try {
     await fetchJobById(parseInt(<string>id));
+    await bindSkillsToPreference()
   } catch (err: any) {
     popupMessage.value = "Failed to fetch job data.";
     showPopup.value = true;
@@ -65,12 +68,46 @@ const handleDelete = async () => {
 const addPreferences = ref(false);
 const toggleAddPreference = () => {
   addPreferences.value = !addPreferences.value;
-  console.log(currentJob.value)
 };
-const handlePreferenceChanges = (preferences: Preference[]) => {
-  currentJob.value.preferences = preferences;
+const getSkillName = (skillId: number) => {
+  return skills.find(value => value.id === skillId)?.name || 'Unknown Skill';
+}
+const updateIsRequired = (preference: Preference, event: Event) => {
+  preference.isRequired = (event.target as HTMLInputElement).checked
+  if (preference.isRequired) {
+    preference.weight = 100; // Set the weight to 100 when checkbox is checked
+  }
 }
 
+const updateWeight = (preference: Preference, event:Event ) =>{
+  preference.weight = Number((event.target as HTMLInputElement).value );
+}
+
+// This is not a clean way of loading skills purely for the sake of giving the preferences their skill names
+// This problem was brought up to others, but not deemed necessary
+const bindSkillsToPreference = async () =>{
+  const useCategory = UseCategory();
+  const limit = 100;
+  const page = ref(1)
+  let response = await useCategory.fetchCategories(limit, page.value);
+  const jobCategories = ref<Category[]>([]);
+  jobCategories.value = response;
+
+  if (currentJob.value.preferences.length > 0) {
+    jobCategories.value.forEach(category => {
+      category.skills.forEach(skill => {
+        // Check if the skillId matches any preferences
+        const isSkillInPreferences = currentJob.value.preferences.some(pref => pref.skillId === skill.id);
+        if (isSkillInPreferences) {
+          // Add the matching skill to the skillsList
+          skills.push(skill);
+        }
+      });
+    });
+  }
+
+  skillsLoaded.value = true
+}
 </script>
 
 <template>
@@ -121,7 +158,13 @@ const handlePreferenceChanges = (preferences: Preference[]) => {
 
         <div>
           <div v-for="preference in currentJob.preferences">
-            <label>{{skills.find(value => value.id ===preference.skillId).name}}</label>
+            <UIFeature :title="getSkillName(preference.skillId)" v-if="skillsLoaded">
+              <input v-model="preference.weight" @change="updateWeight(preference, $event)"
+                            type="range" readonly :disabled="preference.isRequired === true"/>
+              <label for="checkboxInput">required:</label>
+              <input id="checkboxInput" v-model="preference.isRequired" @change="updateIsRequired(preference, $event)" type="checkbox"/>
+            </UIFeature>
+
           </div>
         </div>
 
