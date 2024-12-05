@@ -83,6 +83,8 @@ import type {Skill} from "~/composables/useSkill";
 const useCategory = UseCategory();
 const useSkill = UseSkill();
 
+const skillNameInput = ref("");
+
 const categories = ref<Category[]>([]);
 const selectedCategory = ref<Category | null>(null);
 const selectedSkill = ref<Skill | null>(null);
@@ -192,6 +194,7 @@ const openUpdateSkillModal = async (skillId : number) => {
 };
 
 const openAddSkillModal = (categoryId: number) => {
+  skillNameInput.value = "";
   skillToAddCategoryId.value = categoryId;
   togglePopup("addSkill");
 };
