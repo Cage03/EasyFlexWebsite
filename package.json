@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "cypress": "^13.16.0",
+    "dotenv": "^16.4.7",
     "nuxt": "^3.13.0",
     "vue": "latest"
   },
