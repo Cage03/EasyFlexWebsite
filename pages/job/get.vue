@@ -183,9 +183,13 @@ const bindSkillsToPreference = async () =>{
           <UIButtonStandard :action="saveChanges" :content="'Save Changes'"/>
         </div>
 
-        <!-- Delete Job Button -->
-        <div class="delete-button">
-          <UIButtonStandard :color="'red'" :action="handleDelete" :content="'Delete'"/>
+        <div class="button-container">
+          <div class="find-flexworkers">
+            <UIButtonStandard :color="'yellow'" :action="() => router.push(`/job/matches?id=${id}`)" :content="'Find Flexworkers'"/>
+          </div>
+          <div class="delete-button">
+            <UIButtonStandard :color="'red'" :action="handleDelete" :content="'Delete'"/>
+          </div>
         </div>
       </div>
     </div>
@@ -268,9 +272,10 @@ const bindSkillsToPreference = async () =>{
   justify-content: flex-end;
 }
 
-.delete-button {
+.button-container {
   display: flex;
-  justify-content: flex-end;
+  gap: var(--padding-standard);
   margin-top: var(--margin-standard);
+  justify-content: flex-end;
 }
 </style>
