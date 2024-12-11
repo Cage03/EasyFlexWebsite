@@ -10,7 +10,7 @@
     it('should add a category', () => {
         cy.wait(2000);
         cy.get('.functionality').find('button.yellow.button').click();
-        cy.get('input[placeholder="Name"]').type('Test Category');
+        cy.get('#category_name_input').type('Test Category');
         cy.get('button').contains('Confirm').click();
         cy.on('window:confirm', () => true);
         cy.get('button').contains('Close').click();

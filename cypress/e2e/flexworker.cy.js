@@ -71,7 +71,7 @@
 
         cy.visit(`http://localhost:3000/flexworker/get?id=${flexworkerId}`);
 
-        cy.get('#popup').should('contain.text', 'Error occured while trying to get flexworker');
+        cy.get('#popup').should('contain.text', 'Error occurred while fetching flexworker data.');
     });
 
 })
