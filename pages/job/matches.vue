@@ -92,8 +92,8 @@ watch(percentage, (newVal) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.25rem;
-  gap: 1rem;
+  padding: var(--padding-medium);
+  gap: var(--spacing-standard);
   overflow: auto;
 
   &::-webkit-scrollbar {
@@ -118,11 +118,11 @@ watch(percentage, (newVal) => {
       align-items: flex-start;
       height: 18rem;
       width: 14rem;
-      gap: 0.5rem;
+      gap: var(--spacing-small);
       background-color: #fff;
-      border-radius: 1rem;
+      border-radius: var(--border-radius-standard);
       box-shadow: var(--shadow-four-sides);
-      padding: 1rem;
+      padding: var(--padding-standard);
       
       &:first-child {
         .profile-picture-orb{
