@@ -283,7 +283,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding-top: var(--padding-standard);
 
   .overview-container {
