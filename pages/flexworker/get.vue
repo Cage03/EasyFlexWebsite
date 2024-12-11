@@ -204,6 +204,7 @@ const reload = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   overflow: auto;
 
@@ -215,12 +216,12 @@ const reload = async () => {
 .window {
   display: flex;
   width: 50rem;
-  padding: 1rem;
+  padding: var(--padding-standard);
   flex-direction: column;
   text-align: center;
-  gap: 1rem;
+  gap: var(--spacing-standard);
 
-  border-radius: 1rem;
+  border-radius: var(--border-radius-standard);
   background: var(--white-95, rgba(250, 250, 250, 0.95));
   box-shadow: var(--shadow-four-sides)
 }
@@ -228,16 +229,16 @@ const reload = async () => {
 h1 {
   text-align: left; /* Align the h1 element to the left */
   margin: 0; /* Remove default margin to adjust spacing */
-  padding: 0.5rem 0; /* Add some padding for better spacing */
+  padding: var(--spacing-small) 0; /* Add some padding for better spacing */
 }
 
 .profile_data {
   display: flex;
-  padding: 0 1rem;
+  padding: 0 var(--padding-standard);
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 0.625rem;
+  gap: var(--spacing-small);
 
   .flex-wrapper {
     display: flex;
@@ -266,7 +267,7 @@ h1 {
   justify-content: flex-end;
   width: 100%;
   align-items: center;
-  gap: 2.5rem;
+  gap: var(--spacing-xlarge);
   align-self: stretch;
 }
 
@@ -275,7 +276,7 @@ textarea {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--gray-50);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius-small);
   background: none;
   font-style: italic;
 }
@@ -300,7 +301,7 @@ textarea {
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: 1rem;
+  gap: var(--spacing-standard);
 
   label {
     width: 6rem;
@@ -315,7 +316,7 @@ textarea {
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: 1rem;
+  gap: var(--spacing-standard);
 
   label {
     width: 6rem;
@@ -331,11 +332,11 @@ textarea {
 }
 
 .register-button-container {
-  margin-top: 1rem;
+  margin-top: var(--margin-standard);
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 2.5rem;
+  gap: var(--spacing-xlarge);
   align-self: stretch;
 }
 </style>

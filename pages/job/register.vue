@@ -14,7 +14,7 @@ const job = ref({
   endDate: "",
 });
 
-const id = ref(null);
+const id = ref(null) as Ref<number | null>;
 
 const shouldRedirect = ref(false);
 const showPopup = ref(false);
@@ -99,69 +99,69 @@ h1 {
   align-items: center;
   justify-content: center;
   width: 100%;
-}
 
-.window {
-  display: flex;
-  width: 50rem;
-  padding: 1rem;
-  flex-direction: column;
-  text-align: center;
-  gap: 1rem;
+  .window {
+    display: flex;
+    width: 50rem;
+    padding: var(--padding-standard);
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-standard);
 
-  border-radius: 1rem;
-  background: var(--white-95, rgba(250, 250, 250, 0.95));
-  box-shadow: var(--shadow-four-sides);
-}
+    border-radius: var(--border-radius-standard);
+    background: var(--white-95, rgba(250, 250, 250, 0.95));
+    box-shadow: var(--shadow-four-sides);
 
-.profile_data {
-  display: flex;
-  padding: 0 1rem;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 0.625rem;
-}
+    .profile_data {
+      display: flex;
+      padding: 0 var(--padding-standard);
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.625rem;
 
-input,
-textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--gray-50);
-  border-radius: 0.25rem;
-  background: none;
-  font-style: italic;
-}
+      input,
+      textarea {
+        width: 100%;
+        padding: var(--padding-small);
+        border: 1px solid var(--gray-50);
+        border-radius: var(--border-radius-small);
+        background: none;
+        font-style: italic;
+      }
 
-.hours {
-  width: 6rem;
-}
+      .hours {
+        width: 6rem;
+      }
 
-.date-picker-container {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 1rem;
+      .date-picker-container {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: var(--spacing-standard);
 
-  label {
-    width: 6rem;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary-color);
-    text-align: left;
+        label {
+          width: 6rem;
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--text-primary-color);
+          text-align: left;
+        }
+
+        .date-picker {
+          width: 7.5rem;
+        }
+      }
+    }
+
+    .register-button-container {
+      margin-top: var(--margin-standard);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: var(--spacing-xlarge);
+      align-self: stretch;
+    }
   }
-
-  .date-picker {
-    width: 7.5rem;
-  }
-}
-
-.register-button-container {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 2.5rem;
-  align-self: stretch;
 }
 </style>
