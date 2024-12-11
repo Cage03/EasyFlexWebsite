@@ -164,7 +164,7 @@ const close = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--spacing-medium);
 
   .functionality {
     width: 100%;
@@ -180,22 +180,22 @@ const close = () => {
     .buttons {
       display: flex;
       flex-direction: row;
-      gap: 1rem;
+      gap: var(--spacing-standard);
       flex-shrink: 0;
     }
   }
 
   .overview {
-    padding: 2rem 1rem;
+    padding: var(--padding-large) var(--padding-standard);
     display: flex;
     flex-direction: column;
     height: 25rem;
     width: 100%;
     background: url("../../assets/images/background.jpg") no-repeat center center;
     background-size: cover;
-    border-radius: 1rem;
+    border-radius: var(--border-radius-standard);
     overflow: auto;
-    gap: 1rem;
+    gap: var(--spacing-standard);
 
     &::-webkit-scrollbar {
       width: 12px;
@@ -217,7 +217,7 @@ const close = () => {
 .skill-selection-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--spacing-standard);
   align-items: center;
   justify-content: center;
   position: fixed;
@@ -234,14 +234,14 @@ const close = () => {
   width: 100%;
   height: 3rem;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: var(--margin-standard);
 }
 
 .skill-selection {
   flex-wrap: wrap;
   background-color: var(--white-95);
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: var(--padding-standard);
+  border-radius: var(--border-radius-standard);
   width: 50%;
   min-height: 50%;
 }
@@ -256,7 +256,7 @@ const close = () => {
 .skills-to-add-container {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: var(--spacing-standard);
   align-items: center;
   justify-content: center;
 }

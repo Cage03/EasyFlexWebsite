@@ -59,11 +59,11 @@ const deleteSkill = (skillId: number) => {
 .list-item {
   position: relative;
   width: calc(100% - (4rem + 4px));
-  padding: 0.5rem 2rem;
+  padding: var(--padding-small) var(--padding-large);
   flex-direction: row;
   justify-content: space-between;
   background: #fff;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-standard);
   border: 2px solid var(--text-primary-color);
   align-items: center;
 
@@ -104,12 +104,10 @@ const deleteSkill = (skillId: number) => {
 }
 .right {
   transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
 }
 
 .down {
   transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
 }
 .popup-buttons {
   display: flex;
