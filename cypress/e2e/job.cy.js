@@ -1,7 +1,7 @@
 ﻿describe('show and delete job', () => {
     let jobId;
     const timestamp = Date.now();
-
+    const testJob = `TestJob1_${timestamp}`;
     beforeEach(() => {
         const api_url = Cypress.env('API_URL');
         cy.log(`API URL: ${api_url}`);
