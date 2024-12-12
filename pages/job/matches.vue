@@ -96,6 +96,7 @@ watch(percentage, (newVal) => {
   </div>
 </template>
 
+
 <style scoped lang="scss">
 .matching-page {
   height: calc(100% - 1rem);
