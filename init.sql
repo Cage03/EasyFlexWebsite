@@ -26,18 +26,7 @@ create table Flexworkers
 )
 go
 
-create table JobSkill
-(
-    JobsId   int not null
-        constraint FK_JobSkill_Jobs
-            references Jobs,
-    SkillsId int not null
-        constraint FK_JobSkill_Skills
-            references Skills,
-    constraint PK_JobSkill
-        primary key (JobsId, SkillsId)
-)
-go
+
 
 create table Jobs
 (
@@ -52,18 +41,7 @@ create table Jobs
     Name        nvarchar(255) not null
 )
 go
-create table FlexworkerSkill
-(
-    FlexworkersId int not null
-        constraint FK_FlexworkerSkill_Flexworkers
-            references Flexworkers,
-    SkillsId      int not null
-        constraint FK_FlexworkerSkill_Skills
-            references Skills,
-    constraint PK_FlexworkerSkill
-        primary key (FlexworkersId, SkillsId)
-)
-go
+
 
 
 
@@ -103,6 +81,32 @@ create table Preferences
             on delete cascade,
     IsRequired bit not null,
     Weight     int not null
+)
+go
+
+create table FlexworkerSkill
+(
+    FlexworkersId int not null
+        constraint FK_FlexworkerSkill_Flexworkers
+            references Flexworkers,
+    SkillsId      int not null
+        constraint FK_FlexworkerSkill_Skills
+            references Skills,
+    constraint PK_FlexworkerSkill
+        primary key (FlexworkersId, SkillsId)
+)
+go
+
+create table JobSkill
+(
+    JobsId   int not null
+        constraint FK_JobSkill_Jobs
+            references Jobs,
+    SkillsId int not null
+        constraint FK_JobSkill_Skills
+            references Skills,
+    constraint PK_JobSkill
+        primary key (JobsId, SkillsId)
 )
 go
 
