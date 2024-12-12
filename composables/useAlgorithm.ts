@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import {Utils} from "~/scripts/script-collection";
 
 export interface compatibleFlexworker {
   id: number | 0;
@@ -9,25 +9,35 @@ export interface compatibleFlexworker {
 }
 
 export const UseAlgorithm = () => {
-  const flexworkers = ref<compatibleFlexworker[]>([]);
+  const defaultData = [] as compatibleFlexworker[];
+  const flexworkersState = useState("flexworkers", () => defaultData);
+  const lastFetchedJobId = useState<number | null>("lastFetchedJobId", () => null); 
 
-  const fetchFlexworkers = async (jobId: number) => {
+  const data = computed(() => getFlexworkers());
+
+  const getFlexworkers = (): compatibleFlexworker[] => {
+    return Utils.deepCopy(flexworkersState.value);
+  };
+
+  const fetchFlexworkers = async (jobId: number): Promise<void> => {
+    if (lastFetchedJobId.value === jobId) return;
     try {
-      console.log(`'/Job/Matches?id=${jobId}'`)
-      const response = await fetchFromClient.get(`/Job/Matches?id=${jobId}`, 'main-api');
+      const response = await fetchFromClient.get(`/Job/Matches?id=${jobId}`, "main-api");
 
       if (!response.ok) {
         throw new Error(`Failed to fetch flexworkers: ${response.statusText}`);
       }
 
-      flexworkers.value = (await response._data) as compatibleFlexworker[];
+      flexworkersState.value = (await response._data) as compatibleFlexworker[];
+      lastFetchedJobId.value = jobId; 
     } catch (error: any) {
       throw new Error(error.message || "Error fetching flexworkers.");
     }
   };
 
   return {
-    flexworkers,
+    data,
     fetchFlexworkers,
+    lastFetchedJobId,
   };
 };
