@@ -133,27 +133,27 @@ const bindSkillsToPreference = async () =>{
         <!-- Other Job Fields -->
         <div class="text-container">
           <label>Address:</label>
-          <UIInputField v-model="currentJob.address" placeholder="Address"/>
+          <UIInputField id="address" v-model="currentJob.address" placeholder="Address"/>
         </div>
         <div class="text-container">
           <label>Description:</label>
-          <UIInputFieldMutliline v-model="currentJob.description" placeholder="Description" rows="5"/>
+          <UIInputFieldMutliline id="description" v-model="currentJob.description" placeholder="Description" rows="5"/>
         </div>
         <div class="text-container">
           <label>Min Hours:</label>
-          <UIInputField v-model="currentJob.minHours" type="number" placeholder="Min Hours"/>
+          <UIInputField id="min-hours" v-model="currentJob.minHours" type="number" placeholder="Min Hours"/>
         </div>
         <div class="text-container">
           <label>Max Hours:</label>
-          <UIInputField v-model="currentJob.maxHours" type="number" placeholder="Max Hours"/>
+          <UIInputField id="max-hours" v-model="currentJob.maxHours" type="number" placeholder="Max Hours"/>
         </div>
         <div class="date-picker-container">
           <label>Start Date:</label>
-          <UIInputField v-model="currentJob.startDate" type="date"/>
+          <UIInputField id="start-date" v-model="currentJob.startDate" type="date"/>
         </div>
         <div class="date-picker-container">
           <label>End Date:</label>
-          <UIInputField v-model="currentJob.endDate" type="date"/>
+          <UIInputField id="end-date" v-model="currentJob.endDate" type="date"/>
         </div>
 
         <div>
@@ -212,6 +212,7 @@ const bindSkillsToPreference = async () =>{
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
 }
 
@@ -219,10 +220,10 @@ const bindSkillsToPreference = async () =>{
   display: flex;
   flex-direction: column;
   width: 50rem;
-  padding: 1rem;
+  padding: var(--padding-standard);
   text-align: center;
-  gap: 1rem;
-  border-radius: 1rem;
+  gap: var(--spacing-standard);
+  border-radius: var(--border-radius-standard);
   background: var(--white-95, rgba(250, 250, 250, 0.95));
   box-shadow: var(--shadow-four-sides);
 }
@@ -241,12 +242,12 @@ const bindSkillsToPreference = async () =>{
 
 .text-container {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-standard);
   align-items: center;
 
   label {
     width: 6rem;
-    font-size: 1rem;
+    font-size: var(--font-size-standard);
     font-weight: 700;
     color: var(--text-primary-color);
   }
@@ -254,27 +255,27 @@ const bindSkillsToPreference = async () =>{
 
 .date-picker-container {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-standard);
   align-items: center;
 
   label {
     width: 6rem;
-    font-size: 1rem;
+    font-size: var(--font-size-standard);
     font-weight: 700;
     color: var(--text-primary-color);
   }
 }
 
 .save-button-container {
-  margin-top: 1rem;
+  margin-top: var(--margin-standard);
   display: flex;
   justify-content: flex-end;
 }
 
 .button-container {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--padding-standard);
+  margin-top: var(--margin-standard);
   justify-content: flex-end;
 }
 </style>

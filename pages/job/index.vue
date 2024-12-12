@@ -81,15 +81,14 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 2.5rem;
+  justify-content: center;
 
   .overview-container {
     width: 70%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: var(--spacing-medium);
 
     .functionality {
       width: 100%;
@@ -105,22 +104,22 @@ onMounted(async () => {
       .buttons {
         display: flex;
         flex-direction: row;
-        gap: 1rem;
+        gap: var(--spacing-standard);
         flex-shrink: 0;
       }
     }
 
     .overview {
-      padding: 2rem 1rem;
+      padding: var(--padding-large) var(--padding-standard);
       display: flex;
       flex-direction: column;
       height: 25rem;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;
-      border-radius: 1rem;
+      border-radius: var(--border-radius-standard);
       overflow: auto;
-      gap: 1rem;
+      gap: var(--spacing-standard);
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -128,7 +127,7 @@ onMounted(async () => {
 
       &::-webkit-scrollbar-track {
         background: var(--white-95);
-        border-radius: 1rem;
+        border-radius: var(--border-radius-standard);
       }
 
       &::-webkit-scrollbar-thumb {

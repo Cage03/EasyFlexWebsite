@@ -37,16 +37,16 @@ let props = defineProps(
 .button {
   background-color: #FEC228;
   border: none;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-standard);
   color: white;
-  padding: 1rem;
+  padding: var(--padding-standard);
   text-align: center;
   display: flex;
   font-size: 1rem;
   font-family: Montserrat,sans-serif;
   font-weight:600;
   font-style: italic;
-  gap:0.5rem;
+  gap:var(--spacing-small);
   cursor:pointer;
   align-items:center;
   flex-direction: row;
@@ -66,7 +66,7 @@ let props = defineProps(
 
   &:hover{
     transform: translateY(0);
-    transition: transform 0 ease-in-out, 0 ease-in-out;
+    transition: transform 0.25s ease-in-out, background-color 0.25s ease-in-out;
     background-color: transparent;
     box-shadow: none;
   }
