@@ -35,20 +35,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-
-    services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        ports:
-          - 1433:1433
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: 'yourStrong!Passw0rd'
-        options: >-
-          --health-cmd="wait-for-it -t 60 localhost:1433"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+        
     steps:
        # Set up Node.js for the frontend
       - uses: actions/checkout@v4
@@ -66,7 +53,14 @@ jobs:
       - name: Pull backend image
         run: docker pull sjitzooi/easyflex_api:master
 
-      
+      # Start MSSQL container for database
+      - name: Start MSSQL container
+        run: |
+          docker run -d -p 1433:1433 --name mssql \
+            -e 'ACCEPT_EULA=Y' \
+            -e 'SA_PASSWORD=YourStrong!Passw0rd' \
+            -e 'MSSQL_PID=Express' \
+            mcr.microsoft.com/mssql/server:2019-latest
       # Wait for MSSQL to be ready
       - name: Wait for MSSQL to be ready
         run: |
