@@ -62,8 +62,12 @@ jobs:
             -e 'SA_PASSWORD=YourStrong!Passw0rd' \
             -e 'MSSQL_PID=Express' \
             mcr.microsoft.com/mssql/server:2022-latest
-
-      # Wait for MSSQL to be ready
+      
+      - name: Install a SQL Server suite of tools
+        uses: potatoqualitee/mssqlsuite@v1.7
+        with:
+          install: sqlengine, sqlclient, sqlpackage, localdb
+      
       - name: Wait for MSSQL to be ready
         run: |
           while ! docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1"; do
