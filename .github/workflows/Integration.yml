@@ -79,25 +79,22 @@ jobs:
 
       # Start backend container with MSSQL connection string
       - name: Start backend container
-        run: |
-          docker run -d -p 8080:5238 --name backend \
+        with:
+          start: |
+            docker run -d -p 8080:5238 --name backend \
             -e ConnectionStrings__DefaultConnection="Server=localhost,1433;Database=test_db;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;" \
             sjitzooi/easyflex_api:master
-
-      # Wait for the backend to be ready
-      - name: Wait for backend to be ready
-        run: npx wait-on http://localhost:8080
+          wait-on: 'http://localhost:8080'
+          
 
       # Start frontend application
       - name: Start frontend application
-        run: npm run start &
+        with:
+          start: npm run start &
+          wait-on: 'http://localhost:3000'
         env:
           CI: true
-          NUXT_PUBLIC_API__URL: "http://localhost:8080"
-
-      # Wait for frontend to be ready
-      - name: Wait for frontend to be ready
-        run: npx wait-on http://localhost:3000
+          NUXT_PUBLIC_TEST_API__URL: "http://localhost:8080"
 
       # Run Cypress tests
       - name: Run Cypress tests
