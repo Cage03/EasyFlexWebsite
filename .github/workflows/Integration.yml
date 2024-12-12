@@ -79,6 +79,7 @@ jobs:
 
       # Start backend container with MSSQL connection string
       - name: Start backend container
+        uses: ./
         with:
           start: |
             docker run -d -p 8080:5238 --name backend \
@@ -89,6 +90,7 @@ jobs:
 
       # Start frontend application
       - name: Start frontend application
+        uses: ./
         with:
           start: npm run start &
           wait-on: 'http://localhost:3000'
