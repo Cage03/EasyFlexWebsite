@@ -18,7 +18,20 @@ jobs:
       matrix:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+        
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+          - 1433:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: 'yourStrong!Passw0rd'
+        options: >-
+          --health-cmd="wait-for-it -t 60 localhost:1433"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -54,31 +67,19 @@ jobs:
       - name: Pull backend image
         run: docker pull sjitzooi/easyflex_api:master
 
-      # Start MSSQL container for database
-      - name: Start MSSQL container
+      
+      - name: Install SQLCMD tool
         run: |
-          docker run -d -p 1433:1433 --name mssql \
-            -e 'ACCEPT_EULA=Y' \
-            -e 'SA_PASSWORD=YourStrong!Passw0rd' \
-            -e 'MSSQL_PID=Express' \
-            mcr.microsoft.com/mssql/server:2022-latest
-      
-      - name: Install a SQL Server suite of tools
-        uses: potatoqualitee/mssqlsuite@v1.7
-        with:
-          install: sqlengine, sqlclient, sqlpackage, localdb
-      
+          sudo apt-get update
+          sudo apt-get install -y mssql-tools
+
       - name: Wait for MSSQL to be ready
         run: |
-          while ! docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1"; do
-            echo "Waiting for MSSQL to be ready..."
-            sleep 5
-          done
+          sleep 30
 
-      # Optionally, load test data into MSSQL if needed (run SQL script)
-      - name: Load test data into MSSQL
+      - name: Run SQL script
         run: |
-          docker exec -i mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d master -i ./init.sql
+          sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d master -i ./init.sql
 
       # Start backend container with MSSQL connection string
       - name: Start backend container
