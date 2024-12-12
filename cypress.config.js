@@ -3,7 +3,8 @@ import { config } from "dotenv"
 config();
 export default defineConfig({
   env:{
-    API_URL: process.env.API_URL
+    API_URL: process.env.API_URL,
+    TEST_API_URL: process.env.TEST_API_URL
   },
   e2e: {
     setupNodeEvents(on, config) {
