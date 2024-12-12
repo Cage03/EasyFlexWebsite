@@ -60,6 +60,7 @@ jobs:
             -e 'ACCEPT_EULA=Y' \
             -e 'SA_PASSWORD=YourStrong!Passw0rd' \
             -e 'MSSQL_PID=Express' \
+            -e 'TrustServerCertificate=Yes'
             mcr.microsoft.com/mssql/server:2022-latest
       # Wait for MSSQL to be ready
       - name: Wait for MSSQL to be ready
