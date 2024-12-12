@@ -18,8 +18,7 @@ const fetchFlexworkers = async () => {
 const roundedResults = computed(() => {
   return useAlgorithm.flexworkers.value.map(flexworker => ({
     ...flexworker,
-    compatibility: Math.round(flexworker.compatibility),
-    skills: flexworker.skills 
+    compatibility: Math.round(flexworker.compatibility)
   }));
 });
 

@@ -34,10 +34,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// No additional functionality needed
-</script>
-
 <style scoped>
 .homepage {
   font-family: Arial, sans-serif;
