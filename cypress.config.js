@@ -10,4 +10,7 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
+  //This is to combat flaky tests by allowing it to retry at least 2 times before it's deemed a failure
+  //should prevent cases where test works one time but not the other despite nothing having changed
+  retries: 2,
 });
