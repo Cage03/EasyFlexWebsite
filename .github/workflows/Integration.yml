@@ -81,7 +81,7 @@ jobs:
         run: |
           docker run -d -p 8080:5238 --name backend \
             -e ConnectionStrings__DefaultConnection="Server=localhost,1433;Database=test_db;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;" \
-            sjitzooi/easyflex_api::master
+            sjitzooi/easyflex_api:master
 
       # Wait for the backend to be ready
       - name: Wait for backend to be ready
