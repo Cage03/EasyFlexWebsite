@@ -9,6 +9,7 @@
       <router-link to="/">Home</router-link>
       <router-link to="/flexworker">Flexworkers</router-link>
       <router-link to="/job">Jobs</router-link>
+      <router-link to="/category">Skills</router-link>
     </div>
   </div>
 </template>
@@ -35,7 +36,7 @@
   
   .navigation {
     display: flex;
-    gap: 1rem;
+    gap: var(--spacing-standard);
     font-family: 'Roboto', sans-serif;
     font-size: 1.5rem;
     font-weight: 500;

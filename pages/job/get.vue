@@ -183,9 +183,13 @@ const bindSkillsToPreference = async () =>{
           <UIButtonStandard :action="saveChanges" :content="'Save Changes'"/>
         </div>
 
-        <!-- Delete Job Button -->
-        <div class="delete-button">
-          <UIButtonStandard :color="'red'" :action="handleDelete" :content="'Delete'"/>
+        <div class="button-container">
+          <div class="find-flexworkers">
+            <UIButtonStandard :color="'yellow'" :action="() => router.push(`/job/matches?id=${id}`)" :content="'Find Flexworkers'"/>
+          </div>
+          <div class="delete-button">
+            <UIButtonStandard :color="'red'" :action="handleDelete" :content="'Delete'"/>
+          </div>
         </div>
       </div>
     </div>
@@ -208,6 +212,7 @@ const bindSkillsToPreference = async () =>{
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
 }
 
@@ -215,10 +220,10 @@ const bindSkillsToPreference = async () =>{
   display: flex;
   flex-direction: column;
   width: 50rem;
-  padding: 1rem;
+  padding: var(--padding-standard);
   text-align: center;
-  gap: 1rem;
-  border-radius: 1rem;
+  gap: var(--spacing-standard);
+  border-radius: var(--border-radius-standard);
   background: var(--white-95, rgba(250, 250, 250, 0.95));
   box-shadow: var(--shadow-four-sides);
 }
@@ -237,12 +242,12 @@ const bindSkillsToPreference = async () =>{
 
 .text-container {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-standard);
   align-items: center;
 
   label {
     width: 6rem;
-    font-size: 1rem;
+    font-size: var(--font-size-standard);
     font-weight: 700;
     color: var(--text-primary-color);
   }
@@ -250,26 +255,27 @@ const bindSkillsToPreference = async () =>{
 
 .date-picker-container {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-standard);
   align-items: center;
 
   label {
     width: 6rem;
-    font-size: 1rem;
+    font-size: var(--font-size-standard);
     font-weight: 700;
     color: var(--text-primary-color);
   }
 }
 
 .save-button-container {
-  margin-top: 1rem;
+  margin-top: var(--margin-standard);
   display: flex;
   justify-content: flex-end;
 }
 
-.delete-button {
+.button-container {
   display: flex;
+  gap: var(--padding-standard);
+  margin-top: var(--margin-standard);
   justify-content: flex-end;
-  margin-top: 1rem;
 }
 </style>
