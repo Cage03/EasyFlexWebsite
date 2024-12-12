@@ -60,14 +60,15 @@ jobs:
             -e 'ACCEPT_EULA=Y' \
             -e 'SA_PASSWORD=YourStrong!Passw0rd' \
             -e 'MSSQL_PID=Express' \
-            mcr.microsoft.com/mssql/server:2019-latest
+            mcr.microsoft.com/mssql/server:2022-latest
       # Wait for MSSQL to be ready
       - name: Wait for MSSQL to be ready
         run: |
-          while ! docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1"; do
+          while ! docker exec mssql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1"; do
             echo "Waiting for MSSQL to be ready..."
             sleep 5
           done
+
       # Optionally, load test data into MSSQL if needed (run SQL script)
       - name: Load test data into MSSQL
         run: |
