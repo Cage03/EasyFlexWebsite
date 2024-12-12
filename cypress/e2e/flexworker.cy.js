@@ -3,9 +3,12 @@
     const timestamp = Date.now();
     const testUser = `TestUser1_${timestamp}`;
     beforeEach(() => {
+        const api_url = Cypress.env('API_URL');
+        cy.log(`API URL: ${api_url}`);
+
         cy.request({
             method: 'POST',
-            url: 'https://localhost:7031/Flexworker/Register',
+            url: `${api_url}/Flexworker/Register`,
             body: {
                 name: testUser,
                 email: `${testUser}@example.com`,
@@ -18,7 +21,7 @@
             // Get the latest flexworker from the system
             cy.request({
                 method: 'GET',
-                url: 'https://localhost:7031/Flexworker/Get?limit=1000&page=0',
+                url: `${api_url}/Flexworker/Get?limit=1000&page=0`,
             }).then((response) => {
                 // Assume the latest flexworker is the last one in the list
                 const flexworkers = response.body;

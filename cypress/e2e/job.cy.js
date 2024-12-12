@@ -3,9 +3,11 @@
     const timestamp = Date.now();
     const testJob = `TestJob1_${timestamp}`;
     beforeEach(() => {
+        const api_url = Cypress.env('API_URL');
+        cy.log(`API URL: ${api_url}`);
         cy.request({
             method: 'POST',
-            url: 'https://localhost:7031/Job/Register',
+            url: `${api_url}/Job/Register`,
             body: {
                 name: testJob,
                 address: '123 Main Street',
@@ -19,7 +21,7 @@
             // Get the latest job from the system
             cy.request({
                 method: 'GET',
-                url: 'https://localhost:7031/Job/GetJobs?limit=1000&pageNumber=1',
+                url: `${api_url}/Job/GetJobs?limit=1000&pageNumber=1`,
             }).then((response) => {
                 // Assume the latest job is the last one in the list
                 const jobs = response.body;
