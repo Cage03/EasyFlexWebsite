@@ -41,6 +41,9 @@ export const UseFlexworker = () => {
         if (loading.value) return;
 
         loading.value = true;
+        if (page.value === 0) {
+            clearFlexworkers();
+        }
         try {
             const response = await fetchFromClient.get(
               `/Flexworker/Get?limit=${limit.value}&page=${page.value}&search=${searchQuery.value}`,
