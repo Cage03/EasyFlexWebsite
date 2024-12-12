@@ -8,7 +8,7 @@
           :x-button="true"
           @xButtonFunction="togglePopup('createCategory')"
       >
-        <UIInputField v-model="categoryNameInput" placeholder="Name" />
+        <UIInputField id="category_name_input" v-model="categoryNameInput" placeholder="Name" />
       </UIPopup>
       <UIPopup
           :button-text="'Confirm'"
@@ -16,10 +16,12 @@
           :show="popupState.addSkill"
           :x-button="true"
           @xButtonFunction="togglePopup('addSkill')"
+          id="confirm_add_skill"
       >
-        <UIInputField v-model="skillNameInput" placeholder="Name" />
+        <UIInputField id="skill_name_input" v-model="skillNameInput" placeholder="Name" />
       </UIPopup>
       <UIPopup
+          id="popup"
           :button-text="'Close'"
           @close="togglePopup('misc')"
           :show="popupState.misc"

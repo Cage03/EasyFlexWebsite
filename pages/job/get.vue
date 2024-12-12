@@ -133,27 +133,27 @@ const bindSkillsToPreference = async () =>{
         <!-- Other Job Fields -->
         <div class="text-container">
           <label>Address:</label>
-          <UIInputField v-model="currentJob.address" placeholder="Address"/>
+          <UIInputField id="address" v-model="currentJob.address" placeholder="Address"/>
         </div>
         <div class="text-container">
           <label>Description:</label>
-          <UIInputFieldMutliline v-model="currentJob.description" placeholder="Description" rows="5"/>
+          <UIInputFieldMutliline id="description" v-model="currentJob.description" placeholder="Description" rows="5"/>
         </div>
         <div class="text-container">
           <label>Min Hours:</label>
-          <UIInputField v-model="currentJob.minHours" type="number" placeholder="Min Hours"/>
+          <UIInputField id="min-hours" v-model="currentJob.minHours" type="number" placeholder="Min Hours"/>
         </div>
         <div class="text-container">
           <label>Max Hours:</label>
-          <UIInputField v-model="currentJob.maxHours" type="number" placeholder="Max Hours"/>
+          <UIInputField id="max-hours" v-model="currentJob.maxHours" type="number" placeholder="Max Hours"/>
         </div>
         <div class="date-picker-container">
           <label>Start Date:</label>
-          <UIInputField v-model="currentJob.startDate" type="date"/>
+          <UIInputField id="start-date" v-model="currentJob.startDate" type="date"/>
         </div>
         <div class="date-picker-container">
           <label>End Date:</label>
-          <UIInputField v-model="currentJob.endDate" type="date"/>
+          <UIInputField id="end-date" v-model="currentJob.endDate" type="date"/>
         </div>
 
         <div>

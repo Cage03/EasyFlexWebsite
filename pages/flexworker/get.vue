@@ -104,7 +104,7 @@ const reload = async () => {
 
 <template>
   <div class="register_page">
-    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
+    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup" id="popup">{{ popupMessage }}</UIPopup>
     <UIAddSkillsBox v-if="addSkills" :flexworker="useFlexworker.currentFlexworker.value" @close="reload"/>
     <div class="window" v-if="!addSkills">
       <div class="profile_data">
@@ -115,7 +115,7 @@ const reload = async () => {
               alt="Profile picture"
           />
           <div class="flex-wrapper">
-            <h1 @click="toggleEditName" v-if="!isEditingName">
+            <h1 @click="toggleEditName" v-if="!isEditingName" id="name">
               {{ useFlexworker.currentFlexworker.value.name || "Name" }}
             </h1>
             <input
@@ -123,6 +123,7 @@ const reload = async () => {
                 v-model="useFlexworker.currentFlexworker.value.name"
                 @blur="toggleEditName"
                 style="font-size: 1.5rem"
+                id="name-input"
             />
           </div>
         </div>
@@ -179,10 +180,10 @@ const reload = async () => {
           />
         </div>
         <UICategoriesBox :skills="useFlexworker.currentFlexworker.value.skills"/>
-        <UIButtonStandard :action="toggleAddSkills" :icon="IconType.Plus" :content="'Add skills'"/>
+        <UIButtonStandard id="add-skills" :action="toggleAddSkills" :icon="IconType.Plus" :content="'Add skills'"/>
 
         <div class="save-button-container" v-if="isEdited">
-          <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
+          <UIButtonStandard id="save-button" :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
         <div class="delete-button">
           <UIButtonStandard
