@@ -18,20 +18,6 @@ jobs:
       matrix:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        
-    services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        ports:
-          - 1433:1433
-        env:
-          ACCEPT_EULA: Y
-          SA_PASSWORD: 'yourStrong!Passw0rd'
-        options: >-
-          --health-cmd="wait-for-it -t 60 localhost:1433"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -49,7 +35,20 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        
+
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+          - 1433:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: 'yourStrong!Passw0rd'
+        options: >-
+          --health-cmd="wait-for-it -t 60 localhost:1433"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
        # Set up Node.js for the frontend
       - uses: actions/checkout@v4
@@ -68,18 +67,17 @@ jobs:
         run: docker pull sjitzooi/easyflex_api:master
 
       
-      - name: Install SQLCMD tool
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mssql-tools
-
+      # Wait for MSSQL to be ready
       - name: Wait for MSSQL to be ready
         run: |
-          sleep 30
-
-      - name: Run SQL script
+          while ! docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1"; do
+            echo "Waiting for MSSQL to be ready..."
+            sleep 5
+          done
+      # Optionally, load test data into MSSQL if needed (run SQL script)
+      - name: Load test data into MSSQL
         run: |
-          sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d master -i ./init.sql
+          docker exec -i mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d master -i ./init.sql
 
       # Start backend container with MSSQL connection string
       - name: Start backend container
