@@ -18,7 +18,8 @@ const fetchFlexworkers = async () => {
 const roundedResults = computed(() => {
   return useAlgorithm.flexworkers.value.map(flexworker => ({
     ...flexworker,
-    compatibility: Math.round(flexworker.compatibility)
+    compatibility: Math.round(flexworker.compatibility),
+    skills: flexworker.skills 
   }));
 });
 
@@ -64,14 +65,25 @@ watch(percentage, (newVal) => {
   <div v-if="!isLoading" class="matching-page">
     <h2 v-if="useAlgorithm.flexworkers.value.length > 0">Matches for "{{ pageData.job.title }}"</h2>
     <div class="matches">
-        <NuxtLink :to="`../flexworker/get?id=${flexworker.id}`" class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
-          <div class="profile-picture-orb">
-            <img :src="flexworker.profilePictureUrl" alt="Profile picture">
-            <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
-          </div>
-          <h1>{{ flexworker.name }}</h1>
-        </NuxtLink>
-      </div>
+      <NuxtLink
+          :to="`../flexworker/get?id=${flexworker.id}`"
+          class="match"
+          v-for="flexworker in roundedResults"
+          :key="flexworker.id">
+
+        <div class="profile-picture-orb">
+          <img :src="flexworker.profilePictureUrl" alt="Profile picture">
+          <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
+        </div>
+        <h1>{{ flexworker.name }}</h1>
+
+        <div class="skills">
+          <ul>
+            <li v-for="skill in flexworker.skills" :key="skill.name">{{ skill.name }}</li>
+          </ul>
+        </div>
+      </NuxtLink>
+    </div>
     <div v-if="useAlgorithm.flexworkers.value.length <= 0">
       <h2>No matches found for "{{ pageData.job.title }}"</h2>
     </div>
@@ -84,6 +96,7 @@ watch(percentage, (newVal) => {
     </div>
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .matching-page {
