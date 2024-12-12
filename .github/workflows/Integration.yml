@@ -20,11 +20,85 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+
+
+  cypress-E2E:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+        
+    steps:
+       # Set up Node.js for the frontend
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Install frontend dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Pull backend image from Docker Hub
+      - name: Pull backend image
+        run: docker pull sjitzooi/easyflex_api:latest
+
+      # Start MSSQL container for database
+      - name: Start MSSQL container
+        run: |
+          docker run -d -p 1433:1433 --name mssql \
+            -e 'ACCEPT_EULA=Y' \
+            -e 'SA_PASSWORD=YourStrong!Passw0rd' \
+            -e 'MSSQL_PID=Express' \
+            mcr.microsoft.com/mssql/server:2022-latest
+
+      # Wait for MSSQL to be ready
+      - name: Wait for MSSQL to be ready
+        run: |
+          while ! docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1"; do
+            echo "Waiting for MSSQL to be ready..."
+            sleep 5
+          done
+
+      # Optionally, load test data into MSSQL if needed (run SQL script)
+      - name: Load test data into MSSQL
+        run: |
+          docker exec -i mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -d master -i ./init.sql
+
+      # Start backend container with MSSQL connection string
+      - name: Start backend container
+        run: |
+          docker run -d -p 8080:5238 --name backend \
+            -e ConnectionStrings__DefaultConnection="Server=localhost;Database=test_db;User Id=sa;Password=YourStrong!Passw0rd;" \
+            sjitzooi/easyflex_api:latest
+
+      # Wait for the backend to be ready
+      - name: Wait for backend to be ready
+        run: npx wait-on http://localhost:8080
+
+      # Start frontend application
+      - name: Start frontend application
+        run: npm run start &
+        env:
+          CI: true
+          NUXT_PUBLIC_API__URL: "http://localhost:8080"
+
+      # Wait for frontend to be ready
+      - name: Wait for frontend to be ready
+        run: npx wait-on http://localhost:3000
+
+      # Run Cypress tests
+      - name: Run Cypress tests
+        run: npx cypress run
+  
