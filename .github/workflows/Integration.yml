@@ -81,7 +81,6 @@ jobs:
       - name: Start backend container
         uses: cypress-io/github-action@v6
         with:
-          working-directory: examples/wait-on
           start: |
             docker run -d -p 8080:5238 --name backend \
             -e ConnectionStrings__DefaultConnection="Server=localhost,1433;Database=test_db;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;" \
@@ -93,7 +92,6 @@ jobs:
       - name: Start frontend application
         uses: cypress-io/github-action@v6
         with:
-          working-directory: examples/wait-on
           start: npm run start &
           wait-on: 'http://localhost:3000'
         env:
