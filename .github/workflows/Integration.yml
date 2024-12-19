@@ -79,7 +79,7 @@ jobs:
 
       # Start backend container with MSSQL connection string
       - name: Start backend container
-        uses: ./
+        uses: cypress-io/github-action@v6
         with:
           working-directory: examples/wait-on
           start: |
@@ -91,7 +91,7 @@ jobs:
 
       # Start frontend application
       - name: Start frontend application
-        uses: ./
+        uses: cypress-io/github-action@v6
         with:
           working-directory: examples/wait-on
           start: npm run start &
