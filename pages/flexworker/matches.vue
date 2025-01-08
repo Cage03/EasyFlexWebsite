@@ -1,29 +1,42 @@
 <script setup lang="ts">
 
+import { type Flexworker } from '~/composables/useFlexworker';
+import { type compatibleJob } from '~/composables/useAlgorithm';
+
 const router = useRouter();
 const useAlgorithm = UseAlgorithm();
+const useFlexworker = UseFlexworker();
 
-const jobId = ref<number>(0);
+const flexworker = ref<Flexworker>({
+  id: 0,
+  name: '',
+  address: '',
+  dateOfBirth: '',
+  email: '',
+  phoneNumber: '',
+  profilePictureUrl: '',
+  skills: []
+});
+
+const compatibleJobs = ref<compatibleJob[]>([]);
 
 const isLoading = ref(false);
 const percentage = ref(0);
 const step = ref(0);
 const content = Array(10).fill(null);
 
-const fetchFlexworkers = async () => {
+const fetchJobs = async (id: number) => {
   isLoading.value = true;
-  await useAlgorithm.fetchFlexworkers(jobId.value);
+  if (flexworker.value.id !== null) {
+    compatibleJobs.value = await useAlgorithm.fetchJobs(id);
+  }
+  isLoading.value = false;
 };
 
-const roundedResults = computed(() => {
-  return useAlgorithm.flexworkers.value.map(flexworker => ({
-    ...flexworker,
-  }));
-});
-
 onMounted(async () => {
-  jobId.value = parseInt(router.currentRoute.value.query.id as string);
-  await fetchFlexworkers();
+  flexworker.value = await useFlexworker.fetchFlexworkerById(parseInt(router.currentRoute.value.query.id as string));
+  await fetchJobs(flexworker.value.id!);
+  console.log(compatibleJobs.value);
   
   const totalDuration = 3000;
   const intervalDuration = 50; 
@@ -32,7 +45,6 @@ onMounted(async () => {
 
   const interval = setInterval(() => {
     percentage.value += increment;
-    console.log(percentage.value);
 
     if (percentage.value >= 100) {
       percentage.value = 100;
@@ -47,12 +59,6 @@ onMounted(async () => {
   
 });
 
-let pageData = {
-  job: {
-    title: 'Software Developer'
-  },
-}
-
 watch(percentage, (newVal) => {
   document.documentElement.style.setProperty('--loading-progress', `${newVal}%`);
 });
@@ -62,27 +68,27 @@ watch(percentage, (newVal) => {
 
 <template>
   <div v-if="!isLoading" class="matching-page">
-    <h2 v-if="useAlgorithm.flexworkers.value.length > 0">Matches for "{{ pageData.job.title }}"</h2>
+    <h2 v-if="compatibleJobs.length > 0">Matches for "{{ flexworker.name }}"</h2>
     <div class="matches">
-        <NuxtLink :to="`../flexworker/get?id=${flexworker.id}`" class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
+        <NuxtLink :to="`../job/get?id=${job.id}`" class="match" v-for="job in compatibleJobs" :key="job.id">
           <div class="profile-picture-orb">
-            <img :src="flexworker.profilePictureUrl" alt="Profile picture">
-            <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
+            <img alt="Profile picture">
+            <h1 class="compatibility">{{ job.compatibility }}%</h1>
           </div>
-          <h1>{{ flexworker.name }}</h1>
+          <h1>{{ job.name }}</h1>
           <ul>
-            <UIFeature v-for="skill in flexworker.commonSkills" :key="skill.id" :title="skill.name" />
+            <UIFeature v-for="skill in job.commonSkills" :key="skill.id" :title="skill.name" />
           </ul>
         </NuxtLink>
       </div>
-    <div v-if="useAlgorithm.flexworkers.value.length <= 0">
-      <h2>No matches found for "{{ pageData.job.title }}"</h2>
+    <div v-if="compatibleJobs.length <= 0">
+      <h2>No matches found for "{{ flexworker.name }}"</h2>
     </div>
   </div>
   <div v-if="isLoading" class="loading-screen">
     <div class="loading-bar">
       <div class="background">
-        <h1 :style="{ '--loading-progress': percentage + '%' }">Finding the perfect "{{ pageData.job.title }}"</h1>
+        <h1 :style="{ '--loading-progress': percentage + '%' }">Finding the perfect job for "{{ flexworker.name }}"</h1>
       </div>
     </div>
   </div>
@@ -101,6 +107,10 @@ watch(percentage, (newVal) => {
 
   &::-webkit-scrollbar {
     width: 0;
+  }
+
+  h1 {
+    word-break: break-all;
   }
 
   h2 {

@@ -69,9 +69,10 @@ export const UseFlexworker = () => {
                 throw new Error(`Failed to fetch flexworker: ${response.statusText}`);
             }
 
-            const flexworkerData = (await response._data) as any;
+            const flexworkerData = (await response._data) as Flexworker;
             currentFlexworker.value = flexworkerData;
             originalFlexworker.value = Utils.deepCopy(flexworkerData);
+            return flexworkerData;
         } catch (error: any) {
             throw new Error(error.message || "Error fetching flexworker.");
         }
