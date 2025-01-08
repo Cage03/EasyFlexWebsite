@@ -1,4 +1,4 @@
-import {Utils} from "~/scripts/script-collection";
+import { ref } from 'vue';
 
 export interface compatibleFlexworker {
   id: number | 0;
@@ -20,23 +20,16 @@ export const UseAlgorithm = () => {
   const flexworkers = ref<compatibleFlexworker[]>([]);
   const jobs = ref<compatibleJob[]>([]);
 
-  const data = computed(() => getFlexworkers());
-
-  const getFlexworkers = (): compatibleFlexworker[] => {
-    return Utils.deepCopy(flexworkersState.value);
-  };
-
-  const fetchFlexworkers = async (jobId: number): Promise<void> => {
-    if (lastFetchedJobId.value === jobId) return;
+  const fetchFlexworkers = async (jobId: number) => {
     try {
-      const response = await fetchFromClient.get(`/Job/Matches?id=${jobId}`, "main-api");
+      console.log(`'/Job/Matches?id=${jobId}'`)
+      const response = await fetchFromClient.get(`/Job/Matches?id=${jobId}`, 'main-api');
 
       if (!response.ok) {
         throw new Error(`Failed to fetch flexworkers: ${response.statusText}`);
       }
 
-      flexworkersState.value = (await response._data) as compatibleFlexworker[];
-      lastFetchedJobId.value = jobId; 
+      flexworkers.value = (await response._data) as compatibleFlexworker[];
     } catch (error: any) {
       throw new Error(error.message || "Error fetching flexworkers.");
     }

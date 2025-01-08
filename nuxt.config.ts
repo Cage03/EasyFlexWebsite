@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   css: ['~/assets/scss/main.scss'],
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_ENV === 'test' ? process.env.TEST_API_URL : process.env.API_URL
+      apiUrl: process.env.API_URL
     }
   },
   app:{

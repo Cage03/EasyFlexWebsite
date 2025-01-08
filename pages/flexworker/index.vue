@@ -81,7 +81,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-medium);
+    gap: 1.5rem;
 
     .functionality {
       width: 100%;
@@ -97,22 +97,22 @@ onMounted(async () => {
       .buttons {
         display: flex;
         flex-direction: row;
-        gap: var(--spacing-standard);
+        gap: 1rem;
         flex-shrink: 0;
       }
     }
 
     .overview {
-      padding: var(--padding-large) var(--padding-standard);
+      padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
       height: 25rem;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;
-      border-radius: var(--border-radius-standard);
+      border-radius: 1rem;
       overflow: auto;
-      gap: var(--spacing-standard);
+      gap: 1rem;
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -120,12 +120,12 @@ onMounted(async () => {
 
       &::-webkit-scrollbar-track {
         background: var(--white-95);
-        border-radius: var(--border-radius-standard);
+        border-radius: 1rem;
       }
 
       &::-webkit-scrollbar-thumb {
         background-color: var(--text-primary-color);
-        border-radius: var(--border-radius-standard);
+        border-radius: 1rem;
         border: 3px solid #f1f1f1;
       }
     }

@@ -104,7 +104,7 @@ const reload = async () => {
 
 <template>
   <div class="register_page">
-    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup" id="popup">{{ popupMessage }}</UIPopup>
+    <UIPopup :button-text="'Close'" @close="togglePopup" :show="showPopup">{{ popupMessage }}</UIPopup>
     <UIAddSkillsBox v-if="addSkills" :flexworker="useFlexworker.currentFlexworker.value" @close="reload"/>
     <div class="window" v-if="!addSkills">
       <div class="profile_data">
@@ -178,10 +178,10 @@ const reload = async () => {
           />
         </div>
         <UICategoriesBox :skills="useFlexworker.currentFlexworker.value.skills"/>
-        <UIButtonStandard id="add-skills" :action="toggleAddSkills" :icon="IconType.Plus" :content="'Add skills'"/>
+        <UIButtonStandard :action="toggleAddSkills" :icon="IconType.Plus" :content="'Add skills'"/>
 
         <div class="save-button-container" v-if="isEdited">
-          <UIButtonStandard id="save-button" :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
+          <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
         </div>
         <div class="find-flexworkers">
           <UIButtonStandard :color="'yellow'" :action="() => router.push(`/flexworker/matches?id=${id}`)" :content="'Find Jobs'"/>
@@ -206,7 +206,6 @@ const reload = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
   overflow: auto;
 
@@ -218,12 +217,12 @@ const reload = async () => {
 .window {
   display: flex;
   width: 50rem;
-  padding: var(--padding-standard);
+  padding: 1rem;
   flex-direction: column;
   text-align: center;
-  gap: var(--spacing-standard);
+  gap: 1rem;
 
-  border-radius: var(--border-radius-standard);
+  border-radius: 1rem;
   background: var(--white-95, rgba(250, 250, 250, 0.95));
   box-shadow: var(--shadow-four-sides)
 }
@@ -231,16 +230,16 @@ const reload = async () => {
 h1 {
   text-align: left; /* Align the h1 element to the left */
   margin: 0; /* Remove default margin to adjust spacing */
-  padding: var(--spacing-small) 0; /* Add some padding for better spacing */
+  padding: 0.5rem 0; /* Add some padding for better spacing */
 }
 
 .profile_data {
   display: flex;
-  padding: 0 var(--padding-standard);
+  padding: 0 1rem;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: var(--spacing-small);
+  gap: 0.625rem;
 
   .flex-wrapper {
     display: flex;
@@ -269,7 +268,7 @@ h1 {
   justify-content: flex-end;
   width: 100%;
   align-items: center;
-  gap: var(--spacing-xlarge);
+  gap: 2.5rem;
   align-self: stretch;
 }
 
@@ -278,7 +277,7 @@ textarea {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--gray-50);
-  border-radius: var(--border-radius-small);
+  border-radius: 0.25rem;
   background: none;
   font-style: italic;
 }
@@ -303,7 +302,7 @@ textarea {
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: var(--spacing-standard);
+  gap: 1rem;
 
   label {
     width: 6rem;
@@ -318,7 +317,7 @@ textarea {
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: var(--spacing-standard);
+  gap: 1rem;
 
   label {
     width: 6rem;
@@ -334,11 +333,11 @@ textarea {
 }
 
 .register-button-container {
-  margin-top: var(--margin-standard);
+  margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: var(--spacing-xlarge);
+  gap: 2.5rem;
   align-self: stretch;
 }
 </style>

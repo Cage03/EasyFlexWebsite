@@ -127,27 +127,27 @@ const bindSkillsToPreference = async () =>{
         <!-- Other Job Fields -->
         <div class="text-container">
           <label>Address:</label>
-          <UIInputField id="address" v-model="currentJob.address" placeholder="Address"/>
+          <UIInputField v-model="currentJob.address" placeholder="Address"/>
         </div>
         <div class="text-container">
           <label>Description:</label>
-          <UIInputFieldMutliline id="description" v-model="currentJob.description" placeholder="Description" rows="5"/>
+          <UIInputFieldMutliline v-model="currentJob.description" placeholder="Description" rows="5"/>
         </div>
         <div class="text-container">
           <label>Min Hours:</label>
-          <UIInputField id="min-hours" v-model="currentJob.minHours" type="number" placeholder="Min Hours"/>
+          <UIInputField v-model="currentJob.minHours" type="number" placeholder="Min Hours"/>
         </div>
         <div class="text-container">
           <label>Max Hours:</label>
-          <UIInputField id="max-hours" v-model="currentJob.maxHours" type="number" placeholder="Max Hours"/>
+          <UIInputField v-model="currentJob.maxHours" type="number" placeholder="Max Hours"/>
         </div>
         <div class="date-picker-container">
           <label>Start Date:</label>
-          <UIInputField id="start-date" v-model="currentJob.startDate" type="date"/>
+          <UIInputField v-model="currentJob.startDate" type="date"/>
         </div>
         <div class="date-picker-container">
           <label>End Date:</label>
-          <UIInputField id="end-date" v-model="currentJob.endDate" type="date"/>
+          <UIInputField v-model="currentJob.endDate" type="date"/>
         </div>
 
         <div>
@@ -196,7 +196,6 @@ const bindSkillsToPreference = async () =>{
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100%; /* Ensure it takes the full viewport height */
   overflow-y: auto; /* Allow vertical scrolling */
@@ -209,8 +208,8 @@ const bindSkillsToPreference = async () =>{
   max-width: 90%; /* Add responsiveness for smaller screens */
   padding: 1rem;
   text-align: center;
-  gap: var(--spacing-standard);
-  border-radius: var(--border-radius-standard);
+  gap: 1rem;
+  border-radius: 1rem;
   background: var(--white-95, rgba(250, 250, 250, 0.95));
   box-shadow: var(--shadow-four-sides);
   margin-bottom: 2rem; /* Add spacing to avoid content cutting off */
@@ -226,12 +225,12 @@ const bindSkillsToPreference = async () =>{
 .text-container,
 .date-picker-container {
   display: flex;
-  gap: var(--spacing-standard);
+  gap: 1rem;
   align-items: center;
 
   label {
     width: 6rem;
-    font-size: var(--font-size-standard);
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text-primary-color);
   }

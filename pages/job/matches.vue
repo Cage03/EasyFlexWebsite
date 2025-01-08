@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const router = useRouter();
 const useAlgorithm = UseAlgorithm();
 const useJob = UseJob();
@@ -13,40 +14,12 @@ const content = Array(10).fill(null);
 const jobTitle = ref("");
 
 const fetchFlexworkers = async () => {
-  if (useAlgorithm.lastFetchedJobId.value !== jobId.value) {
-    isLoading.value = true;
-    percentage.value = 0;
-    step.value = 0;
-
-    const totalDuration = 3000;
-    const intervalDuration = 50;
-    const steps = totalDuration / intervalDuration;
-    const increment = 100 / steps;
-
-    const interval = setInterval(() => {
-      percentage.value += increment;
-
-      if (percentage.value >= 100) {
-        percentage.value = 100;
-        clearInterval(interval);
-      }
-
-      if (step.value < content.length && percentage.value >= (step.value * 100) / content.length) {
-        step.value += 1;
-      }
-    }, intervalDuration);
-
-    await useAlgorithm.fetchFlexworkers(jobId.value);
-
-    const remainingTime = totalDuration - (percentage.value / 100) * totalDuration;
-    await new Promise((resolve) => setTimeout(resolve, Math.max(0, remainingTime)));
-
-    isLoading.value = false;
-  }
+  isLoading.value = true;
+  await useAlgorithm.fetchFlexworkers(jobId.value);
 };
 
 const roundedResults = computed(() => {
-  return useAlgorithm.data.value.map((flexworker) => ({
+  return useAlgorithm.flexworkers.value.map(flexworker => ({
     ...flexworker,
   }));
 });
@@ -81,8 +54,10 @@ onMounted(async () => {
 });
 
 watch(percentage, (newVal) => {
-  document.documentElement.style.setProperty("--loading-progress", `${newVal}%`);
+  document.documentElement.style.setProperty('--loading-progress', `${newVal}%`);
 });
+
+
 </script>
 
 <template>
@@ -113,7 +88,6 @@ watch(percentage, (newVal) => {
   </div>
 </template>
 
-
 <style scoped lang="scss">
 
 .matching-page {
@@ -122,8 +96,8 @@ watch(percentage, (newVal) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--padding-medium);
-  gap: var(--spacing-standard);
+  padding: 1.25rem;
+  gap: 1rem;
   overflow: auto;
   
 
@@ -152,11 +126,11 @@ watch(percentage, (newVal) => {
       align-items: flex-start;
       height: auto; /* Adjust to fit content */
       width: 14rem;
-      gap: var(--spacing-small);
+      gap: 0.5rem;
       background-color: #fff;
-      border-radius: var(--border-radius-standard);
+      border-radius: 1rem;
       box-shadow: var(--shadow-four-sides);
-      padding: var(--padding-standard);
+      padding: 1rem;
       cursor: pointer;
       text-decoration: none;
       color: var(--text-primary-color);

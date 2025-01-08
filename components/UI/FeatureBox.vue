@@ -38,11 +38,11 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .feature-box {
-  margin: var(margin-small);
+  margin: 0.625rem;
   display: flex;
   text-align: start;
   flex-direction: row;
-  gap: var(--spacing-small);
+  gap: 0.625rem;
   align-self: stretch;
   align-items: center;
 }
@@ -60,7 +60,7 @@ const props = defineProps({
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  border-radius: var(--border-radius-standard);
+  border-radius: 1rem;
   max-width: 75%;
   width: 75%;
   min-height: 3rem;
@@ -74,8 +74,8 @@ const props = defineProps({
   margin: 0.3125rem;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-small);
-  border-radius: var(--border-radius-standard);
+  gap: 0.625rem;
+  border-radius: 1rem;
   border: 1px solid var(--Primary-Solid, #4E8798);
   color: #000;
   font-size: 1rem;
@@ -86,7 +86,7 @@ const props = defineProps({
 
 .add-feature-container {
   display: flex;
-  gap: var(--spacing-small);
+  gap: 0.625rem;
   margin-left: auto;
 }
 </style>

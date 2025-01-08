@@ -8,7 +8,7 @@
           :x-button="true"
           @xButtonFunction="togglePopup('createCategory')"
       >
-        <UIInputField id="category_name_input" v-model="categoryNameInput" placeholder="Name" />
+        <UIInputField v-model="categoryNameInput" placeholder="Name" />
       </UIPopup>
       <UIPopup
           :button-text="'Confirm'"
@@ -16,12 +16,10 @@
           :show="popupState.addSkill"
           :x-button="true"
           @xButtonFunction="togglePopup('addSkill')"
-          id="confirm_add_skill"
       >
-        <UIInputField id="skill_name_input" v-model="skillNameInput" placeholder="Name" />
+        <UIInputField v-model="skillNameInput" placeholder="Name" />
       </UIPopup>
       <UIPopup
-          id="popup"
           :button-text="'Close'"
           @close="togglePopup('misc')"
           :show="popupState.misc"
@@ -286,14 +284,14 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: var(--padding-standard);
+  padding-top: 1rem;
 
   .overview-container {
     width: 70%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-medium);
+    gap: 1.5rem;
 
     .functionality {
       width: 100%;
@@ -309,22 +307,22 @@ onMounted(async () => {
       .buttons {
         display: flex;
         flex-direction: row;
-        gap: var(--spacing-standard);
+        gap: 1rem;
         flex-shrink: 0;
       }
     }
 
     .overview {
-      padding: var(--padding-large) var(--padding-standard);
+      padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
       height: 25rem;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;
-      border-radius: var(--border-radius-standard);
+      border-radius: 1rem;
       overflow: auto;
-      gap: var(--spacing-standard);
+      gap: 1rem;
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -332,12 +330,12 @@ onMounted(async () => {
 
       &::-webkit-scrollbar-track {
         background: var(--white-95);
-        border-radius: var(--border-radius-standard);
+        border-radius: 1rem;
       }
 
       &::-webkit-scrollbar-thumb {
         background-color: var(--text-primary-color);
-        border-radius: var(--border-radius-standard);
+        border-radius: 1rem;
         border: 3px solid #f1f1f1;
       }
     }

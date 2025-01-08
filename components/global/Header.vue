@@ -36,7 +36,7 @@
   
   .navigation {
     display: flex;
-    gap: var(--spacing-standard);
+    gap: 1rem;
     font-family: 'Roboto', sans-serif;
     font-size: 1.5rem;
     font-weight: 500;

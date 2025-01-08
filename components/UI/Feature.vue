@@ -19,7 +19,7 @@ const props = defineProps({
 .container {
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-small);
+  gap: 0.625rem;
 }
 
 .features {
@@ -28,7 +28,7 @@ const props = defineProps({
   margin: 0.3125rem;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-small);
+  gap: 0.625rem;
   border-radius: 1rem;
   border: 1px solid var(--Primary-Solid, #4E8798);
   height: fit-content;

@@ -37,8 +37,8 @@ const updateValue = (event: Event) => {
   
   input{
     width:100%;
-    padding: var(--padding-standard) var(--padding-xlarge);
-    border-radius: var(--border-radius-standard);
+    padding:1rem 2.5rem;
+    border-radius: 1rem;
     font-size: 1rem;
     font-family: Montserrat, sans-serif;
     font-style:italic;
