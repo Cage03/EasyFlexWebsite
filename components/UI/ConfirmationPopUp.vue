@@ -53,7 +53,7 @@ const confirmConfirmation = () =>{
 
 .popup-content {
   background: white;
-  padding: 2rem;
+  padding: var(--padding-large);
   border-radius: 0.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -63,7 +63,7 @@ const confirmConfirmation = () =>{
 }
 
 .popup-text {
-  margin-bottom: 1rem;
+  margin-bottom: var(--margin-standard);
 }
 
 .popup-show .popup-content {
