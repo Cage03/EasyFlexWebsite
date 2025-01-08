@@ -120,16 +120,10 @@ const bindSkillsToPreference = async () =>{
     <div class="window"  v-if="!addPreferences">
       <div class="profile-data">
         <!-- Editable Job Name -->
-        <div class="flex-wrapper">
-          <h1 v-if="!isEdited">{{ currentJob.name || "Name" }}</h1>
-          <input
-              v-model="currentJob.name"
-              placeholder="Job Name"
-              @input="togglePopup"
-              style="font-size: 1.5rem"
-          />
+        <div class="text-container">
+          <label>Job Name:</label>
+          <UIInputField v-model="currentJob.name" placeholder="Job Name"/>
         </div>
-
         <!-- Other Job Fields -->
         <div class="text-container">
           <label>Address:</label>
@@ -197,34 +191,28 @@ const bindSkillsToPreference = async () =>{
 </template>
 
 <style scoped lang="scss">
-.preference-item{
-  display: flex;
-  align-items: center;
-  label{
-    font-weight: normal;
-  }
-  span{
-    font-weight: bold;
-  }
-}
 .job-page {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  height: 100%; /* Ensure it takes the full viewport height */
+  overflow-y: auto; /* Allow vertical scrolling */
 }
 
 .window {
   display: flex;
   flex-direction: column;
   width: 50rem;
+  max-width: 90%; /* Add responsiveness for smaller screens */
   padding: 1rem;
   text-align: center;
   gap: 1rem;
   border-radius: 1rem;
   background: var(--white-95, rgba(250, 250, 250, 0.95));
   box-shadow: var(--shadow-four-sides);
+  margin-bottom: 2rem; /* Add spacing to avoid content cutting off */
 }
 
 .profile-data {
@@ -232,26 +220,9 @@ const bindSkillsToPreference = async () =>{
   flex-direction: column;
   gap: 0.625rem;
   text-align: left;
-
-  .flex-wrapper {
-    display: flex;
-    justify-content: space-between;
-  }
 }
 
-.text-container {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-
-  label {
-    width: 6rem;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary-color);
-  }
-}
-
+.text-container,
 .date-picker-container {
   display: flex;
   gap: 1rem;
@@ -265,16 +236,25 @@ const bindSkillsToPreference = async () =>{
   }
 }
 
-.save-button-container {
+.save-button-container,
+.button-container {
   margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
+  gap: 1rem;
 }
 
-.button-container {
+.preference-item {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  justify-content: flex-end;
+  align-items: center;
+
+  label {
+    font-weight: normal;
+  }
+
+  span {
+    font-weight: bold;
+  }
 }
+
 </style>

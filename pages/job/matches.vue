@@ -2,6 +2,7 @@
 
 const router = useRouter();
 const useAlgorithm = UseAlgorithm();
+const useJob = UseJob();
 
 const jobId = ref<number>(0);
 
@@ -9,6 +10,8 @@ const isLoading = ref(false);
 const percentage = ref(0);
 const step = ref(0);
 const content = Array(10).fill(null);
+
+const jobTitle = ref("");
 
 const fetchFlexworkers = async () => {
   isLoading.value = true;
@@ -23,6 +26,9 @@ const roundedResults = computed(() => {
 
 onMounted(async () => {
   jobId.value = parseInt(router.currentRoute.value.query.id as string);
+  await useJob.fetchJobById(jobId.value);
+  jobTitle.value = useJob.currentJob.value.name;
+  console.log(jobTitle.value);
   await fetchFlexworkers();
   
   const totalDuration = 3000;
@@ -47,12 +53,6 @@ onMounted(async () => {
   
 });
 
-let pageData = {
-  job: {
-    title: 'Software Developer'
-  },
-}
-
 watch(percentage, (newVal) => {
   document.documentElement.style.setProperty('--loading-progress', `${newVal}%`);
 });
@@ -62,33 +62,34 @@ watch(percentage, (newVal) => {
 
 <template>
   <div v-if="!isLoading" class="matching-page">
-    <h2 v-if="useAlgorithm.flexworkers.value.length > 0">Matches for "{{ pageData.job.title }}"</h2>
+    <h2 v-if="useAlgorithm.flexworkers.value.length > 0">Matches for "{{ jobTitle }}"</h2>
     <div class="matches">
         <NuxtLink :to="`../flexworker/get?id=${flexworker.id}`" class="match" v-for="flexworker in roundedResults" :key="flexworker.id">
           <div class="profile-picture-orb">
             <img :src="flexworker.profilePictureUrl" alt="Profile picture">
             <h1 class="compatibility">{{ flexworker.compatibility }}%</h1>
           </div>
-          <h1>{{ flexworker.name }}</h1>
+            <h1>{{ flexworker.name }}</h1>
           <ul>
-            <UIFeature v-for="skill in flexworker.commonSkills" :key="skill.id" :title="skill.name" />
+            <UIFeature v-for="skill in flexworker.skills" :key="skill.id" :title="skill.name" />
           </ul>
         </NuxtLink>
       </div>
     <div v-if="useAlgorithm.flexworkers.value.length <= 0">
-      <h2>No matches found for "{{ pageData.job.title }}"</h2>
+      <h2>No matches found for "{{ jobTitle }}"</h2>
     </div>
   </div>
   <div v-if="isLoading" class="loading-screen">
     <div class="loading-bar">
       <div class="background">
-        <h1 :style="{ '--loading-progress': percentage + '%' }">Finding the perfect "{{ pageData.job.title }}"</h1>
+        <h1 :style="{ '--loading-progress': percentage + '%' }">Finding the perfect "{{ jobTitle }}"</h1>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+
 .matching-page {
   height: calc(100% - 1rem);
   width: 100%;
@@ -98,11 +99,14 @@ watch(percentage, (newVal) => {
   padding: 1.25rem;
   gap: 1rem;
   overflow: auto;
+  
 
   &::-webkit-scrollbar {
     width: 0;
   }
-
+  
+  
+  
   h2 {
     align-self: flex-start;
     font-size: 2.5rem;
@@ -114,12 +118,13 @@ watch(percentage, (newVal) => {
     grid-template-columns: repeat(5, 1fr);
     gap: 4rem 0.5rem;
     padding: 3rem;
+    text-wrap: wrap;
 
     .match {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      height: 18rem;
+      height: auto; /* Adjust to fit content */
       width: 14rem;
       gap: 0.5rem;
       background-color: #fff;
@@ -129,10 +134,10 @@ watch(percentage, (newVal) => {
       cursor: pointer;
       text-decoration: none;
       color: var(--text-primary-color);
-      
+
       &:first-child {
-        .profile-picture-orb{
-          border-color:#4E8798;
+        .profile-picture-orb {
+          border-color: #4E8798;
         }
       }
 
@@ -161,7 +166,7 @@ watch(percentage, (newVal) => {
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 2.5rem;
+          font-size: 2rem;
           font-weight: bold;
           background-color: rgba(255, 255, 255, 0.5);
           color: var(--text-primary-color);
@@ -169,9 +174,31 @@ watch(percentage, (newVal) => {
       }
 
       h1 {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
         font-weight: bold;
-        text-align:center;
+        text-align: center;
+        margin: 0.5rem 0;
+        line-break: anywhere;
+      }
+
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: inline-block;
+          background-color: var(--secondary-color);
+          color: #fff;
+          padding: 0.3rem 0.6rem;
+          border-radius: 0.5rem;
+          font-size: 0.9rem;
+          font-weight: bold;
+          white-space: nowrap;
+        }
       }
     }
   }
@@ -218,4 +245,5 @@ watch(percentage, (newVal) => {
     }
   }
 }
+
 </style>

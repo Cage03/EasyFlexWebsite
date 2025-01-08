@@ -114,17 +114,16 @@ const reload = async () => {
               :src="useFlexworker.currentFlexworker.value.profilePictureUrl"
               alt="Profile picture"
           />
-          <div class="flex-wrapper">
-            <h1 @click="toggleEditName" v-if="!isEditingName">
-              {{ useFlexworker.currentFlexworker.value.name || "Name" }}
-            </h1>
-            <input
-                v-if="isEditingName"
-                v-model="useFlexworker.currentFlexworker.value.name"
-                @blur="toggleEditName"
-                style="font-size: 1.5rem"
-            />
-          </div>
+        </div>
+
+        <div class="text-container">
+          <label>Name:</label>
+          <UIInputField 
+              id="name"
+              v-model="useFlexworker.currentFlexworker.value.name" 
+              placeholder="Name"
+              required
+          />
         </div>
 
         <div class="text-container">
@@ -183,6 +182,9 @@ const reload = async () => {
 
         <div class="save-button-container" v-if="isEdited">
           <UIButtonStandard :action="saveChanges" :icon="IconType.Edit" :content="'Save changes'"/>
+        </div>
+        <div class="find-flexworkers">
+          <UIButtonStandard :color="'yellow'" :action="() => router.push(`/flexworker/matches?id=${id}`)" :content="'Find Jobs'"/>
         </div>
         <div class="delete-button">
           <UIButtonStandard
