@@ -132,9 +132,6 @@ const close = () => {
     <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{popupMessage}}</UIPopup>
     <div class="functionality">
       <UIButtonStandard :action="close" :content="'Close'" :color="'red'"/>
-      <div class="search-bar-container">
-      </div>
-      <UISearch :placeholder="'Search...'"/>
     </div>
     <div class="overview">
       <CategoryListItem v-for="category in flexworkerCategories" :key="category.id" :category="category"
