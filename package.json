@@ -4,17 +4,20 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "cross-env NUXT_ENV=development nuxt dev",
+    "test": "cross-env NUXT_ENV=test nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "cypress": "^13.16.0",
+    "dotenv": "^16.4.7",
     "nuxt": "^3.13.0",
     "vue": "latest"
   },
   "devDependencies": {
-    "cypress": "^13.16.0",
+    "cross-env": "^7.0.3",
     "sass": "^1.79.5",
     "sass-embedded": "^1.79.4"
   }

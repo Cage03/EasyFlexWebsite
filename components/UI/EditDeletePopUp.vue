@@ -70,7 +70,7 @@ const emitUpdate=() =>{
 
 .popup-content {
   background: white;
-  padding: 2rem;
+  padding: var(--padding-large);
   border-radius: 0.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -83,11 +83,11 @@ const emitUpdate=() =>{
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  gap: 1rem
+  gap: var(--spacing-standard);
 }
 .popup-text {
-  margin-bottom: 1rem;
-  margin-right: 1rem;
+  margin-bottom: var(--margin-standard);
+  margin-right: var(--margin-standard);
 }
 
 .popup-show .popup-content {
@@ -96,7 +96,7 @@ const emitUpdate=() =>{
 
 .close-button {
   position: relative;
-  top: 0rem;
+  top: 0;
   left: 90%;
   background: none;
   border: none;

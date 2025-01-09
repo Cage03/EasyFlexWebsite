@@ -23,7 +23,7 @@ export const UseFlexworker = () => {
     } as Flexworker;
 
     const flexworkers = useState("flexworkers", () => [] as Array<typeof defaultData>);
-    const page = ref(1);
+    const page = ref(0);
     const limit = ref(10);
     const loading = ref(false);
     const searchQuery = ref("");
@@ -34,13 +34,16 @@ export const UseFlexworker = () => {
 
     const clearFlexworkers = () => {
         flexworkers.value = [];
-        page.value = 1;
+        page.value = 0;
     };
 
     const fetchFlexworkers = async () => {
         if (loading.value) return;
 
         loading.value = true;
+        if (page.value === 0) {
+            clearFlexworkers();
+        }
         try {
             const response = await fetchFromClient.get(
               `/Flexworker/Get?limit=${limit.value}&page=${page.value}&search=${searchQuery.value}`,

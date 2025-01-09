@@ -177,9 +177,9 @@ async function registerFlexworker() {
 
 input {
   width: 100%;
-  padding: 0.5rem;
+  padding: var(--padding-small);
   border: 1px solid var(--gray-50);
-  border-radius: 0.25rem;
+  border-radius: var(--border-radius-small);
   background: none;
 }
 
@@ -198,11 +198,11 @@ input {
   .window {
     display: flex;
     width: 50rem;
-    padding: 1rem;
+    padding: var(--padding-standard);
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--spacing-standard);
 
-    border-radius: 1rem;
+    border-radius: var(--border-radius-standard);
     background: var(--white-95, rgba(250, 250, 250, 0.95));
 
     /* Shadow 4 Sides */
@@ -217,26 +217,26 @@ input {
   .profile_data_header {
     display: flex;
     align-items: flex-start;
-    gap: 0.625rem;
+    gap: var(--spacing-small);
     align-self: stretch;
   }
 
   .profile_data {
     display: flex;
-    padding: 0 1rem;
+    padding: 0 var(--padding-standard);
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    gap: 0.625rem;
+    gap: var(--spacing-small);
   }
 }
 
 .features-window {
   display: flex;
-  padding: 1rem;
+  padding: var(--spacing-standard);
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.625rem;
+  gap: var(--spacing-small);
   flex: 1 0 0;
   align-self: stretch;
 }
@@ -254,7 +254,7 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.625rem;
+  gap: var(--spacing-small);
   align-self: stretch;
 }
 
@@ -263,7 +263,7 @@ input {
   justify-content: space-between;
   align-items: center;
   flex: 1 0 0;
-  border-radius: 1rem;
+  border-radius: var(--border-radius-standard);
   border: 1px solid #000;
   max-width: 75%;
   min-height: 3rem;
@@ -275,8 +275,8 @@ input {
   margin: 0.3125rem;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.625rem;
-  border-radius: 1rem;
+  gap: var(--spacing-small);
+  border-radius: var(--border-radius-standard);
   border: 1px solid var(--Primary-Solid, #4E8798);
 
   color: #000;
@@ -288,7 +288,7 @@ input {
 
 .add-certificate-container, .add-skill-container, .add-language-container {
   display: flex;
-  gap: 0.625rem;
+  gap: var(--spacing-small);
   margin-left: auto;
 }
 
@@ -296,7 +296,7 @@ input {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 2.5rem;
+  gap: var(--spacing-xlarge);
   align-self: stretch;
 }
 
