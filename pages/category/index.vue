@@ -50,9 +50,6 @@
           />
       <h1>Category and Skill Manager</h1>
       <div class="functionality">
-        <div class="search-bar-container">
-          <UISearch v-model="searchQuery" placeholder="Search..." />
-        </div>
         <div class="buttons">
           <UIButtonStandard
               :action="() => togglePopup('createCategory')"
@@ -183,6 +180,7 @@ const createCategory = async () => {
     categories.value.unshift(newCategory);
     showPopupMessage("Category added successfully.");
     togglePopup("createCategory");
+    location.reload();
   } catch (error: any) {
     showPopupMessage(error.data?.message || "Failed to add category.");
   }

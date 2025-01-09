@@ -47,10 +47,7 @@ onMounted(async () => {
     </UIPopup>
     <div class="overview-container">
       <div class="functionality">
-        <div class="search-bar-container">
-          <UISearch :placeholder="'Search...'" 
-                    v-model="useJob.computedSearchQuery.value"/>
-        </div>
+       
         <div class="buttons">
           <UIButtonStandard
               :action="redirectToCreate"

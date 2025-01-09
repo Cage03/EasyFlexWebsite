@@ -3,9 +3,6 @@
   <div class="flexworker-overview-page">
     <div class="overview-container">
       <div class="functionality">
-        <div class="search-bar-container">
-          <UISearch :placeholder="'Search...'" v-model="computedSearchQuery" />
-        </div>
         <div class="buttons">
           <UIButtonStandard :action="redirectToCreate" :icon="IconType.Plus" :content="'Create New'" />
         </div>
