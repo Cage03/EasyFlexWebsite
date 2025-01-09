@@ -61,7 +61,7 @@ const xButtonFunction = () => {
 
 .popup-content {
   background: white;
-  padding: var(--padding-large);
+  padding: 2rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -71,7 +71,7 @@ const xButtonFunction = () => {
 }
 
 .popup-text {
-  margin-bottom: var(--spacing-standard);
+  margin-bottom: 1rem;
 }
 
 .popup-show .popup-content {
@@ -80,7 +80,7 @@ const xButtonFunction = () => {
 
 .close-button {
   position: relative;
-  top: 0;
+  top: 0rem;
   left: 90%;
   background: none;
   border: none;

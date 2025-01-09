@@ -36,19 +36,19 @@ const redirectTo = () => {
 .list-item {
   position: relative;
   width: calc(100% - (4rem + 4px));
-  padding: var(--padding-small) var(--padding-large);
+  padding: 0.5rem 2rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   background: #fff;
-  border-radius: var(--border-radius-standard);
+  border-radius: 1rem;
   border: 2px solid var(--text-primary-color);
   align-items: center;
 
   .properties {
     display: flex;
     flex-direction: row;
-    gap: var(--spacing-standard);
+    gap: 1rem;
     width: 100%; 
 
     p {

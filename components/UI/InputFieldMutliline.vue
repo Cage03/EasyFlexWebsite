@@ -27,9 +27,8 @@ const updateValue = (event: Event) => {
 <style scoped lang="scss">
 textarea {
   width: 100%;
-  padding: var(--padding-small);
-  border-radius: var(--border-radius-small);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
   font-size: 1rem;
-  resize: none;
 }
 </style>

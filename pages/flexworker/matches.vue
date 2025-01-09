@@ -70,17 +70,16 @@ watch(percentage, (newVal) => {
   <div v-if="!isLoading" class="matching-page">
     <h2 v-if="compatibleJobs.length > 0">Matches for "{{ flexworker.name }}"</h2>
     <div class="matches">
-        <NuxtLink :to="`../job/get?id=${job.id}`" class="match" v-for="job in compatibleJobs" :key="job.id">
-          <div class="profile-picture-orb">
-            <img alt="Profile picture">
-            <h1 class="compatibility">{{ job.compatibility }}%</h1>
-          </div>
-          <h1>{{ job.name }}</h1>
-          <ul>
-            <UIFeature v-for="skill in job.commonSkills" :key="skill.id" :title="skill.name" />
-          </ul>
-        </NuxtLink>
-      </div>
+      <NuxtLink :to="`../job/get?id=${job.id}`" class="match" v-for="job in compatibleJobs" :key="job.id">
+        <div class="profile-placeholder">
+          <h1 class="compatibility">{{ job.compatibility }}%</h1>
+        </div>
+        <h1 class="job-title">{{ job.name }}</h1>
+        <ul>
+          <UIFeature v-for="skill in job.commonSkills" :key="skill.id" :title="skill.name" />
+        </ul>
+      </NuxtLink>
+    </div>
     <div v-if="compatibleJobs.length <= 0">
       <h2>No matches found for "{{ flexworker.name }}"</h2>
     </div>
@@ -93,6 +92,8 @@ watch(percentage, (newVal) => {
     </div>
   </div>
 </template>
+
+
 
 <style scoped lang="scss">
 .matching-page {
@@ -107,10 +108,6 @@ watch(percentage, (newVal) => {
 
   &::-webkit-scrollbar {
     width: 0;
-  }
-
-  h1 {
-    word-break: break-all;
   }
 
   h2 {
@@ -128,8 +125,7 @@ watch(percentage, (newVal) => {
     .match {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      height: 18rem;
+      height: auto; /* Adjust to fit content */
       width: 14rem;
       gap: 0.5rem;
       background-color: #fff;
@@ -139,10 +135,10 @@ watch(percentage, (newVal) => {
       cursor: pointer;
       text-decoration: none;
       color: var(--text-primary-color);
-      
+
       &:first-child {
-        .profile-picture-orb{
-          border-color:#4E8798;
+        .profile-picture-orb {
+          border-color: #4E8798;
         }
       }
 
@@ -171,7 +167,7 @@ watch(percentage, (newVal) => {
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 2.5rem;
+          font-size: 2rem;
           font-weight: bold;
           background-color: rgba(255, 255, 255, 0.5);
           color: var(--text-primary-color);
@@ -179,9 +175,31 @@ watch(percentage, (newVal) => {
       }
 
       h1 {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
         font-weight: bold;
-        text-align:center;
+        text-align: center;
+        margin: 0.5rem 0;
+        line-break: anywhere;
+      }
+
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: inline-block;
+          background-color: var(--secondary-color);
+          color: #fff;
+          padding: 0.3rem 0.6rem;
+          border-radius: 0.5rem;
+          font-size: 0.9rem;
+          font-weight: bold;
+          white-space: nowrap;
+        }
       }
     }
   }
@@ -228,4 +246,6 @@ watch(percentage, (newVal) => {
     }
   }
 }
+
 </style>
+

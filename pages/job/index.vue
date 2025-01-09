@@ -47,10 +47,7 @@ onMounted(async () => {
     </UIPopup>
     <div class="overview-container">
       <div class="functionality">
-        <div class="search-bar-container">
-          <UISearch :placeholder="'Search...'" 
-                    v-model="useJob.computedSearchQuery.value"/>
-        </div>
+       
         <div class="buttons">
           <UIButtonStandard
               :action="redirectToCreate"
@@ -81,14 +78,15 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 2.5rem;
 
   .overview-container {
     width: 70%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-medium);
+    gap: 1.5rem;
 
     .functionality {
       width: 100%;
@@ -104,22 +102,22 @@ onMounted(async () => {
       .buttons {
         display: flex;
         flex-direction: row;
-        gap: var(--spacing-standard);
+        gap: 1rem;
         flex-shrink: 0;
       }
     }
 
     .overview {
-      padding: var(--padding-large) var(--padding-standard);
+      padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
       height: 25rem;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;
-      border-radius: var(--border-radius-standard);
+      border-radius: 1rem;
       overflow: auto;
-      gap: var(--spacing-standard);
+      gap: 1rem;
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -127,7 +125,7 @@ onMounted(async () => {
 
       &::-webkit-scrollbar-track {
         background: var(--white-95);
-        border-radius: var(--border-radius-standard);
+        border-radius: 1rem;
       }
 
       &::-webkit-scrollbar-thumb {

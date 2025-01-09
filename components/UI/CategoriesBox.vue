@@ -1,6 +1,7 @@
 ﻿<script setup lang="ts">
 import { computed } from 'vue';
 import {type Skill} from '~/composables/useSkill';
+import {list} from "postcss";
 
 const props = defineProps({
   skills: {
