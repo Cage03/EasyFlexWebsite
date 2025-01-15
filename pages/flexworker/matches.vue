@@ -122,6 +122,10 @@ watch(percentage, (newVal) => {
     gap: 4rem 0.5rem;
     padding: 3rem;
 
+    .match:hover{
+      transform: scale(1.05);
+    }
+
     .match {
       display: flex;
       flex-direction: column;
@@ -135,12 +139,15 @@ watch(percentage, (newVal) => {
       cursor: pointer;
       text-decoration: none;
       color: var(--text-primary-color);
+      transition: 0.2s;
+
 
       &:first-child {
         .profile-picture-orb {
           border-color: #4E8798;
         }
       }
+
 
       .profile-picture-orb {
         display: flex;
