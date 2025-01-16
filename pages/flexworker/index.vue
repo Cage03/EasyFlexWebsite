@@ -2,6 +2,7 @@
   <UIPopup :button-text="'Close'" :show="showPopup" @close="togglePopup()">{{ popupMessage }}</UIPopup>
   <div class="flexworker-overview-page">
     <div class="overview-container">
+      <h1>Flexworker Manager</h1>
       <div class="functionality">
         <div class="buttons">
           <UIButtonStandard :action="redirectToCreate" :icon="IconType.Plus" :content="'Create New'" />
@@ -103,7 +104,7 @@ onMounted(async () => {
       padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
-      height: 25rem;
+      height: 60vh;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;

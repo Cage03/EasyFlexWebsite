@@ -46,6 +46,7 @@ onMounted(async () => {
       {{ popupMessage }}
     </UIPopup>
     <div class="overview-container">
+      <h1>Job Manager</h1>
       <div class="functionality">
        
         <div class="buttons">
@@ -78,8 +79,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 2.5rem;
+  justify-content: center;
 
   .overview-container {
     width: 70%;
@@ -111,7 +111,7 @@ onMounted(async () => {
       padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
-      height: 25rem;
+      height: 60vh;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;

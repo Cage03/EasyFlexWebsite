@@ -54,6 +54,7 @@
           <UIButtonStandard
               :action="() => togglePopup('createCategory')"
               :content="'Add Category'"
+              :icon="IconType.Plus"
           />
         </div>
       </div>
@@ -76,6 +77,7 @@
 import { UseCategory } from "~/composables/useCategory";
 import type { Category } from "~/composables/useCategory";
 import type {Skill} from "~/composables/useSkill";
+import { IconType } from "~/types/global-types";
 
 const useCategory = UseCategory();
 const useSkill = UseSkill();
@@ -281,8 +283,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 1rem;
+  justify-content: center;
 
   .overview-container {
     width: 70%;
@@ -314,7 +315,7 @@ onMounted(async () => {
       padding: 2rem 1rem;
       display: flex;
       flex-direction: column;
-      height: 25rem;
+      height: 60vh;
       width: 100%;
       background: url("../../assets/images/background.jpg") no-repeat center center;
       background-size: cover;
